@@ -1,10 +1,13 @@
 'use client'
 
+import { useContext } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import clsx from 'clsx'
 
-import { Container } from '@/components/Container'
-import { Prose } from '@/components/Prose'
-import { formatDate } from '@/lib/formatDate'
+import { Container } from './Container'
+import { Prose } from './Prose'
+import { formatDate } from '../lib/formatDate'
 
 function ArrowLeftIcon(props) {
   return (

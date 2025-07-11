@@ -1,13 +1,13 @@
-import logoVietnam from '@/images/flags/vietnam.svg'
-import logoCambodia from '@/images/flags/cambodia.svg'
-import logoThailand from '@/images/flags/thailand.svg'
-import logoKazakhstan from '@/images/flags/kazakhstan.svg'
+import vietnamFlag from '../images/flags/vietnam.svg'
+import cambodiaFlag from '../images/flags/cambodia.svg'
+import thailandFlag from '../images/flags/thailand.svg'
+import kazakhstanFlag from '../images/flags/kazakhstan.svg'
 
 export const countries = [
   {
     slug: 'vietnam',
     name: 'Vietnam',
-    image: logoVietnam,
+    image: vietnamFlag,
     cities: [
       'Hanoi',
       'Ho Chi Minh City',
@@ -20,19 +20,19 @@ export const countries = [
   {
     slug: 'cambodia',
     name: 'Cambodia',
-    image: logoCambodia,
+    image: cambodiaFlag,
     cities: ['Siem Reap', 'Battambang'],
   },
   {
     slug: 'thailand',
     name: 'Thailand',
-    image: logoThailand,
+    image: thailandFlag,
     cities: ['Bangkok', 'Chiang Mai'],
   },
   {
     slug: 'kazakhstan',
     name: 'Kazakhstan',
-    image: logoKazakhstan,
+    image: kazakhstanFlag,
     cities: ['Almaty'],
   },
 ]

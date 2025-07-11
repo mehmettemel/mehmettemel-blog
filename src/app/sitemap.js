@@ -1,4 +1,4 @@
-import { getAllArticles } from '@/lib/articles'
+import { getAllArticles } from '../lib/articles'
 
 export default async function sitemap() {
   const baseUrl = 'https://mehmettemel.com'

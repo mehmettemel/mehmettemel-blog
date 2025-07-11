@@ -1,7 +1,7 @@
 import Image from 'next/image'
-import { Card } from '@/components/Card'
-import { SimpleLayout } from '@/components/SimpleLayout'
-import { countries } from '@/lib/countries'
+import { Card } from '../../components/Card'
+import { SimpleLayout } from '../../components/SimpleLayout'
+import { countries } from '../../lib/countries'
 
 export const metadata = {
   title: 'Countries',

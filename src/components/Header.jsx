@@ -13,8 +13,8 @@ import {
 } from '@headlessui/react'
 import clsx from 'clsx'
 
-import { Container } from '@/components/Container'
-import avatarImage from '@/images/avatar2.jpg'
+import { Container } from './Container'
+import avatarImage from '../images/avatar2.jpg'
 
 function CloseIcon(props) {
   return (

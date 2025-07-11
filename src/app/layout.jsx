@@ -1,8 +1,8 @@
-import { Providers } from '@/app/providers'
-import { Layout } from '@/components/Layout'
-import { siteConfig, generateStructuredData } from '@/lib/seo'
+import { Providers } from './providers'
+import { Layout } from '../components/Layout'
+import { siteConfig, generateStructuredData } from '../lib/seo'
 
-import '@/styles/tailwind.css'
+import '../styles/tailwind.css'
 
 export const metadata = {
   metadataBase: new URL(siteConfig.url),

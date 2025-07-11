@@ -1,8 +1,8 @@
-import { countries } from '@/lib/countries'
-import { getArticlesByCountryAndCity } from '@/lib/getAllArticles'
-import { Section } from '@/components/Section'
-import { Card } from '@/components/Card'
-import { SimpleLayout } from '@/components/SimpleLayout'
+import { countries } from '../../../lib/countries'
+import { getArticlesByCountryAndCity } from '../../../lib/getAllArticles'
+import { Section } from '../../../components/Section'
+import { Card } from '../../../components/Card'
+import { SimpleLayout } from '../../../components/SimpleLayout'
 
 export default async function CountryPage({ params }) {
   const { country } = params

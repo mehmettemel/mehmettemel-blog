@@ -6,7 +6,7 @@ export async function getAllArticles() {
 
   const articles = await Promise.all(
     articleSlugs.map(async (slug) => {
-      const mod = await import(`@/app/articles/${slug}/page.mdx`)
+      const mod = await import(`../app/articles/${slug}/page.mdx`)
       return { ...mod.article, slug }
     }),
   )
