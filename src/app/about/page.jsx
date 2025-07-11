@@ -85,35 +85,22 @@ export default function About() {
             Mehmet Temel
           </h1>
           <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
-            <p>
-              Hey there! I&apos;m a front-end developer with 4+ years of
-              crafting pixel-perfect, user-friendly apps that (hopefully) make
-              people smile. By day, I wrestle with React, Next.js, and Vue to
-              build digital experiences; by night, I&apos;m either bachata
-              dancing my heart out (5+ years of Latin dance vibes!) or planning
-              my next adventure to a corner of the world I haven&apos;t explored
-              yet.
-            </p>
-            <p>
-              I&apos;m a self-proclaimed culture geek who&apos;s obsessed with
-              diving into new countries, tasting their food (tastier, the
-              better!), and having deep, soul-stirring chats with strangers who
-              become friends. Whether it&apos;s learning why a dish is cooked a
-              certain way or debating life&apos;s big questions over coffee,
-              I&apos;m all about collecting stories and moments that stick with
-              you forever.
-            </p>
-            <p>
-              When I&apos;m not coding or globe-trotting, you&apos;ll find me
-              nerding out over psychology, trying to figure out what makes us
-              humans tick, or burning the dance floor with a cha-cha or two.
-              Life&apos;s too short for boring experiences, so I&apos;m here to
-              code, dance, eat, and explore my way through it—one unforgettable
-              memory at a time.
-            </p>
-            <p className="font-bold">
-              I&apos;m always up for a deep conversation on any topic.
-            </p>
+            As far as I’ve discovered about myself, here’s who I am:
+            <br />
+            <br />
+            Traveling and experiencing new cultures is an experience that keeps
+            me alive.
+            <br />
+            <br />
+            Trying new foods while traveling is a particular interest of mine.
+            <br />
+            <br />
+            As a hobby, I’ve been practicing Latin dances for many years.
+            <br />
+            <br />I love having deep conversations that enhance my awareness.
+          </div>
+          <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
+            that&apos;s all I can say about myself.
           </div>
         </div>
         <div className="lg:pl-20">

@@ -1,7 +1,5 @@
 export async function getAllArticles() {
   const articleSlugs = [
-    'crafting-a-design-system-for-a-multiplanetary-future',
-    'introducing-animaginary',
     'rewriting-the-cosmos-kernel-in-rust',
     'social-media-influence-on-youth',
   ]
