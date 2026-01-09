@@ -7,10 +7,13 @@ A modern, SEO-optimized blog built with Next.js 16, focused on travel stories an
 - **Framework**: Next.js 16.1.1 (App Router)
 - **React**: 19.2.3
 - **Styling**: Tailwind CSS 4.1.18
+- **UI Components**: shadcn/ui
 - **Content**: Markdown with gray-matter
 - **Typography**: @tailwindcss/typography
+- **Font**: Geist Mono
 - **Theme**: next-themes (Dark/Light mode)
 - **Animations**: Framer Motion
+- **Color Scheme**: Custom earth-tone palette (Linen, Olive, Sage, Clay)
 
 ## 📦 Blog Features
 
@@ -18,8 +21,10 @@ A modern, SEO-optimized blog built with Next.js 16, focused on travel stories an
 - **Reading Time**: Automatic reading time calculation
 - **SEO Optimized**: Full metadata, Open Graph, and structured data
 - **Responsive Design**: Mobile-first approach
-- **Dark Mode**: System preference detection with manual toggle
+- **Dark Mode**: System preference detection with animated toggle
+- **Custom Color Scheme**: Unique earth-tone palette for warm, natural aesthetics
 - **Fast Performance**: Optimized images and static generation
+- **Accessibility**: WCAG 2.1 AA compliant color contrasts
 
 ## 📝 Writing Blog Posts
 
@@ -96,19 +101,44 @@ npm start
 
 ### Colors
 
-Edit `src/styles/tailwind.css` to customize the color palette.
+The project uses a unique earth-tone color palette:
+- **Light Mode**: Linen (warm beige) background with Sage (soft green) accents
+- **Dark Mode**: Olive (deep green) background with Clay (terracotta) accents
+
+Edit `src/styles/tailwind.css` to customize the color palette. See `docs/COLOR_SCHEME.md` for detailed color documentation.
+
+**Color Usage:**
+```jsx
+// Always use semantic color tokens
+<div className="bg-background text-foreground">
+  <button className="bg-primary text-primary-foreground hover:bg-primary/90">
+    Click me
+  </button>
+  <p className="text-muted-foreground">Secondary text</p>
+</div>
+```
 
 ### Navigation
 
 Update navigation links in:
-- `src/components/Header.jsx`
-- `src/components/Footer.jsx`
+- `src/components/Navbar.jsx` (Main navigation)
+- `src/components/Footer.jsx` (Footer links)
 
 ### SEO
 
 Configure SEO settings in:
 - `src/lib/seo.js` (Global SEO config)
 - `src/app/layout.jsx` (Root metadata)
+
+### Documentation
+
+Complete documentation available in `/docs`:
+- `COLOR_SCHEME.md` - Color palette and usage guide
+- `FONT_SETUP.md` - Font configuration
+- `SEO_SETUP.md` - SEO best practices
+- `ANALYTICS_SETUP.md` - Analytics setup
+- `FILE_STRUCTURE.md` - Complete file structure
+- `project-overview.md` - Project architecture
 
 ## 🌐 Deployment
 

@@ -27,45 +27,47 @@ export default {
       },
       DEFAULT: {
         css: {
-          '--tw-prose-body': theme('colors.zinc.600'),
-          '--tw-prose-headings': theme('colors.zinc.900'),
-          '--tw-prose-links': theme('colors.teal.500'),
-          '--tw-prose-links-hover': theme('colors.teal.600'),
-          '--tw-prose-underline': theme('colors.teal.500 / 0.2'),
-          '--tw-prose-underline-hover': theme('colors.teal.500'),
-          '--tw-prose-bold': theme('colors.zinc.900'),
-          '--tw-prose-counters': theme('colors.zinc.900'),
-          '--tw-prose-bullets': theme('colors.zinc.900'),
-          '--tw-prose-hr': theme('colors.zinc.100'),
-          '--tw-prose-quote-borders': theme('colors.zinc.200'),
-          '--tw-prose-captions': theme('colors.zinc.400'),
-          '--tw-prose-code': theme('colors.zinc.700'),
-          '--tw-prose-code-bg': theme('colors.zinc.300 / 0.2'),
-          '--tw-prose-pre-code': theme('colors.zinc.100'),
-          '--tw-prose-pre-bg': theme('colors.zinc.900'),
+          // Light Mode - Linen theme
+          '--tw-prose-body': '#6B705C', // muted
+          '--tw-prose-headings': '#2D302D', // olive-800
+          '--tw-prose-links': '#A3B18A', // sage
+          '--tw-prose-links-hover': '#8A9B74', // darker sage
+          '--tw-prose-underline': 'rgba(163, 177, 138, 0.2)',
+          '--tw-prose-underline-hover': '#A3B18A',
+          '--tw-prose-bold': '#2D302D',
+          '--tw-prose-counters': '#2D302D',
+          '--tw-prose-bullets': '#2D302D',
+          '--tw-prose-hr': '#E8E3D5', // linen-200
+          '--tw-prose-quote-borders': '#E8E3D5',
+          '--tw-prose-captions': '#6B705C',
+          '--tw-prose-code': '#4A4E4A', // olive-700
+          '--tw-prose-code-bg': 'rgba(232, 227, 213, 0.5)',
+          '--tw-prose-pre-code': '#F4F1EA',
+          '--tw-prose-pre-bg': '#2D302D',
           '--tw-prose-pre-border': 'transparent',
-          '--tw-prose-th-borders': theme('colors.zinc.200'),
-          '--tw-prose-td-borders': theme('colors.zinc.100'),
+          '--tw-prose-th-borders': '#E8E3D5',
+          '--tw-prose-td-borders': '#F4F1EA',
 
-          '--tw-prose-invert-body': theme('colors.zinc.400'),
-          '--tw-prose-invert-headings': theme('colors.zinc.200'),
-          '--tw-prose-invert-links': theme('colors.teal.400'),
-          '--tw-prose-invert-links-hover': theme('colors.teal.400'),
-          '--tw-prose-invert-underline': theme('colors.teal.400 / 0.3'),
-          '--tw-prose-invert-underline-hover': theme('colors.teal.400'),
-          '--tw-prose-invert-bold': theme('colors.zinc.200'),
-          '--tw-prose-invert-counters': theme('colors.zinc.200'),
-          '--tw-prose-invert-bullets': theme('colors.zinc.200'),
-          '--tw-prose-invert-hr': theme('colors.zinc.700 / 0.4'),
-          '--tw-prose-invert-quote-borders': theme('colors.zinc.500'),
-          '--tw-prose-invert-captions': theme('colors.zinc.500'),
-          '--tw-prose-invert-code': theme('colors.zinc.300'),
-          '--tw-prose-invert-code-bg': theme('colors.zinc.200 / 0.05'),
-          '--tw-prose-invert-pre-code': theme('colors.zinc.100'),
-          '--tw-prose-invert-pre-bg': 'rgb(0 0 0 / 0.4)',
-          '--tw-prose-invert-pre-border': theme('colors.zinc.200 / 0.1'),
-          '--tw-prose-invert-th-borders': theme('colors.zinc.700'),
-          '--tw-prose-invert-td-borders': theme('colors.zinc.800'),
+          // Dark Mode - Olive theme
+          '--tw-prose-invert-body': '#A3B18A', // sage as muted
+          '--tw-prose-invert-headings': '#F4F1EA', // linen-100
+          '--tw-prose-invert-links': '#D4A373', // clay
+          '--tw-prose-invert-links-hover': '#E0B589', // lighter clay
+          '--tw-prose-invert-underline': 'rgba(212, 163, 115, 0.3)',
+          '--tw-prose-invert-underline-hover': '#D4A373',
+          '--tw-prose-invert-bold': '#F4F1EA',
+          '--tw-prose-invert-counters': '#F4F1EA',
+          '--tw-prose-invert-bullets': '#F4F1EA',
+          '--tw-prose-invert-hr': 'rgba(45, 48, 45, 0.4)',
+          '--tw-prose-invert-quote-borders': '#4A4E4A',
+          '--tw-prose-invert-captions': '#A3B18A',
+          '--tw-prose-invert-code': '#E8E3D5',
+          '--tw-prose-invert-code-bg': 'rgba(45, 48, 45, 0.5)',
+          '--tw-prose-invert-pre-code': '#F4F1EA',
+          '--tw-prose-invert-pre-bg': 'rgba(0, 0, 0, 0.4)',
+          '--tw-prose-invert-pre-border': 'rgba(232, 227, 213, 0.1)',
+          '--tw-prose-invert-th-borders': '#2D302D',
+          '--tw-prose-invert-td-borders': '#1A1C1A',
 
           // Base
           color: 'var(--tw-prose-body)',

@@ -54,39 +54,38 @@ export default async function BlogPost({ params }) {
   }
 
   return (
-    <Container className="mt-16 lg:mt-32">
-      <div className="xl:relative">
-        <div className="mx-auto max-w-2xl">
+    <Container>
+      <div className="max-w-[620px] mx-auto pt-12 pb-16">
           <Link
             href="/blog"
             aria-label="Go back to blog"
-            className="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md ring-1 shadow-zinc-800/5 ring-zinc-900/5 transition lg:absolute lg:-left-5 lg:-mt-2 lg:mb-0 xl:-top-1.5 xl:left-0 xl:mt-0 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0 dark:ring-white/10 dark:hover:border-zinc-700 dark:hover:ring-white/20"
+            className="group mb-6 inline-flex items-center gap-2 text-sm text-muted hover:text-foreground transition"
           >
-            <ArrowLeftIcon className="h-4 w-4 stroke-zinc-500 transition group-hover:stroke-zinc-700 dark:stroke-zinc-500 dark:group-hover:stroke-zinc-400" />
+            <ArrowLeftIcon className="h-4 w-4 stroke-current" />
+            <span>Back to Blog</span>
           </Link>
           <article>
-            <header className="flex flex-col">
-              <h1 className="mt-6 text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+            <header className="flex flex-col mb-8">
+              <h1 className="text-[32px] leading-[1.2] font-bold tracking-tight text-foreground">
                 {post.title}
               </h1>
-              <time
-                dateTime={post.date}
-                className="order-first flex items-center text-base text-zinc-400 dark:text-zinc-500"
-              >
-                <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-                <span className="ml-3">{format(new Date(post.date), 'MMMM d, yyyy')}</span>
-              </time>
-              {post.readingTime && (
-                <span className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                  {post.readingTime}
-                </span>
-              )}
+              <div className="mt-4 flex items-center gap-3 text-sm text-muted">
+                <time dateTime={post.date}>
+                  {format(new Date(post.date), 'MMM d, yyyy')}
+                </time>
+                {post.readingTime && (
+                  <>
+                    <span>•</span>
+                    <span>{post.readingTime}</span>
+                  </>
+                )}
+              </div>
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-teal-50 px-3 py-1 text-sm font-medium text-teal-600 dark:bg-teal-900/20 dark:text-teal-400"
+                      className="px-2.5 py-1 text-xs rounded-md bg-secondary text-foreground"
                     >
                       {tag}
                     </span>
@@ -95,11 +94,10 @@ export default async function BlogPost({ params }) {
               )}
             </header>
             <div
-              className="prose prose-zinc mt-8 dark:prose-invert"
+              className="prose max-w-none"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </article>
-        </div>
       </div>
     </Container>
   )

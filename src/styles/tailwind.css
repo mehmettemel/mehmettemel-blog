@@ -1,36 +1,282 @@
 @import 'tailwindcss';
-@import './prism.css' layer(components);
 
+@plugin 'tailwindcss-animate';
 @plugin '@tailwindcss/typography';
-@config '../../typography.js';
-
-@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --text-xs: 0.8125rem;
-  --text-xs--line-height: 1.5rem;
-  --text-sm: 0.875rem;
-  --text-sm--line-height: 1.5rem;
-  --text-base: 1rem;
-  --text-base--line-height: 1.75rem;
-  --text-lg: 1.125rem;
-  --text-lg--line-height: 1.75rem;
-  --text-xl: 1.25rem;
-  --text-xl--line-height: 2rem;
-  --text-2xl: 1.5rem;
-  --text-2xl--line-height: 2rem;
-  --text-3xl: 1.875rem;
-  --text-3xl--line-height: 2.25rem;
-  --text-4xl: 2rem;
-  --text-4xl--line-height: 2.5rem;
-  --text-5xl: 3rem;
-  --text-5xl--line-height: 3.5rem;
-  --text-6xl: 3.75rem;
-  --text-6xl--line-height: 1;
-  --text-7xl: 4.5rem;
-  --text-7xl--line-height: 1;
-  --text-8xl: 6rem;
-  --text-8xl--line-height: 1;
-  --text-9xl: 8rem;
-  --text-9xl--line-height: 1;
+  /* Linen (Keten) Tonları - Light Mode */
+  --color-linen-50: #F9F7F2;
+  --color-linen-100: #F4F1EA;
+  --color-linen-200: #E8E3D5;
+  
+  /* Olive (Zeytin) Tonları - Dark Mode */
+  --color-olive-700: #4A4E4A;
+  --color-olive-800: #2D302D;
+  --color-olive-900: #1A1C1A;
+  
+  /* Brand Renkleri (Toprak tonları) */
+  --color-brand-sage: #A3B18A;
+  --color-brand-clay: #D4A373;
+  
+  /* Muted Tonu */
+  --color-muted-base: #6B705C;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+:root {
+  /* Light Mode - Keten Temalı */
+  --background: 40 33% 94%;      /* #F4F1EA - Linen 100 */
+  --foreground: 120 5% 18%;      /* #2D302D - Olive 800 */
+
+  --card: 40 33% 94%;
+  --card-foreground: 120 5% 18%;
+
+  --popover: 40 50% 97%;         /* #F9F7F2 - Linen 50 */
+  --popover-foreground: 120 5% 18%;
+
+  --primary: 82 26% 60%;         /* #A3B18A - Sage */
+  --primary-foreground: 40 33% 94%;
+
+  --secondary: 40 36% 88%;       /* #E8E3D5 - Linen 200 */
+  --secondary-foreground: 120 5% 18%;
+
+  --muted: 60 11% 40%;           /* #6B705C - Muted */
+  --muted-foreground: 120 5% 28%;
+
+  --accent: 82 26% 60%;          /* #A3B18A - Sage */
+  --accent-foreground: 120 5% 10%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 40 33% 94%;
+
+  --border: 40 36% 88%;          /* #E8E3D5 - Linen 200 */
+  --input: 40 36% 88%;
+  --ring: 82 26% 60%;
+
+  --radius: 0.5rem;
+}
+
+.dark {
+  /* Dark Mode - Zeytin Temalı */
+  --background: 120 5% 10%;      /* #1A1C1A - Olive 900 */
+  --foreground: 40 33% 94%;      /* #F4F1EA - Linen 100 */
+
+  --card: 120 5% 18%;            /* #2D302D - Olive 800 */
+  --card-foreground: 40 33% 94%;
+
+  --popover: 120 5% 10%;
+  --popover-foreground: 40 33% 94%;
+
+  --primary: 30 48% 64%;         /* #D4A373 - Clay */
+  --primary-foreground: 120 5% 10%;
+
+  --secondary: 120 5% 18%;       /* #2D302D - Olive 800 */
+  --secondary-foreground: 40 33% 94%;
+
+  --muted: 82 26% 60%;           /* #A3B18A - Sage (dark mode'da muted) */
+  --muted-foreground: 40 36% 88%;
+
+  --accent: 30 48% 64%;          /* #D4A373 - Clay */
+  --accent-foreground: 40 33% 94%;
+
+  --destructive: 0 62.8% 50.6%;
+  --destructive-foreground: 40 33% 94%;
+
+  --border: 120 5% 18%;          /* #2D302D - Olive 800 */
+  --input: 120 5% 18%;
+  --ring: 30 48% 64%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Blog Prose Custom Colors - Light Mode */
+  .prose {
+    --tw-prose-body: #6B705C;
+    --tw-prose-headings: #2D302D;
+    --tw-prose-lead: #4A4E4A;
+    --tw-prose-links: #A3B18A;
+    --tw-prose-bold: #2D302D;
+    --tw-prose-counters: #6B705C;
+    --tw-prose-bullets: #A3B18A;
+    --tw-prose-hr: #E8E3D5;
+    --tw-prose-quotes: #2D302D;
+    --tw-prose-quote-borders: #E8E3D5;
+    --tw-prose-captions: #6B705C;
+    --tw-prose-code: #4A4E4A;
+    --tw-prose-pre-code: #F4F1EA;
+    --tw-prose-pre-bg: #2D302D;
+    --tw-prose-th-borders: #E8E3D5;
+    --tw-prose-td-borders: #E8E3D5;
+  }
+
+  /* Blog Prose Custom Colors - Dark Mode */
+  .dark .prose {
+    --tw-prose-body: #A3B18A;
+    --tw-prose-headings: #F4F1EA;
+    --tw-prose-lead: #E8E3D5;
+    --tw-prose-links: #D4A373;
+    --tw-prose-bold: #F4F1EA;
+    --tw-prose-counters: #A3B18A;
+    --tw-prose-bullets: #D4A373;
+    --tw-prose-hr: #4A4E4A;
+    --tw-prose-quotes: #F4F1EA;
+    --tw-prose-quote-borders: #4A4E4A;
+    --tw-prose-captions: #A3B18A;
+    --tw-prose-code: #E8E3D5;
+    --tw-prose-pre-code: #F4F1EA;
+    --tw-prose-pre-bg: rgba(0, 0, 0, 0.5);
+    --tw-prose-th-borders: #2D302D;
+    --tw-prose-td-borders: #2D302D;
+  }
+
+  /* Force heading colors for both modes */
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    color: var(--tw-prose-headings);
+    font-weight: 700;
+  }
+
+  .dark .prose h1,
+  .dark .prose h2,
+  .dark .prose h3,
+  .dark .prose h4,
+  .dark .prose h5,
+  .dark .prose h6 {
+    color: #F4F1EA !important;
+  }
+
+  /* Additional prose styling */
+  .prose p,
+  .prose li {
+    color: var(--tw-prose-body);
+  }
+
+  .dark .prose p,
+  .dark .prose li {
+    color: #A3B18A !important;
+  }
+
+  .prose a {
+    color: var(--tw-prose-links);
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-color: rgba(163, 177, 138, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .prose a:hover {
+    color: #8A9B74;
+    text-decoration-color: #A3B18A;
+  }
+
+  .dark .prose a {
+    color: #D4A373 !important;
+    text-decoration-color: rgba(212, 163, 115, 0.3);
+  }
+
+  .dark .prose a:hover {
+    color: #E0B589 !important;
+    text-decoration-color: #D4A373;
+  }
+
+  .prose strong {
+    color: var(--tw-prose-bold);
+  }
+
+  .dark .prose strong {
+    color: #F4F1EA !important;
+  }
+
+  .prose code {
+    color: var(--tw-prose-code);
+    background-color: rgba(232, 227, 213, 0.5);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+
+  .dark .prose code {
+    color: #E8E3D5 !important;
+    background-color: rgba(45, 48, 45, 0.5);
+  }
+
+  .prose pre {
+    background-color: #2D302D;
+    border: 1px solid #E8E3D5;
+  }
+
+  .dark .prose pre {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #4A4E4A;
+  }
+
+  .prose blockquote {
+    color: var(--tw-prose-quotes);
+    border-left-color: var(--tw-prose-quote-borders);
+  }
+
+  .dark .prose blockquote {
+    color: #F4F1EA !important;
+    border-left-color: #4A4E4A !important;
+  }
 }

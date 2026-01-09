@@ -4,8 +4,8 @@
   "description": "Front End Engineer specializing in React, Vue.js, and e-commerce development. Based in Adana, Turkey, but always traveling.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#F4F1EA",
+  "theme_color": "#F4F1EA",
   "orientation": "portrait-primary",
   "icons": [
     {

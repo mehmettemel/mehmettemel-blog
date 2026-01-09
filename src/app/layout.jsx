@@ -70,6 +70,9 @@ export const metadata = {
   },
 }
 
+import { GeistMono } from 'geist/font/mono'
+import { cn } from '../lib/utils'
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
@@ -93,7 +96,8 @@ export default function RootLayout({ children }) {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#1A1C1A" media="(prefers-color-scheme: dark)" />
 
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
@@ -240,10 +244,20 @@ export default function RootLayout({ children }) {
                 '@type': 'Person',
                 name: siteConfig.author.name,
                 url: siteConfig.url,
-              },
-              publisher: {
-                '@type': 'Person',
-                name: siteConfig.author.name,
+                author: {
+                  '@type': 'Person',
+                  name: siteConfig.author.name,
+                  url: siteConfig.url,
+                },
+                publisher: {
+                  '@type': 'Person',
+                  name: siteConfig.author.name,
+                },
+                address: {
+                  '@type': 'PostalAddress',
+                  addressLocality: 'Adana',
+                  addressCountry: 'Turkey',
+                },
               },
               blogPost: [
                 {
@@ -278,9 +292,14 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="flex h-full bg-zinc-50 dark:bg-black">
+      <body
+        className={cn(
+          'min-h-screen bg-background text-foreground antialiased',
+          GeistMono.className,
+        )}
+      >
         <Providers>
-          <div className="flex w-full">
+          <div className="relative flex min-h-screen flex-col">
             <Layout>{children}</Layout>
           </div>
         </Providers>

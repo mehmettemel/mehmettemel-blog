@@ -22,9 +22,9 @@ function SocialLink({ className, href, children, icon: Icon }) {
     <li className={clsx(className, 'flex')}>
       <Link
         href={href}
-        className="group flex text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-500"
+        className="group flex text-sm font-medium text-foreground transition hover:text-primary"
       >
-        <Icon className="h-6 w-6 flex-none fill-zinc-500 transition group-hover:fill-teal-500" />
+        <Icon className="h-6 w-6 flex-none fill-muted transition group-hover:fill-primary" />
         <span className="ml-4">{children}</span>
       </Link>
     </li>
@@ -52,15 +52,15 @@ export default function About() {
               src={avatarImage}
               alt="Mehmet Temel"
               sizes="(min-width: 1024px) 32rem, 20rem"
-              className="aspect-square rotate-3 rounded-2xl bg-zinc-100 object-cover dark:bg-zinc-800"
+              className="aspect-square rotate-3 rounded-2xl bg-secondary object-cover"
             />
           </div>
         </div>
         <div className="lg:order-first lg:row-span-2">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Xin chào! I'm Mehmet Temel.
           </h1>
-          <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
+          <div className="mt-6 space-y-7 text-base text-muted-foreground">
             <p>
               I'm a passionate traveler and food enthusiast who believes that the best way
               to understand a culture is through its cuisine. Based in Adana, Turkey, but
@@ -119,7 +119,7 @@ export default function About() {
             <SocialLink
               href="mailto:contact@mehmettemel.com"
               icon={MailIcon}
-              className="mt-8 border-t border-zinc-100 pt-8 dark:border-zinc-700/40"
+              className="mt-8 border-t border-border pt-8"
             >
               contact@mehmettemel.com
             </SocialLink>

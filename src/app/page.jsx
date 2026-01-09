@@ -1,63 +1,25 @@
 import Link from 'next/link'
-import { format } from 'date-fns'
-
-import { Button } from '../components/Button'
 import { Container } from '../components/Container'
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  XIcon,
-} from '../components/SocialIcons'
 import { getAllPosts } from '../lib/blog'
+import { format } from 'date-fns'
 
 // SEO metadata for the home page
 export const metadata = {
-  title: 'Mehmet Temel - Travel & Food Blogger | Best Food Spots & Travel Tips',
+  title: 'Mehmet Temel - Frontend Developer & Food Engineer',
   description:
-    'Discover authentic travel experiences and hidden food gems around the world. Travel and food blogger sharing restaurant reviews, local cuisine guides, and travel tips from Turkey and beyond. Find the best food spots, authentic local dishes, and travel recommendations.',
-  keywords: [
-    'travel blog',
-    'food blog',
-    'restaurant reviews',
-    'travel tips',
-    'local cuisine',
-    'authentic food',
-    'food photography',
-    'travel photography',
-    'Adana food',
-    'Turkish cuisine',
-    'Turkey travel',
-    'Mediterranean food',
-    'street food',
-    'local food spots',
-    'food guide',
-    'travel guide',
-    'best restaurants',
-    'hidden gems',
-    'culinary travel',
-    'food culture',
-    'travel experiences',
-    'solo travel',
-    'budget travel',
-    'digital nomad',
-    'backpacking',
-    'city guides',
-    'Mehmet Temel',
-  ],
+    'Mehmet Temel - Frontend developer bridging technology and food engineering.',
   openGraph: {
-    title:
-      'Mehmet Temel - Travel & Food Blogger | Best Food Spots & Travel Tips',
+    title: 'Mehmet Temel - Frontend Developer & Food Engineer',
     description:
-      'Discover authentic travel experiences and hidden food gems around the world. Restaurant reviews, local cuisine guides, and travel tips from Turkey and beyond.',
+      'Mehmet Temel - Frontend developer bridging technology and food engineering.',
     url: 'https://mehmettemel.com',
-    siteName: 'Mehmet Temel Travel & Food Blog',
+    siteName: 'Mehmet Temel',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Mehmet Temel - Travel & Food Blogger',
+        alt: 'Mehmet Temel',
       },
     ],
     locale: 'en_US',
@@ -67,9 +29,8 @@ export const metadata = {
     card: 'summary_large_image',
     site: '@temelbusiness',
     creator: '@temelbusiness',
-    title: 'Mehmet Temel - Travel & Food Blogger',
-    description:
-      'Discover authentic travel experiences and hidden food gems around the world. Restaurant reviews and travel tips.',
+    title: 'Mehmet Temel',
+    description: 'Frontend developer bridging technology and food engineering.',
     images: ['/og-image.jpg'],
   },
   alternates: {
@@ -77,137 +38,117 @@ export const metadata = {
   },
 }
 
-function SocialLink({ icon: Icon, ...props }) {
-  return (
-    <Link className="group -m-1 p-1" {...props}>
-      <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
-    </Link>
-  )
-}
-
-function Article({ post }) {
-  return (
-    <article className="group relative flex flex-col items-start">
-      <h2 className="text-base font-semibold tracking-tight text-zinc-800 dark:text-zinc-100">
-        <div className="absolute -inset-x-4 -inset-y-6 z-0 scale-95 bg-zinc-50 opacity-0 transition group-hover:scale-100 group-hover:opacity-100 sm:-inset-x-6 sm:rounded-2xl dark:bg-zinc-800/50" />
-        <Link href={`/blog/${post.slug}`}>
-          <span className="absolute -inset-x-4 -inset-y-6 z-20 sm:-inset-x-6 sm:rounded-2xl" />
-          <span className="relative z-10">{post.title}</span>
-        </Link>
-      </h2>
-      <time
-        className="relative z-10 order-first mb-3 flex items-center text-sm text-zinc-400 pl-3.5 dark:text-zinc-500"
-        dateTime={post.date}
-      >
-        <span
-          className="absolute inset-y-0 left-0 flex items-center"
-          aria-hidden="true"
-        >
-          <span className="h-4 w-0.5 rounded-full bg-zinc-200 dark:bg-zinc-500" />
-        </span>
-        {format(new Date(post.date), 'MMMM d, yyyy')}
-      </time>
-      <p className="relative z-10 mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        {post.description}
-      </p>
-      <div
-        aria-hidden="true"
-        className="relative z-10 mt-4 flex items-center text-sm font-medium text-teal-500"
-      >
-        Read article
-        <svg
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-          className="ml-1 h-4 w-4 stroke-current"
-        >
-          <path
-            d="M6.75 5.75 9.25 8l-2.5 2.25"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
-    </article>
-  )
-}
-
 export default function Home() {
-  const posts = getAllPosts().slice(0, 3)
+  const allPosts = getAllPosts()
+  const recentPosts = allPosts.slice(0, 12)
 
   return (
-    <>
-      <Container className="mt-9">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-            Travel & Food Blogger
-          </h1>
-          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I'm Mehmet Temel, a passionate traveler and food enthusiast
-            who's been exploring the world one dish at a time. Based in
-            Adana, Turkey, but always on the move, I share authentic travel
-            experiences, hidden food gems, and honest restaurant reviews from my
-            adventures around the globe.
-          </p>
-          <div className="mt-6 flex gap-6">
-            <SocialLink
-              href="https://x.com/temelbusiness"
-              aria-label="Follow on X"
-              icon={XIcon}
-            />
-            <SocialLink
-              href="https://www.instagram.com/mehmettemelim"
-              aria-label="Follow on Instagram"
-              icon={InstagramIcon}
-            />
-            <SocialLink
-              href="https://github.com/mehmettemel"
-              aria-label="Follow on GitHub"
-              icon={GitHubIcon}
-            />
-            <SocialLink
-              href="https://www.linkedin.com/in/mehmettemelim"
-              aria-label="Follow on LinkedIn"
-              icon={LinkedInIcon}
-            />
-          </div>
+    <Container>
+      <div className="max-w-[620px] mx-auto pt-12 pb-16">
+        {/* Hero Section */}
+        <h1 className="text-[32px] leading-[1.2] font-bold tracking-tight text-foreground">
+          Hi 👋, I'm Mehmet Temel!
+        </h1>
+
+        {/* Info Badges */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Senior Frontend Developer
+          </span>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            From Turkey, based in Adana
+          </span>
         </div>
-      </Container>
-      <Container className="mt-24 md:mt-28">
-        <div className="mx-auto max-w-2xl">
-          <div className="flex flex-col gap-16">
-            <div>
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100">
-                  Latest Posts
-                </h2>
-                {posts.length > 0 && (
-                  <Button href="/blog" variant="secondary">
-                    View all
-                  </Button>
-                )}
-              </div>
-              {posts.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-zinc-600 dark:text-zinc-400">
-                    No blog posts yet. Check back soon for exciting travel and food
-                    stories!
-                  </p>
-                </div>
-              ) : (
-                <div className="md:border-l md:border-zinc-100 md:pl-6 md:dark:border-zinc-700/40">
-                  <div className="flex flex-col space-y-16">
-                    {posts.map((post) => (
-                      <Article key={post.slug} post={post} />
-                    ))}
-                  </div>
-                </div>
-              )}
+
+        <div className="mt-2 flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Food Engineering & Software
+          </span>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Building user-friendly interfaces
+          </span>
+        </div>
+
+        {/* Social Links */}
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link
+            href="https://x.com/temelbusiness"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground hover:bg-primary/10 transition"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            Thoughts on Twitter
+          </Link>
+          <Link
+            href="https://www.instagram.com/mehmettemelim"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded-md bg-secondary text-foreground hover:bg-primary/10 transition"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Adventures on Instagram
+          </Link>
+        </div>
+
+        {/* Blog Section */}
+        <section className="mt-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[22px] font-bold text-foreground">Blog</h2>
+            <Link
+              href="/blog"
+              className="text-sm text-muted hover:text-primary transition inline-flex items-center gap-1"
+            >
+              View all blog posts
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          {recentPosts.length > 0 ? (
+            <div className="space-y-0">
+              {recentPosts.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="flex items-center justify-between py-3 group border-b border-border last:border-b-0 hover:bg-secondary/20 -mx-3 px-3 transition"
+                >
+                  <span className="text-[15px] text-foreground group-hover:text-primary transition flex-1 pr-4">
+                    {post.title}
+                  </span>
+                  <span className="text-[13px] text-muted whitespace-nowrap">
+                    {format(new Date(post.date), 'MMM d, yyyy')}
+                  </span>
+                </Link>
+              ))}
             </div>
-          </div>
-        </div>
-      </Container>
-    </>
+          ) : (
+            <p className="text-muted-foreground text-sm">
+              No blog posts yet. Check back soon!
+            </p>
+          )}
+        </section>
+      </div>
+    </Container>
   )
 }
