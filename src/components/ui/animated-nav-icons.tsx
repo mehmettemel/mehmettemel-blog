@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 interface AnimatedNavIconProps {
   href: string
   label: string
-  icon: "home" | "blog" | "contact" | "gems"
+  icon: "home" | "blog" | "decoded" | "contact" | "gems" | "signals" | "about"
   onClick?: () => void
 }
 
@@ -30,8 +30,11 @@ export function AnimatedNavIcon({ href, label, icon, onClick }: AnimatedNavIconP
     >
       {icon === "home" && <HomeIcon isActive={isActive} />}
       {icon === "blog" && <BlogIcon isActive={isActive} />}
+      {icon === "decoded" && <BlogIcon isActive={isActive} />}
       {icon === "contact" && <ContactIcon isActive={isActive} />}
+      {icon === "about" && <AboutIcon isActive={isActive} />}
       {icon === "gems" && <GemsIcon isActive={isActive} />}
+      {icon === "signals" && <SignalsIcon isActive={isActive} />}
     </Link>
   )
 }
@@ -281,6 +284,115 @@ function GemsIcon({ isActive }: { isActive: boolean }) {
               ease: "easeInOut"
             }}
           />
+        </motion.g>
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+function SignalsIcon({ isActive }: { isActive: boolean }) {
+  const duration = 0.7
+
+  return (
+    <motion.div animate={isActive ? "active" : "inactive"}>
+      <motion.svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Signal waves outline - inactive */}
+        <motion.g
+          variants={{
+            active: { opacity: 0, scale: 0.8 },
+            inactive: { opacity: 1, scale: 1 }
+          }}
+          transition={{ duration }}
+        >
+          <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2" />
+          <path d="M8.5 8.5a5 5 0 0 1 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M5.5 5.5a9 9 0 0 1 13 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </motion.g>
+        {/* Signal waves filled - active */}
+        <motion.g
+          variants={{
+            active: { opacity: 1, scale: 1 },
+            inactive: { opacity: 0, scale: 0.8 }
+          }}
+          transition={{ duration }}
+        >
+          <circle cx="12" cy="12" r="2" fill="currentColor" stroke="currentColor" strokeWidth="2" />
+          <motion.path
+            d="M8.5 8.5a5 5 0 0 1 7 7"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{
+              opacity: [0.5, 1, 0.5],
+              pathLength: [0.5, 1, 0.5]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+          <motion.path
+            d="M5.5 5.5a9 9 0 0 1 13 13"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            animate={{
+              opacity: [0.3, 0.8, 0.3],
+              pathLength: [0.3, 1, 0.3]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.2
+            }}
+          />
+        </motion.g>
+      </motion.svg>
+    </motion.div>
+  )
+}
+
+function AboutIcon({ isActive }: { isActive: boolean }) {
+  const duration = 0.7
+
+  return (
+    <motion.div animate={isActive ? "active" : "inactive"}>
+      <motion.svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* User outline - inactive */}
+        <motion.g
+          variants={{
+            active: { opacity: 0, scale: 0.8 },
+            inactive: { opacity: 1, scale: 1 }
+          }}
+          transition={{ duration }}
+        >
+          <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2" />
+          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </motion.g>
+        {/* User filled - active */}
+        <motion.g
+          variants={{
+            active: { opacity: 1, scale: 1 },
+            inactive: { opacity: 0, scale: 0.8 }
+          }}
+          transition={{ duration }}
+        >
+          <circle cx="12" cy="8" r="4" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" />
+          <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </motion.g>
       </motion.svg>
     </motion.div>

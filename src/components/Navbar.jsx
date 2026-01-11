@@ -14,9 +14,10 @@ import { Container } from './Container'
 function DesktopNav() {
   return (
     <nav className="hidden md:flex items-center gap-1">
-      <AnimatedNavIcon href="/blog" label="Blog" icon="blog" />
+      <AnimatedNavIcon href="/decoded" label="Decoded" icon="decoded" />
       <AnimatedNavIcon href="/gems" label="Gems" icon="gems" />
-      <AnimatedNavIcon href="/contact" label="Contact" icon="contact" />
+      <AnimatedNavIcon href="/signals" label="Signals" icon="signals" />
+      <AnimatedNavIcon href="/about" label="Hakkımda" icon="about" />
     </nav>
   )
 }
@@ -39,16 +40,20 @@ function MobileNav() {
             <span className="text-sm font-medium text-muted">Home</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/blog" label="Blog" icon="blog" onClick={closeSheet} />
-            <span className="text-sm font-medium text-muted">Blog</span>
+            <AnimatedNavIcon href="/decoded" label="Decoded" icon="decoded" onClick={closeSheet} />
+            <span className="text-sm font-medium text-muted">Decoded</span>
           </div>
           <div className="flex items-center gap-2 px-2">
             <AnimatedNavIcon href="/gems" label="Gems" icon="gems" onClick={closeSheet} />
             <span className="text-sm font-medium text-muted">Gems</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/contact" label="Contact" icon="contact" onClick={closeSheet} />
-            <span className="text-sm font-medium text-muted">Contact</span>
+            <AnimatedNavIcon href="/signals" label="Signals" icon="signals" onClick={closeSheet} />
+            <span className="text-sm font-medium text-muted">Signals</span>
+          </div>
+          <div className="flex items-center gap-2 px-2">
+            <AnimatedNavIcon href="/about" label="Hakkımda" icon="about" onClick={closeSheet} />
+            <span className="text-sm font-medium text-muted">Hakkımda</span>
           </div>
           <div className="mt-6 pt-6 border-t border-border">
             <div className="flex items-center justify-between px-2">

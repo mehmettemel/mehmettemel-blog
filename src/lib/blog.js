@@ -6,7 +6,7 @@ import html from 'remark-html'
 import remarkGfm from 'remark-gfm'
 import readingTime from 'reading-time'
 
-const postsDirectory = path.join(process.cwd(), 'content/blog')
+const postsDirectory = path.join(process.cwd(), 'content/decoded')
 
 export function getAllPosts() {
   // Check if directory exists

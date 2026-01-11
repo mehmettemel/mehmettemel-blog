@@ -3,9 +3,9 @@ import { RabbitHoleCard } from '../../components/RabbitHoleCard'
 import { getAllPosts } from '../../lib/blog'
 
 export const metadata = {
-  title: 'Rabbit Holes - Notes from Books, Videos & Articles | Mehmet Temel',
+  title: 'Decoded - Gıda ve Beslenme Araştırmaları | Mehmet Temel',
   description:
-    'Deep dives into interesting books, videos, and articles. My personal notes and takeaways from exploring ideas worth sharing.',
+    'Yediğimiz şeylerin vücutta gerçekte ne yaptığını çözüyorum. Gıda, besinler ve vücut mekanizmaları hakkında derin dalış yazıları.',
 }
 
 export default function BlogIndex() {
@@ -17,12 +17,12 @@ export default function BlogIndex() {
         {/* Header */}
         <div className="mb-12">
           <h1 className="mb-3 text-4xl font-bold tracking-tight text-foreground">
-            Rabbit Holes
+            Decoded
           </h1>
           <p className="max-w-2xl text-base text-muted-foreground">
-            Notes and insights from books, videos, and articles I've explored.
-            Each entry is a journey down a fascinating rabbit hole worth
-            sharing.
+            Yediğimiz şeylerin vücutta gerçekte ne yaptığını çözüyorum.
+            Tek bir gıda, besin veya mekanizma hakkında derin araştırmalar
+            ve kişisel yorumlar.
           </p>
         </div>
 
@@ -30,7 +30,7 @@ export default function BlogIndex() {
         {posts.length === 0 ? (
           <div className="py-12 text-center">
             <p className="text-base text-muted-foreground">
-              No rabbit holes explored yet. Check back soon!
+              Henüz yazı yok. Yakında ilk araştırmalar yayınlanacak!
             </p>
           </div>
         ) : (

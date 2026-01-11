@@ -56,7 +56,7 @@ export function RabbitHoleCard({ post, index }) {
       transition={{ duration: 0.4, delay: index * 0.05 }}
     >
       <Link
-        href={`/blog/${post.slug}`}
+        href={`/decoded/${post.slug}`}
         className={`group flex items-center justify-between relative overflow-hidden rounded-lg border ${config.borderColor} bg-gradient-to-r ${config.gradient} p-4 transition-all duration-300 hover:shadow-md`}
       >
         {/* Background pattern */}
