@@ -2,22 +2,18 @@
 
 import { Menu } from 'lucide-react'
 import { useState } from 'react'
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from './ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 import { AnimatedThemeToggle } from './ui/animated-theme-toggle'
 import { AnimatedNavIcon } from './ui/animated-nav-icons'
 import { Container } from './Container'
 
 function DesktopNav() {
   return (
-    <nav className="hidden md:flex items-center gap-1">
-      <AnimatedNavIcon href="/researches" label="Arastirmalar" icon="decoded" />
-      <AnimatedNavIcon href="/gems" label="Kaynaklar" icon="gems" />
-      <AnimatedNavIcon href="/signals" label="Signals" icon="signals" />
-      <AnimatedNavIcon href="/contact" label="Iletisim" icon="about" />
+    <nav className="hidden items-center gap-1 md:flex">
+      <AnimatedNavIcon href="/incelemeler" label="Incelemeler" icon="decoded" />
+      <AnimatedNavIcon href="/kesifler" label="Kesifler" icon="gems" />
+      <AnimatedNavIcon href="/bu-hafta" label="Bu Hafta" icon="signals" />
+      <AnimatedNavIcon href="/iletisim" label="Iletisim" icon="about" />
     </nav>
   )
 }
@@ -29,33 +25,58 @@ function MobileNav() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger className="md:hidden p-2 -m-2 text-muted hover:text-foreground rounded-lg hover:bg-secondary/50 transition">
+      <SheetTrigger className="-m-2 rounded-lg p-2 text-muted transition hover:bg-secondary/50 hover:text-foreground md:hidden">
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle menu</span>
       </SheetTrigger>
       <SheetContent side="right" className="w-64">
-        <nav className="flex flex-col gap-1 mt-8">
+        <nav className="mt-8 flex flex-col gap-1">
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/" label="Ana Sayfa" icon="home" onClick={closeSheet} />
+            <AnimatedNavIcon
+              href="/"
+              label="Ana Sayfa"
+              icon="home"
+              onClick={closeSheet}
+            />
             <span className="text-sm font-medium text-muted">Ana Sayfa</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/researches" label="Arastirmalar" icon="decoded" onClick={closeSheet} />
-            <span className="text-sm font-medium text-muted">Arastirmalar</span>
+            <AnimatedNavIcon
+              href="/incelemeler"
+              label="Incelemeler"
+              icon="decoded"
+              onClick={closeSheet}
+            />
+            <span className="text-sm font-medium text-muted">Incelemeler</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/gems" label="Kaynaklar" icon="gems" onClick={closeSheet} />
-            <span className="text-sm font-medium text-muted">Kaynaklar</span>
+            <AnimatedNavIcon
+              href="/kesifler"
+              label="Kesifler"
+              icon="gems"
+              onClick={closeSheet}
+            />
+            <span className="text-sm font-medium text-muted">Kesifler</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/signals" label="Signals" icon="signals" onClick={closeSheet} />
-            <span className="text-sm font-medium text-muted">Signals</span>
+            <AnimatedNavIcon
+              href="/bu-hafta"
+              label="Bu Hafta"
+              icon="signals"
+              onClick={closeSheet}
+            />
+            <span className="text-sm font-medium text-muted">Bu Hafta</span>
           </div>
           <div className="flex items-center gap-2 px-2">
-            <AnimatedNavIcon href="/contact" label="Iletisim" icon="about" onClick={closeSheet} />
+            <AnimatedNavIcon
+              href="/iletisim"
+              label="Iletisim"
+              icon="about"
+              onClick={closeSheet}
+            />
             <span className="text-sm font-medium text-muted">Iletisim</span>
           </div>
-          <div className="mt-6 pt-6 border-t border-border">
+          <div className="mt-6 border-t border-border pt-6">
             <div className="flex items-center justify-between px-2">
               <span className="text-sm font-medium text-muted">Tema</span>
               <AnimatedThemeToggle />
@@ -69,9 +90,9 @@ function MobileNav() {
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border/40">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <Container>
-        <div className="max-w-[620px] mx-auto flex items-center justify-between py-3">
+        <div className="mx-auto flex max-w-[620px] items-center justify-between py-3">
           <AnimatedNavIcon href="/" label="Ana Sayfa" icon="home" />
           <div className="flex items-center gap-1">
             <DesktopNav />
