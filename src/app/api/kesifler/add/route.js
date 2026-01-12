@@ -220,11 +220,16 @@ async function updateKesiflerFile(type, newData) {
   },`
 
     // Array içine ekle - son ] işaretinden önce ekle
+    // Hem boş array [] hem de çok satırlı array'leri destekler
     updatedContent = updatedContent.replace(
-      /(export const usefulLinks = \[)([\s\S]*?)(\n\])/,
+      /(export const usefulLinks = \[)([\s\S]*?)(\s*\])/,
       (match, p1, p2, p3) => {
-        // Eğer array boş değilse sonuna ekle, boşsa direkt ekle
-        return `${p1}${p2}${p2.trim() ? '\n' : ''}${newLink}${p3}`
+        // Eğer array boş ise (sadece whitespace varsa)
+        if (!p2.trim()) {
+          return `${p1}\n${newLink}\n]`
+        }
+        // Array doluysa sonuna ekle
+        return `${p1}${p2}\n${newLink}\n]`
       },
     )
   } else if (type === 'note') {
@@ -238,10 +243,16 @@ async function updateKesiflerFile(type, newData) {
     tags: ${JSON.stringify(newData.tags)},
   },`
 
+    // Hem boş array [] hem de çok satırlı array'leri destekler
     updatedContent = updatedContent.replace(
-      /(export const inspirationalQuotes = \[)([\s\S]*?)(\n\])/,
+      /(export const inspirationalQuotes = \[)([\s\S]*?)(\s*\])/,
       (match, p1, p2, p3) => {
-        return `${p1}${p2}${p2.trim() ? '\n' : ''}${newNote}${p3}`
+        // Eğer array boş ise (sadece whitespace varsa)
+        if (!p2.trim()) {
+          return `${p1}\n${newNote}\n]`
+        }
+        // Array doluysa sonuna ekle
+        return `${p1}${p2}\n${newNote}\n]`
       },
     )
   }
