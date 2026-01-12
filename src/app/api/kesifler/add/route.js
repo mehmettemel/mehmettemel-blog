@@ -13,8 +13,8 @@ function isURL(text) {
   return urlPattern.test(text.trim())
 }
 
-// Gemini API çağrısı
-async function callGemini(prompt) {
+// Gemini API çağrısı (retry mekanizması ile)
+async function callGemini(prompt, retries = 3, delay = 2000) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`
 
   const payload = {
@@ -29,26 +29,48 @@ async function callGemini(prompt) {
     ],
   }
 
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
 
-    const json = await res.json()
+      const json = await res.json()
 
-    if (json.error) {
-      throw new Error('Gemini API Hatası: ' + json.error.message)
+      if (json.error) {
+        // Overload hatası ise retry yap
+        if (
+          json.error.message.includes('overloaded') ||
+          json.error.status === 'RESOURCE_EXHAUSTED'
+        ) {
+          if (attempt < retries) {
+            console.log(
+              `Gemini overloaded, retry ${attempt}/${retries} (${delay}ms bekliyor...)`,
+            )
+            await new Promise((resolve) => setTimeout(resolve, delay * attempt))
+            continue
+          }
+        }
+        throw new Error('Gemini API Hatası: ' + json.error.message)
+      }
+
+      if (!json.candidates || !json.candidates[0].content) {
+        throw new Error('Gemini cevap döndüremedi.')
+      }
+
+      return json.candidates[0].content.parts[0].text
+    } catch (error) {
+      if (attempt === retries) {
+        throw new Error('Gemini API çağrısı başarısız: ' + error.message)
+      }
+      // Network hatası varsa da retry yap
+      console.log(
+        `Gemini API hatası, retry ${attempt}/${retries} (${delay}ms bekliyor...)`,
+      )
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt))
     }
-
-    if (!json.candidates || !json.candidates[0].content) {
-      throw new Error('Gemini cevap döndüremedi.')
-    }
-
-    return json.candidates[0].content.parts[0].text
-  } catch (error) {
-    throw new Error('Gemini API çağrısı başarısız: ' + error.message)
   }
 }
 
