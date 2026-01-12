@@ -52,6 +52,15 @@ export const inspirationalQuotes = [
     author: 'Osman Müftüoğlu',
     source: null,
     category: 'saglik',
-    tags: ["bağışıklık","D vitamini","sağlık","takviye"],
+    tags: ["bağışıklık","D vitamini","sağlık","takviye"
+  {
+    id: 1768243962225,
+    text: 'Narı kabuğundaki beyaz liflerle birlikte tüketin veya suyunu öyle sıkın.En değerli polifenoller (elajotaninler) o beyaz liflerde ve çekirdektedir',
+    author: 'Osman Müftüoğlu',
+    source: null,
+    category: 'saglik',
+    tags: ["nar","polifenoller","beslenme","saglik"],
+  },
+],
   },
 ]
