@@ -80,16 +80,15 @@ async function handleLink(url) {
 {
   "title": "Link başlığı",
   "description": "Kısa açıklama (max 150 karakter)",
-  "type": "website/article/video/tool seçeneklerinden en uygun olanı"
+  "type": "website/article/video seçeneklerinden en uygun olanı"
 }
 
 URL: ${url}
 
 KATEGORİ SEÇİMİ:
-- "website": Genel web siteleri, blog ana sayfaları, kurumsal siteler, haber siteleri
-- "article": Blog yazıları, teknik dökümanlar, makaleler, rehberler
+- "website": Tüm web siteleri (ana sayfalar, kurumsal siteler, haber siteleri, online araçlar, web uygulamaları)
+- "article": Blog yazıları, teknik dökümanlar, makaleler, rehberler, tutorial'lar
 - "video": YouTube videoları, video kursları, webinar kayıtları
-- "tool": Online araçlar, web uygulamaları, geliştirici araçları, üretkenlik araçları
 
 ÖNEMLI: Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.`
 

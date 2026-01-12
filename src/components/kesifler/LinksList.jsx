@@ -25,11 +25,6 @@ const typeConfig = {
     icon: '🎥',
     color: 'bg-red-500/10 text-red-600 dark:text-red-400',
   },
-  tool: {
-    label: 'Araç',
-    icon: '🛠️',
-    color: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
-  },
 }
 
 // Animation variants for the container
