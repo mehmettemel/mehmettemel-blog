@@ -57,7 +57,16 @@ export const inspirationalQuotes = [
     author: null,
     source: 'https://x.com/Wegiveyouhealt1/status/2010616904231346567?s=20',
     category: 'saglik',
-    tags: ["bacak gücü","ömür","sağlık"],
+    tags: ["bacak gücü","ömür","sağlık"
+  {
+    id: 1768245788887,
+    text: 'A 20 minute walk after meals is one of the most overlooked health tools.',
+    author: null,
+    source: 'https://x.com/Wegiveyouhealt1/status/2010540030130008520?s=20',
+    category: 'saglik',
+    tags: ["yürüyüş","sağlık","egzersiz"],
+  },
+],
   },
 ],
   },
