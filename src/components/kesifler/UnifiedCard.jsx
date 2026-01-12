@@ -2,7 +2,13 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Info } from 'lucide-react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 /**
  * Unified Card Component for both Links and Quotes
@@ -88,7 +94,19 @@ export function UnifiedCard({
           {source && (
             <>
               {author && <span className="text-muted-foreground/50">•</span>}
-              <span className="italic">{source}</span>
+              <TooltipProvider>
+                <Tooltip delayDuration={200}>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center gap-1 italic cursor-help border-b border-dashed border-muted-foreground/30 hover:border-muted-foreground/60 transition-colors">
+                      {source}
+                      <Info className="h-3 w-3 opacity-50" />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-xs">
+                    <p className="text-xs">Kaynak: {source}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </>
           )}
         </div>
