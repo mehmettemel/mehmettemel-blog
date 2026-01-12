@@ -118,7 +118,7 @@ async function handleNote(text) {
   "text": "Notun kendisi (tırnak işaretlerini koruyarak)",
   "author": "Varsa yazar adı, yoksa null",
   "source": "Varsa kaynak (kitap adı, makale başlığı, konuşma ismi vs.), yoksa null",
-  "category": "motivasyon/yazilim/tasarim/teknoloji/saglik/gida/seyahat kategorilerinden en uygun olanı",
+  "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı",
   "tags": ["tag1", "tag2"]
 }
 
@@ -131,19 +131,18 @@ KAYNAK TESPİTİ:
 - Yazar adı ile kaynak ayrı tutulmalı (örn: Yazar: Steve Jobs, Kaynak: Stanford Konuşması)
 - Kaynak yoksa null döndür
 
-KATEGORİ SEÇİMİ:
-- motivasyon: İlham verici, motive edici alıntılar
-- yazilim: Programlama, kodlama, yazılım geliştirme
-- tasarim: UI/UX, grafik tasarım, yaratıcılık
-- teknoloji: Genel teknoloji, yenilikler, geleceğe dair
-- saglik: Sağlık, fitness, yaşam tarzı
-- gida: Yemek, beslenme, mutfak
-- seyahat: Gezi, keşif, macera
+KATEGORİ SEÇİMİ (5 kategori):
+- kisisel: Kişisel gelişim, motivasyon, ilham verici alıntılar, hayat dersleri, başarı, mutluluk
+- saglik: Sağlık tavsiyeleri, fitness, bağışıklık, vitaminler, egzersiz, mental sağlık
+- gida: Yemek tarifleri, beslenme, mutfak ipuçları, gıda bilgisi, diyet
+- seyahat: Gezi, tatil, keşif, macera, yer önerileri, seyahat ipuçları
+- genel: Yukarıdaki kategorilere uymayan diğer tüm konular (teknoloji, yazılım, tasarım, bilim, kültür, vs.)
 
 ÖNEMLI:
 - Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.
 - text alanında tırnak işaretlerini koruyarak düzgün escape et.
-- Tags 2-3 adet, kısa ve öz olmalı`
+- Tags 2-3 adet, kısa ve öz olmalı
+- Kategori seçiminde en spesifik kategoriyi tercih et (örn: sağlık konusu ise "genel" yerine "saglik")`
 
   const aiResponse = await callGemini(prompt)
 

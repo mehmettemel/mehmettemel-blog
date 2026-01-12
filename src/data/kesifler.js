@@ -35,16 +35,14 @@ export const linkCategories = [
 // Not Kategorileri
 export const quoteCategories = [
   { id: 'all', name: 'Tümü', icon: '📚' },
-  { id: 'motivasyon', name: 'Motivasyon', icon: '💪' },
-  { id: 'yazilim', name: 'Yazılım', icon: '⚡' },
-  { id: 'tasarim', name: 'Tasarım', icon: '🎨' },
-  { id: 'teknoloji', name: 'Teknoloji', icon: '💻' },
+  { id: 'kisisel', name: 'Kişisel', icon: '💭' },
   { id: 'saglik', name: 'Sağlık', icon: '🏥' },
   { id: 'gida', name: 'Gıda', icon: '🍎' },
   { id: 'seyahat', name: 'Seyahat', icon: '✈️' },
+  { id: 'genel', name: 'Genel', icon: '📝' },
 ]
 
-// Notlar ve Alıntılar - Boş
+// Notlar ve Alıntılar
 export const inspirationalQuotes = [
   {
     id: 1768243881702,
@@ -52,15 +50,14 @@ export const inspirationalQuotes = [
     author: 'Osman Müftüoğlu',
     source: null,
     category: 'saglik',
-    tags: ["bağışıklık","D vitamini","sağlık","takviye"
+    tags: ['bağışıklık', 'D vitamini', 'sağlık', 'takviye'],
+  },
   {
     id: 1768243962225,
     text: 'Narı kabuğundaki beyaz liflerle birlikte tüketin veya suyunu öyle sıkın.En değerli polifenoller (elajotaninler) o beyaz liflerde ve çekirdektedir',
     author: 'Osman Müftüoğlu',
     source: null,
     category: 'saglik',
-    tags: ["nar","polifenoller","beslenme","saglik"],
-  },
-],
+    tags: ['nar', 'polifenoller', 'beslenme', 'saglik'],
   },
 ]
