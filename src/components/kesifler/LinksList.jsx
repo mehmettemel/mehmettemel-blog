@@ -10,6 +10,11 @@ import { UnifiedCard } from './UnifiedCard'
 const ITEMS_PER_PAGE = 12
 
 const typeConfig = {
+  website: {
+    label: 'Website',
+    icon: '🌐',
+    color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
+  },
   book: {
     label: 'Kitap',
     icon: '📖',
