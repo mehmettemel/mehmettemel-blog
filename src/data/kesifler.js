@@ -8,13 +8,6 @@ export const usefulLinks = [
     type: 'tool',
     url: 'https://www.ui-skills.com/',
   },
-  {
-    id: 1768223924093,
-    title: 'React – A JavaScript library for building user interfaces',
-    description: 'The official website for React, a JavaScript library for building user interfaces. Find documentation, tutorials, and resources here.',
-    type: 'website',
-    url: 'https://react.dev',
-  },
 ]
 
 // Link Kategorileri
