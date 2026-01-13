@@ -44,17 +44,17 @@ export default async function SignalsPage() {
   if (!signals) {
     return (
       <Container>
-        <div className="mx-auto max-w-4xl py-12 sm:py-16 lg:py-20">
-          <div className="mb-12 sm:mb-16">
-            <h1 className="mb-5 text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+        <div className="mx-auto max-w-7xl py-4 sm:py-6">
+          <div className="mb-6">
+            <h1 className="mb-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Bu Hafta
             </h1>
-            <p className="text-lg sm:text-xl leading-relaxed text-muted-foreground">
+            <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">
               Her hafta dikkatimi çeken kaynaklar ve bilgiler.
             </p>
           </div>
-          <div className="rounded-xl border border-dashed border-border bg-secondary/20 py-20 sm:py-24 text-center">
-            <p className="text-lg sm:text-xl text-muted-foreground">
+          <div className="rounded-xl border border-dashed border-border bg-secondary/20 py-12 sm:py-16 text-center">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Bu hafta henüz içerik yok. Pazartesi günü yeni içerik yayınlanacak!
             </p>
           </div>
@@ -65,16 +65,16 @@ export default async function SignalsPage() {
 
   return (
     <Container>
-      <div className="mx-auto max-w-4xl py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl py-4 sm:py-6">
         {/* Header */}
-        <div className="mb-10 sm:mb-14">
-          <h1 className="mb-5 text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+        <div className="mb-6">
+          <h1 className="mb-1.5 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             Bu Hafta
           </h1>
-          <p className="text-lg sm:text-xl leading-relaxed text-muted-foreground mb-4">
+          <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground mb-2">
             Bu hafta dikkatimi çeken kaynaklar ve bilgiler.
           </p>
-          <div className="text-sm sm:text-base text-muted">
+          <div className="text-xs sm:text-sm text-muted">
             Son güncelleme:{' '}
             <time dateTime={signals.lastUpdated}>
               {format(new Date(signals.lastUpdated), "d MMMM yyyy, EEEE", { locale: tr })}
@@ -84,9 +84,9 @@ export default async function SignalsPage() {
 
         {/* Content */}
         <article
-          className="prose prose-lg max-w-none dark:prose-invert
+          className="prose prose-sm sm:prose-base max-w-none dark:prose-invert
             prose-headings:font-bold prose-headings:text-foreground
-            prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+            prose-h2:text-lg prose-h2:mt-6 prose-h2:mb-3 sm:prose-h2:text-xl
             prose-p:text-muted-foreground prose-p:leading-relaxed
             prose-a:text-primary prose-a:no-underline hover:prose-a:underline
             prose-strong:text-foreground prose-strong:font-semibold"
@@ -94,8 +94,8 @@ export default async function SignalsPage() {
         />
 
         {/* Footer */}
-        <div className="mt-12 sm:mt-16 pt-8 border-t border-border">
-          <p className="text-sm sm:text-base text-muted-foreground text-center">
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs sm:text-sm text-muted-foreground text-center">
             Her Pazartesi güncellenir.{' '}
             <a
               href="https://twitter.com/mehmettemel"

@@ -35,9 +35,9 @@ export function ResearchesList({ posts }) {
 
   if (!posts || posts.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <div className="mb-4 text-6xl">📚</div>
-        <p className="text-base text-muted-foreground">
+      <div className="py-8 text-center">
+        <div className="mb-3 text-4xl">📚</div>
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Henüz araştırma eklenmedi. Yakında yeni içerikler eklenecek!
         </p>
       </div>
@@ -78,63 +78,60 @@ export function ResearchesList({ posts }) {
   }))
 
   return (
-    <div className="lg:flex lg:gap-8 xl:gap-12">
-      {/* Sidebar Navigation */}
+    <div>
+      {/* Category Chips - Horizontal at top */}
       <ResearchCategorySidebar
         categories={categoriesWithCounts}
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
       />
 
-      {/* Main Content */}
-      <div className="min-w-0 flex-1">
-        {/* Stats */}
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground sm:text-base">
-            <span className="font-semibold text-foreground">
-              {filteredPosts.length}
-            </span>{' '}
-            araştırma
+      {/* Stats */}
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-xs text-muted-foreground sm:text-sm">
+          <span className="font-semibold text-foreground">
+            {filteredPosts.length}
+          </span>{' '}
+          araştırma
+        </p>
+        {totalPages > 1 && (
+          <p className="text-xs text-muted-foreground">
+            Sayfa {currentPage} / {totalPages}
           </p>
-          {totalPages > 1 && (
-            <p className="text-sm text-muted-foreground">
-              Sayfa {currentPage} / {totalPages}
-            </p>
-          )}
-        </div>
-
-        {/* Posts List */}
-        {filteredPosts.length > 0 ? (
-          <>
-            <motion.div
-              key={`${listId}-${selectedCategory}-${currentPage}`}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-3 sm:space-y-4"
-            >
-              {currentPosts.map((post, index) => (
-                <RabbitHoleCard key={post.slug} post={post} index={index} />
-              ))}
-            </motion.div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            )}
-          </>
-        ) : (
-          <div className="rounded-lg border border-dashed border-border bg-secondary/20 py-16 text-center">
-            <p className="text-base text-muted-foreground">
-              Bu kategoride henüz araştırma yok.
-            </p>
-          </div>
         )}
       </div>
+
+      {/* Posts List */}
+      {filteredPosts.length > 0 ? (
+        <>
+          <motion.div
+            key={`${listId}-${selectedCategory}-${currentPage}`}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-2.5"
+          >
+            {currentPosts.map((post, index) => (
+              <RabbitHoleCard key={post.slug} post={post} index={index} />
+            ))}
+          </motion.div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
+      ) : (
+        <div className="rounded-lg border border-dashed border-border bg-secondary/20 py-12 text-center">
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Bu kategoride henüz araştırma yok.
+          </p>
+        </div>
+      )}
     </div>
   )
 }

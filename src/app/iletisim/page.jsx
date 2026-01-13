@@ -30,16 +30,16 @@ function SocialLink({ href, icon: Icon, children }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-3 sm:gap-4 rounded-lg border border-border bg-card p-4 sm:p-5 transition-all hover:border-primary/40 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
+      className="group flex items-center gap-2.5 sm:gap-3 rounded-lg border border-border bg-card p-3 transition-all hover:border-primary/40 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
     >
-      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-secondary/50 transition-all duration-300 group-hover:bg-primary/10 group-hover:scale-110">
-        <Icon className="h-6 w-6 sm:h-7 sm:w-7 fill-muted-foreground transition-colors duration-300 group-hover:fill-primary" />
+      <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-secondary/50 transition-all duration-300 group-hover:bg-primary/10 group-hover:scale-110">
+        <Icon className="h-5 w-5 sm:h-5.5 sm:w-5.5 fill-muted-foreground transition-colors duration-300 group-hover:fill-primary" />
       </div>
       <div className="flex-1">
-        <p className="text-sm sm:text-base font-medium text-foreground">{children}</p>
+        <p className="text-xs sm:text-sm font-medium text-foreground">{children}</p>
       </div>
       <svg
-        className="h-5 w-5 flex-shrink-0 text-muted-foreground opacity-50 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"
+        className="h-4 w-4 flex-shrink-0 text-muted-foreground opacity-50 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -58,31 +58,31 @@ function SocialLink({ href, icon: Icon, children }) {
 export default function Contact() {
   return (
     <Container>
-      <div className="mx-auto max-w-3xl py-12 sm:py-16 lg:py-20">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-5">
+      <div className="mx-auto max-w-7xl py-4 sm:py-6">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-1.5">
           İletişim
         </h1>
-        <p className="text-lg sm:text-xl leading-relaxed text-muted-foreground mb-10 sm:mb-14">
+        <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground mb-6">
           Benimle iletişime geçmek için aşağıdaki kanalları kullanabilirsiniz.
         </p>
 
         {/* Email */}
-        <div className="mb-8 sm:mb-10">
+        <div className="mb-5">
           <Link
             href="mailto:contact@mehmettemel.com"
-            className="group flex items-center gap-3 sm:gap-4 rounded-lg border border-border bg-card p-4 sm:p-5 transition-all hover:border-primary/40 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
+            className="group flex items-center gap-2.5 sm:gap-3 rounded-lg border border-border bg-card p-3 transition-all hover:border-primary/40 hover:bg-secondary/30 hover:shadow-md active:scale-[0.99]"
           >
-            <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-secondary/50 transition-all duration-300 group-hover:bg-primary/10 group-hover:scale-110">
-              <MailIcon className="h-6 w-6 sm:h-7 sm:w-7 fill-muted-foreground transition-colors duration-300 group-hover:fill-primary" />
+            <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-secondary/50 transition-all duration-300 group-hover:bg-primary/10 group-hover:scale-110">
+              <MailIcon className="h-5 w-5 sm:h-5.5 sm:w-5.5 fill-muted-foreground transition-colors duration-300 group-hover:fill-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm sm:text-base font-medium text-foreground mb-0.5">Email</p>
-              <p className="text-sm sm:text-base text-muted-foreground truncate">
+              <p className="text-xs sm:text-sm font-medium text-foreground mb-0.5">Email</p>
+              <p className="text-xs sm:text-sm text-muted-foreground truncate">
                 contact@mehmettemel.com
               </p>
             </div>
             <svg
-              className="h-5 w-5 flex-shrink-0 text-muted-foreground opacity-50 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"
+              className="h-4 w-4 flex-shrink-0 text-muted-foreground opacity-50 transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-100"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -98,8 +98,8 @@ export default function Contact() {
         </div>
 
         {/* Social Links */}
-        <div className="space-y-3 sm:space-y-4">
-          <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-4 sm:mb-6">
+        <div className="space-y-2.5">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3">
             Sosyal Medya
           </h2>
           <SocialLink href="https://x.com/temelbusiness" icon={XIcon}>

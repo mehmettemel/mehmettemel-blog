@@ -45,30 +45,25 @@ export default function Home() {
 
   return (
     <Container>
-      <div className="mx-auto max-w-5xl py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl py-4 sm:py-6">
         {/* Hero Section */}
-        <div className="mb-12 sm:mb-16">
-          <h1 className="mb-4 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-            Merhaba, Ben Mehmet Temel
+        <div className="mb-6">
+          <h1 className="mb-3 text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+            Mehmet Temel
           </h1>
 
-          <p className="mb-4 text-xl sm:text-2xl font-semibold text-foreground/90">
-            Gıda Mühendisi × Frontend Developer
-          </p>
-
-          <p className="max-w-3xl text-base sm:text-lg lg:text-xl leading-relaxed text-muted-foreground">
-            İnternetin derinliklerinden beslenme ve insan biyolojisi hakkında az
-            bilinen değerli kaynakları çıkarıyor, anlaşılır hale getiriyorum.
+          <p className="text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            dijital koleksiyon
           </p>
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-wrap gap-3 sm:gap-4 mb-16 sm:mb-20">
+        <div className="mb-8 flex flex-wrap gap-2.5">
           <Link
             href="https://x.com/temelbusiness"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm sm:text-base font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-md active:scale-95"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-md active:scale-95 sm:text-base"
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -77,7 +72,7 @@ export default function Home() {
           </Link>
           <Link
             href="/bu-hafta"
-            className="inline-flex items-center gap-2 rounded-lg bg-secondary px-5 py-2.5 text-sm sm:text-base font-medium text-foreground transition-all hover:bg-secondary/80 hover:shadow-md active:scale-95"
+            className="inline-flex items-center gap-2 rounded-lg bg-secondary px-5 py-2.5 text-sm font-medium text-foreground transition-all hover:bg-secondary/80 hover:shadow-md active:scale-95 sm:text-base"
           >
             <svg
               className="h-4 w-4"
@@ -98,18 +93,18 @@ export default function Home() {
         </div>
 
         {/* Researches Section */}
-        <section className="max-w-4xl">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+        <section>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-foreground sm:text-xl">
               Son Araştırmalar
             </h2>
             <Link
               href="/incelemeler"
-              className="inline-flex items-center gap-2 text-sm sm:text-base font-medium text-muted transition-all hover:text-primary hover:gap-3"
+              className="inline-flex items-center gap-2 text-xs font-medium text-muted transition-all hover:gap-3 hover:text-primary sm:text-sm"
             >
               Tümünü Gör
               <svg
-                className="h-4 w-4 sm:h-5 sm:w-5"
+                className="h-3.5 w-3.5 sm:h-4 sm:w-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -125,25 +120,25 @@ export default function Home() {
           </div>
 
           {recentPosts.length > 0 ? (
-            <div className="space-y-0 rounded-xl border border-border overflow-hidden bg-card">
+            <div className="space-y-0 overflow-hidden rounded-xl border border-border bg-card">
               {recentPosts.slice(0, 3).map((post) => (
                 <Link
                   key={post.slug}
                   href={`/incelemeler/${post.slug}`}
-                  className="group flex items-center justify-between border-b border-border px-5 py-5 sm:px-6 sm:py-6 transition-all last:border-b-0 hover:bg-secondary/30 active:bg-secondary/40"
+                  className="group flex items-center justify-between border-b border-border px-3 py-3 transition-all last:border-b-0 hover:bg-secondary/30 active:bg-secondary/40 sm:px-4 sm:py-4"
                 >
-                  <span className="flex-1 pr-4 text-base sm:text-lg text-foreground transition-colors group-hover:text-primary line-clamp-2 font-medium">
+                  <span className="line-clamp-2 flex-1 pr-3 text-sm font-medium text-foreground transition-colors group-hover:text-primary sm:text-base">
                     {post.title}
                   </span>
-                  <span className="text-sm whitespace-nowrap text-muted flex-shrink-0">
+                  <span className="flex-shrink-0 text-xs whitespace-nowrap text-muted">
                     {format(new Date(post.date), 'MMM d, yyyy')}
                   </span>
                 </Link>
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-dashed border-border bg-secondary/20 p-8 text-center">
-              <p className="text-sm sm:text-base text-muted-foreground">
+            <div className="rounded-lg border border-dashed border-border bg-secondary/20 p-6 text-center">
+              <p className="text-xs text-muted-foreground sm:text-sm">
                 Henüz yazı yok. Yakında ilk araştırmalar yayınlanacak!
               </p>
             </div>

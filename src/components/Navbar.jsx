@@ -92,15 +92,15 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <Container>
-        <div className="mx-auto flex max-w-7xl items-center justify-between py-3">
-          <AnimatedNavIcon href="/" label="Ana Sayfa" icon="home" />
+        <div className="mx-auto flex max-w-7xl items-center justify-between py-3 md:justify-center">
           <div className="flex items-center gap-1">
+            <AnimatedNavIcon href="/" label="Ana Sayfa" icon="home" />
             <DesktopNav />
             <div className="hidden md:block">
               <AnimatedThemeToggle />
             </div>
-            <MobileNav />
           </div>
+          <MobileNav />
         </div>
       </Container>
     </header>

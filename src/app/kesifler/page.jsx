@@ -9,51 +9,35 @@ import { usefulLinks, inspirationalQuotes } from '../../data/kesifler'
 export default function Kesifler() {
   return (
     <Container>
-      <div className="mx-auto max-w-7xl py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl py-4 sm:py-6">
         {/* Header */}
-        <div className="mb-10 sm:mb-14">
-          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground mb-5">
+        <div className="mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-1.5">
             Keşifler
           </h1>
-          <p className="text-lg sm:text-xl leading-relaxed text-muted-foreground max-w-3xl">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             İnternette bulduğum değerli kaynaklar ve topladığım notlar.
           </p>
         </div>
 
         {/* Tabs Navigation */}
         <Tabs defaultValue="links" className="w-full">
-          <TabsList className="w-full grid grid-cols-2 sm:w-auto sm:inline-flex mb-6 sm:mb-8">
-            <TabsTrigger value="links" className="text-sm sm:text-base">
-              📚 Faydalı Linkler
+          <TabsList className="w-full grid grid-cols-2 sm:w-auto sm:inline-flex mb-3">
+            <TabsTrigger value="links" className="text-xs py-1.5">
+              📚 Linkler
             </TabsTrigger>
-            <TabsTrigger value="notes" className="text-sm sm:text-base">
-              💭 Notlarım
+            <TabsTrigger value="notes" className="text-xs py-1.5">
+              💭 Notlar
             </TabsTrigger>
           </TabsList>
 
           {/* Faydalı Linkler Tab */}
           <TabsContent value="links" className="mt-0">
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2 sm:mb-3">
-                Faydalı Kaynaklar
-              </h2>
-              <p className="text-sm sm:text-base leading-relaxed text-muted-foreground">
-                Web development, tasarım ve kişisel gelişim hakkında faydalı bulduğum kitaplar, makaleler ve videolar.
-              </p>
-            </div>
             <LinksList links={usefulLinks} />
           </TabsContent>
 
           {/* Notlar ve Alıntılar Tab */}
           <TabsContent value="notes" className="mt-0">
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-2 sm:mb-3">
-                Notlar ve Alıntılar
-              </h2>
-              <p className="text-sm sm:text-base leading-relaxed text-muted-foreground">
-                İnternetin derinliklerinden topladığım notlar, düşünceler ve ilham veren alıntılar. Seyahat, gıda, sağlık ve daha fazlası...
-              </p>
-            </div>
             <QuotesList quotes={inspirationalQuotes} />
           </TabsContent>
         </Tabs>

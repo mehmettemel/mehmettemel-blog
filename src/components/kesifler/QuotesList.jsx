@@ -71,78 +71,75 @@ export function QuotesList({ quotes }) {
   }))
 
   return (
-    <div className="lg:flex lg:gap-8 xl:gap-12">
-      {/* Sidebar Navigation */}
+    <div>
+      {/* Category Chips - Horizontal at top */}
       <CategorySidebar
         categories={categoriesWithCounts}
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
       />
 
-      {/* Main Content */}
-      <div className="min-w-0 flex-1">
-        {/* Stats */}
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-sm text-muted-foreground sm:text-base">
-            <span className="font-semibold text-foreground">
-              {filteredQuotes.length}
-            </span>{' '}
-            not/alıntı
+      {/* Stats */}
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-xs text-muted-foreground sm:text-sm">
+          <span className="font-semibold text-foreground">
+            {filteredQuotes.length}
+          </span>{' '}
+          not/alıntı
+        </p>
+        {totalPages > 1 && (
+          <p className="text-xs text-muted-foreground">
+            Sayfa {currentPage} / {totalPages}
           </p>
-          {totalPages > 1 && (
-            <p className="text-sm text-muted-foreground">
-              Sayfa {currentPage} / {totalPages}
-            </p>
-          )}
-        </div>
-
-        {/* Quotes List */}
-        {filteredQuotes.length > 0 ? (
-          <>
-            <motion.div
-              key={`${listId}-${selectedCategory}-${currentPage}`}
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-4"
-            >
-              {currentQuotes.map((quote, index) => {
-                // Check if text has quotes already
-                const hasQuotes =
-                  quote.text.startsWith('"') || quote.text.includes('\n')
-                const displayText = hasQuotes ? quote.text : `"${quote.text}"`
-
-                return (
-                  <UnifiedCard
-                    key={quote.id}
-                    description={displayText}
-                    author={quote.author}
-                    source={quote.source}
-                    url={quote.url}
-                    isExternal={false}
-                    index={index}
-                  />
-                )
-              })}
-            </motion.div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            )}
-          </>
-        ) : (
-          <div className="rounded-lg border border-dashed border-border bg-secondary/20 py-16 text-center">
-            <p className="text-base text-muted-foreground">
-              Bu kategoride henüz not/alıntı yok.
-            </p>
-          </div>
         )}
       </div>
+
+      {/* Quotes List */}
+      {filteredQuotes.length > 0 ? (
+        <>
+          <motion.div
+            key={`${listId}-${selectedCategory}-${currentPage}`}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3"
+          >
+            {currentQuotes.map((quote, index) => {
+              // Check if text has quotes already
+              const hasQuotes =
+                quote.text.startsWith('"') || quote.text.includes('\n')
+              const displayText = hasQuotes ? quote.text : `"${quote.text}"`
+
+              return (
+                <UnifiedCard
+                  key={quote.id}
+                  description={displayText}
+                  author={quote.author}
+                  source={quote.source}
+                  url={quote.url}
+                  isExternal={false}
+                  index={index}
+                />
+              )
+            })}
+          </motion.div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
+      ) : (
+        <div className="rounded-lg border border-dashed border-border bg-secondary/20 py-12 text-center">
+          <p className="text-sm text-muted-foreground">
+            Bu kategoride henüz not/alıntı yok.
+          </p>
+        </div>
+      )}
     </div>
   )
 }
