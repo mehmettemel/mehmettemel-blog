@@ -57,27 +57,37 @@ export async function getNotes({ type, category, page = 1, limit = 12 }) {
   try {
     const offset = (page - 1) * limit
 
-    // Build where clause
-    let whereConditions = [`note_type = ${sql`${type}`}`]
+    // Get notes with proper SQL template
+    let notes
+    let countResult
+
     if (category && category !== 'all') {
-      whereConditions.push(`category = ${sql`${category}`}`)
+      // Filter by both type and category
+      notes = await sql`
+        SELECT * FROM notes
+        WHERE note_type = ${type} AND category = ${category}
+        ORDER BY created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+
+      countResult = await sql`
+        SELECT COUNT(*) as count FROM notes
+        WHERE note_type = ${type} AND category = ${category}
+      `
+    } else {
+      // Filter by type only
+      notes = await sql`
+        SELECT * FROM notes
+        WHERE note_type = ${type}
+        ORDER BY created_at DESC
+        LIMIT ${limit} OFFSET ${offset}
+      `
+
+      countResult = await sql`
+        SELECT COUNT(*) as count FROM notes
+        WHERE note_type = ${type}
+      `
     }
-
-    const whereClause = whereConditions.join(' AND ')
-
-    // Get notes
-    const notes = await sql`
-      SELECT * FROM notes
-      WHERE ${sql.unsafe(whereClause)}
-      ORDER BY created_at DESC
-      LIMIT ${limit} OFFSET ${offset}
-    `
-
-    // Get total count
-    const countResult = await sql`
-      SELECT COUNT(*) as count FROM notes
-      WHERE ${sql.unsafe(whereClause)}
-    `
 
     const total = parseInt(countResult[0].count)
 
