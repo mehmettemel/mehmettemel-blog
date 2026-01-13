@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useId } from 'react'
-import { motion } from 'framer-motion'
 import { Pagination } from '../Pagination'
 import { linkCategories } from '../../data/kesifler'
 import { CategorySidebar } from './CategorySidebar'
@@ -24,18 +23,6 @@ const typeConfig = {
     label: 'Diğer',
     icon: '🌍',
     color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  },
-}
-
-// Animation variants for the container
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05,
-    },
   },
 }
 
@@ -115,11 +102,8 @@ export function LinksList({ links }) {
       {/* Links List */}
       {filteredLinks.length > 0 ? (
         <>
-          <motion.div
+          <div
             key={`${listId}-${selectedCategory}-${currentPage}`}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
             className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3"
           >
             {currentLinks.map((gem, index) => {
@@ -138,7 +122,7 @@ export function LinksList({ links }) {
                 />
               )
             })}
-          </motion.div>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (

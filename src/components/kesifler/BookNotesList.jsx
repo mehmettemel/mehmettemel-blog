@@ -1,25 +1,12 @@
 'use client'
 
 import { useState, useId, useMemo } from 'react'
-import { motion } from 'framer-motion'
 import { Pagination } from '../Pagination'
 import { bookCategories } from '../../data/kesifler'
 import { CategorySidebar } from './CategorySidebar'
 import { SourceCard } from './SourceCard'
 
 const ITEMS_PER_PAGE = 12
-
-// Animation variants for the container
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05,
-    },
-  },
-}
 
 export function BookNotesList({ notes }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -129,11 +116,8 @@ export function BookNotesList({ notes }) {
       {/* Source Cards Grid */}
       {filteredGroups.length > 0 ? (
         <>
-          <motion.div
+          <div
             key={`${listId}-${selectedCategory}-${currentPage}`}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
             className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4"
           >
             {currentGroups.map((group, index) => (
@@ -147,7 +131,7 @@ export function BookNotesList({ notes }) {
                 index={index}
               />
             ))}
-          </motion.div>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { ExternalLink, Play, BookOpen } from 'lucide-react'
 import {
   Dialog,
@@ -38,16 +37,9 @@ export function SourceCard({
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
-          duration: 0.25,
-          delay: index * 0.04,
-          ease: [0.25, 0.1, 0.25, 1],
-        }}
+      <div
         onClick={() => setIsModalOpen(true)}
-        className="group relative flex cursor-pointer flex-col rounded-lg border border-border bg-card p-4 transition-all duration-200 hover:scale-[1.02] hover:border-primary/40 hover:bg-secondary/20 hover:shadow-lg"
+        className="group relative flex animate-[fade-in-up_0.3s_ease-out_forwards] cursor-pointer flex-col rounded-lg border border-border bg-card p-4 transition-all duration-200 hover:border-primary/40 hover:bg-secondary/20 hover:shadow-lg"
       >
         {/* Title - Source name */}
         <div className="mb-2 flex items-start gap-2">
@@ -73,7 +65,7 @@ export function SourceCard({
             <ExternalLink className="h-3.5 w-3.5 text-muted-foreground/50" />
           )}
         </div>
-      </motion.div>
+      </div>
 
       {/* Modal with all notes */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

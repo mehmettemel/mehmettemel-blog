@@ -1,25 +1,12 @@
 'use client'
 
 import { useState, useId } from 'react'
-import { motion } from 'framer-motion'
 import { Pagination } from '../Pagination'
 import { quoteCategories } from '../../data/kesifler'
 import { CategorySidebar } from './CategorySidebar'
 import { UnifiedCard } from './UnifiedCard'
 
 const ITEMS_PER_PAGE = 12
-
-// Animation variants for the container
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05,
-    },
-  },
-}
 
 export function QuotesList({ quotes }) {
   const [currentPage, setCurrentPage] = useState(1)
@@ -97,11 +84,8 @@ export function QuotesList({ quotes }) {
       {/* Quotes List */}
       {filteredQuotes.length > 0 ? (
         <>
-          <motion.div
+          <div
             key={`${listId}-${selectedCategory}-${currentPage}`}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
             className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3"
           >
             {currentQuotes.map((quote, index) => {
@@ -122,7 +106,7 @@ export function QuotesList({ quotes }) {
                 />
               )
             })}
-          </motion.div>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
