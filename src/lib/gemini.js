@@ -235,9 +235,9 @@ KATEGORİ SEÇİMİ (5 kategori):
 export async function handleVideo(text) {
   const prompt = `Aşağıdaki video notunu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "text": "Video'dan alınan notlar veya alıntılar (orijinal formatı koru, satır satır ayır)",
+  "notes": ["Alıntı 1", "Alıntı 2", "Alıntı 3"],
   "author": "Konuşmacı veya içerik üreticisi adı (örn: Jensen Huang, Lex Fridman)",
-  "source": "Video başlığı veya konu (örn: AI Bubble, Trump, Arms Race with China)",
+  "source": "Video başlığı veya konu (örn: AI Bubble Interview)",
   "category": "youtube/documentary/course/podcast kategorilerinden en uygun olanı",
   "url": "Video URL'i varsa, yoksa null",
   "tags": ["tag1", "tag2"]
@@ -246,11 +246,11 @@ export async function handleVideo(text) {
 Video Notu: ${text}
 
 PARSE KURALLARI:
-1. Tırnak içindeki metinler ("...") alıntılardır, bunları text alanına koy
-2. İsimler (Jensen Huang, Elon Musk vs.) author alanına git
-3. "on ...", "about ...", "hakkında" gibi ifadeler source/konu olarak çıkarılmalı
-4. Birden fazla alıntı varsa hepsini text'e satır satır ekle
-5. text alanında orijinal satır yapısını koru (\\n ile ayır)
+1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
+2. Satır başındaki her farklı cümle/paragraf ayrı bir not olabilir
+3. İsimler (Jensen Huang, Elon Musk vs.) author alanına git
+4. "on ...", "about ...", "hakkında" gibi ifadeler source/konu olarak çıkarılmalı
+5. Her alıntıyı notes array'inde AYRI bir eleman olarak döndür
 
 KATEGORİ SEÇİMİ (4 kategori):
 - youtube: YouTube videoları, röportajlar, vlogs
@@ -259,9 +259,9 @@ KATEGORİ SEÇİMİ (4 kategori):
 - podcast: Podcast'ler, ses içerikleri
 
 ÖNEMLI:
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma
-- URL varsa mutlaka çıkar
-- Tags 2-3 adet olmalı`
+- notes bir ARRAY olmalı, her alıntı ayrı bir string
+- Tek alıntı varsa bile array olarak döndür: ["Tek alıntı"]
+- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma`
 
   const aiResponse = await callGemini(prompt)
 
@@ -281,9 +281,9 @@ KATEGORİ SEÇİMİ (4 kategori):
     videoData = JSON.parse(cleanResponse)
   } catch (parseError) {
     console.error('Failed to parse Gemini response as JSON:', cleanResponse)
-    // Fallback: use original text as-is with default category
+    // Fallback: use original text as single note
     videoData = {
-      text: text,
+      notes: [text],
       author: null,
       source: null,
       category: 'youtube',
@@ -292,16 +292,24 @@ KATEGORİ SEÇİMİ (4 kategori):
     }
   }
 
-  return {
+  // Ensure notes is an array
+  let notesArray = videoData.notes
+  if (!Array.isArray(notesArray)) {
+    // If text field exists (old format), convert to array
+    notesArray = videoData.text ? [videoData.text] : [text]
+  }
+
+  // Return array of note objects
+  return notesArray.map((noteText) => ({
     type: 'video',
     category: videoData.category,
     title: null,
-    text: videoData.text,
+    text: noteText,
     url: videoData.url,
     author: videoData.author,
     source: videoData.source,
     tags: videoData.tags || [],
-  }
+  }))
 }
 
 /**
@@ -312,7 +320,7 @@ KATEGORİ SEÇİMİ (4 kategori):
 export async function handleBook(text) {
   const prompt = `Aşağıdaki kitap notunu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "text": "Kitaptan alınan notlar veya alıntılar (orijinal formatı koru, satır satır ayır)",
+  "notes": ["Alıntı 1", "Alıntı 2", "Alıntı 3"],
   "author": "Kitabın yazarı (örn: James Clear, Yuval Noah Harari)",
   "source": "Kitap adı (örn: Atomic Habits, Sapiens)",
   "category": "science/selfhelp/biography/fiction/health kategorilerinden en uygun olanı",
@@ -323,10 +331,10 @@ export async function handleBook(text) {
 Kitap Notu: ${text}
 
 PARSE KURALLARI:
-1. Tırnak içindeki metinler ("...") alıntılardır, bunları text alanına koy
-2. "Yazar:", "Author:", "by" veya "-" ile belirtilen isimler author alanına git
-3. "Kitap:", "Book:", "from", "Kaynak:" ile belirtilen başlıklar source alanına git
-4. Birden fazla alıntı varsa hepsini text'e satır satır ekle (\\n ile ayır)
+1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
+2. Satır başındaki her farklı cümle/paragraf ayrı bir not olabilir
+3. "Yazar:", "Author:", "by" veya "-" ile belirtilen isimler author alanına git
+4. "Kitap:", "Book:", "from", "Kaynak:" ile belirtilen başlıklar source alanına git
 5. Notlar Türkçe veya İngilizce olabilir, her iki dili de destekle
 
 KATEGORİ SEÇİMİ (5 kategori):
@@ -337,10 +345,9 @@ KATEGORİ SEÇİMİ (5 kategori):
 - health: Sağlık, fitness, beslenme, psikoloji
 
 ÖNEMLI:
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma
-- author alanına mutlaka kitabın yazarını koy (varsa)
-- source alanına mutlaka kitap adını koy (varsa)
-- Tags 2-3 adet olmalı`
+- notes bir ARRAY olmalı, her alıntı ayrı bir string
+- Tek alıntı varsa bile array olarak döndür: ["Tek alıntı"]
+- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma`
 
   const aiResponse = await callGemini(prompt)
 
@@ -360,9 +367,9 @@ KATEGORİ SEÇİMİ (5 kategori):
     bookData = JSON.parse(cleanResponse)
   } catch (parseError) {
     console.error('Failed to parse Gemini response as JSON:', cleanResponse)
-    // Fallback: use original text as-is with default category
+    // Fallback: use original text as single note
     bookData = {
-      text: text,
+      notes: [text],
       author: null,
       source: null,
       category: 'selfhelp',
@@ -371,16 +378,24 @@ KATEGORİ SEÇİMİ (5 kategori):
     }
   }
 
-  return {
+  // Ensure notes is an array
+  let notesArray = bookData.notes
+  if (!Array.isArray(notesArray)) {
+    // If text field exists (old format), convert to array
+    notesArray = bookData.text ? [bookData.text] : [text]
+  }
+
+  // Return array of note objects
+  return notesArray.map((noteText) => ({
     type: 'book',
     category: bookData.category,
     title: null,
-    text: bookData.text,
+    text: noteText,
     url: bookData.url,
     author: bookData.author,
     source: bookData.source,
     tags: bookData.tags || [],
-  }
+  }))
 }
 
 /**

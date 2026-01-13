@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useId } from 'react'
+import { useState, useId, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Pagination } from '../Pagination'
 import { videoCategories } from '../../data/kesifler'
 import { CategorySidebar } from './CategorySidebar'
-import { UnifiedCard } from './UnifiedCard'
+import { SourceCard } from './SourceCard'
 
 const ITEMS_PER_PAGE = 12
 
@@ -26,6 +26,28 @@ export function VideoNotesList({ notes }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const listId = useId()
 
+  // Group notes by source
+  const groupedBySource = useMemo(() => {
+    if (!notes || notes.length === 0) return []
+
+    const groups = {}
+    notes.forEach((note) => {
+      const key = note.source || 'Bilinmeyen Kaynak'
+      if (!groups[key]) {
+        groups[key] = {
+          source: note.source,
+          author: note.author,
+          url: note.url,
+          category: note.category,
+          notes: [],
+        }
+      }
+      groups[key].notes.push(note)
+    })
+
+    return Object.values(groups)
+  }, [notes])
+
   if (!notes || notes.length === 0) {
     return (
       <div className="py-12 text-center">
@@ -37,16 +59,16 @@ export function VideoNotesList({ notes }) {
     )
   }
 
-  // Filter notes by category
-  const filteredNotes =
+  // Filter groups by category
+  const filteredGroups =
     selectedCategory === 'all'
-      ? notes
-      : notes.filter((note) => note.category === selectedCategory)
+      ? groupedBySource
+      : groupedBySource.filter((group) => group.category === selectedCategory)
 
-  const totalPages = Math.ceil(filteredNotes.length / ITEMS_PER_PAGE)
+  const totalPages = Math.ceil(filteredGroups.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
-  const currentNotes = filteredNotes.slice(startIndex, endIndex)
+  const currentGroups = filteredGroups.slice(startIndex, endIndex)
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
@@ -58,10 +80,10 @@ export function VideoNotesList({ notes }) {
     setCurrentPage(1)
   }
 
-  // Get count for each category
+  // Get count for each category (count unique sources)
   const getCategoryCount = (categoryId) => {
-    if (categoryId === 'all') return notes.length
-    return notes.filter((n) => n.category === categoryId).length
+    if (categoryId === 'all') return groupedBySource.length
+    return groupedBySource.filter((g) => g.category === categoryId).length
   }
 
   // Prepare categories with counts
@@ -69,6 +91,12 @@ export function VideoNotesList({ notes }) {
     ...cat,
     count: getCategoryCount(cat.id),
   }))
+
+  // Total notes count
+  const totalNotesCount = filteredGroups.reduce(
+    (acc, group) => acc + group.notes.length,
+    0,
+  )
 
   return (
     <div>
@@ -83,9 +111,13 @@ export function VideoNotesList({ notes }) {
       <div className="mb-3 flex items-center justify-between">
         <p className="text-xs text-muted-foreground sm:text-sm">
           <span className="font-semibold text-foreground">
-            {filteredNotes.length}
+            {filteredGroups.length}
           </span>{' '}
-          video notu
+          kaynak,{' '}
+          <span className="font-semibold text-foreground">
+            {totalNotesCount}
+          </span>{' '}
+          not
         </p>
         {totalPages > 1 && (
           <p className="text-xs text-muted-foreground">
@@ -94,34 +126,27 @@ export function VideoNotesList({ notes }) {
         )}
       </div>
 
-      {/* Notes List */}
-      {filteredNotes.length > 0 ? (
+      {/* Source Cards Grid */}
+      {filteredGroups.length > 0 ? (
         <>
           <motion.div
             key={`${listId}-${selectedCategory}-${currentPage}`}
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3"
+            className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4"
           >
-            {currentNotes.map((note, index) => {
-              const hasQuotes =
-                note.text.startsWith('"') || note.text.includes('\n')
-              const displayText = hasQuotes ? note.text : `"${note.text}"`
-
-              return (
-                <UnifiedCard
-                  key={note.id}
-                  description={displayText}
-                  author={note.author}
-                  source={note.source}
-                  url={note.url}
-                  isExternal={false}
-                  enableModal={true}
-                  index={index}
-                />
-              )
-            })}
+            {currentGroups.map((group, index) => (
+              <SourceCard
+                key={group.source || index}
+                source={group.source}
+                author={group.author}
+                notes={group.notes}
+                url={group.url}
+                type="video"
+                index={index}
+              />
+            ))}
           </motion.div>
 
           {/* Pagination */}

@@ -70,6 +70,7 @@ export async function POST(request) {
 
     // Process based on type
     let categorizedData
+    let isMultiNote = false
 
     switch (noteType) {
       case 'link':
@@ -82,17 +83,68 @@ export async function POST(request) {
         break
       case 'video':
         categorizedData = await handleVideo(content)
-        console.log(`🎬 Detected as video: ${categorizedData.category}`)
+        isMultiNote = Array.isArray(categorizedData)
+        console.log(
+          `🎬 Detected as video: ${isMultiNote ? categorizedData.length + ' notes' : categorizedData.category}`,
+        )
         break
       case 'book':
         categorizedData = await handleBook(content)
-        console.log(`📖 Detected as book: ${categorizedData.category}`)
+        isMultiNote = Array.isArray(categorizedData)
+        console.log(
+          `📖 Detected as book: ${isMultiNote ? categorizedData.length + ' notes' : categorizedData.category}`,
+        )
         break
       default:
         throw new Error(`Unknown note type: ${noteType}`)
     }
 
-    // Save to Neon database
+    // Handle multi-note (video/book can return arrays)
+    if (isMultiNote && Array.isArray(categorizedData)) {
+      const savedNotes = []
+
+      for (const noteData of categorizedData) {
+        // Save to Neon database
+        const note = await createNote(noteData)
+        console.log(`✅ Saved to DB: note #${note.id}`)
+
+        // Create markdown file in GitHub
+        const github = await createMarkdownFile(note)
+        console.log(`📁 Created GitHub file: ${github.path}`)
+
+        // Update note with GitHub info
+        await updateNoteGithubPath(note.id, github.path, github.sha)
+
+        savedNotes.push({
+          id: note.id,
+          text: noteData.text,
+          github_path: github.path,
+        })
+      }
+
+      // Return success response for multiple notes
+      const typeNames = {
+        link: 'Link',
+        quote: 'Alıntı',
+        video: 'Video',
+        book: 'Kitap',
+      }
+
+      return NextResponse.json({
+        success: true,
+        type: noteType,
+        count: savedNotes.length,
+        data: {
+          notes: savedNotes,
+          category: categorizedData[0]?.category,
+          author: categorizedData[0]?.author,
+          source: categorizedData[0]?.source,
+        },
+        message: `${savedNotes.length} ${typeNames[noteType]} notu başarıyla eklendi!`,
+      })
+    }
+
+    // Single note (link, quote, or single video/book)
     const note = await createNote(categorizedData)
     console.log(`✅ Saved to DB: note #${note.id}`)
 
