@@ -1,0 +1,18 @@
+---
+id: 14
+type: quote
+category: genel
+
+author: Carlota Perez
+source: "Technological Revolutions and Financial Capital"
+tags: ["teknoloji","finans","ekonomi"]
+created_at: Tue Jan 13 2026 19:02:39 GMT+0000 (Coordinated Universal Time)
+url: null
+---
+
+# Finansal balonlar ve çökmeler sistemin hatası deği
+
+Finansal balonlar ve çökmeler sistemin hatası değil, işleyişinin bir sonucudur. Teknolojilerin devrimler halinde gelişmesi ve finansal sermayenin üretim sermayesinden işlevsel olarak ayrılması bu durumu tetikler. Yeni bir teknoloji seti eskilerinin yerini aldığında, sadece ekipmanlar değil, insanların becerileri ve organizasyon biçimleri de bir "alışkanlık kırma kasırgası"na maruz kalır. Yeni bir teknoloji seti eskilerinin yerini aldığında, sadece ekipmanlar değil, insanların becerileri ve organizasyon biçimleri de bir "alışkanlık kırma kasırgası"na maruz kalır. Her teknolojik devrim, toplumu zenginler ve yoksullar arasında keskin bir şekilde böler (Kutuplaşma). ↳ Bu süreçte eski endüstriler çökerken yeni endüstrilerde devasa servetler birikir. Altın çağ: Finansal çöküşten sonra kurumsal düzenlemeler yapıldığında ortaya çıkan, üretimin merkezde olduğu yaygın refah dönemi. Tarihteki Beş Devrim: * 1. Sanayi Devrimi (1771 - İngiltere) * 2. Buhar ve Demiryolu Çağı (1829 - İngiltere) * 3. Çelik ve Ağır Mühendislik Çağı (1875 - ABD/Almanya) * 4. Petrol ve Otomobil Çağı (1908 - ABD) * 5. Bilgi ve Telekomünikasyon Çağı (1971 - ABD). Yeni paradigma, öncekinin başarısının yarattığı ataleti kırmak zorundadır. ↳ Bu "eski ve yeni arasındaki savaş", sistemin gelişimindeki temel gerilimdir. Her paradigma, verimlilik anlayışını kökten değiştirir. ↳ Buhar çağında "büyük ölçek" ilerlemeyken, bilgi çağında "esnek ağ yapıları" üstündür. Finansal sermaye, "dışarıdan gelenleri" (outsiders) destekleyerek rutini bozar. ↳ Yerleşik devler genellikle mevcut paradigmaya fazla yatırım yaptıkları için tutuculaşırlar. Finansal çılgınlık, yeni teknolojinin altyapısını (Örn: İnternet kabloları) kurmak için gerekli devasa sermayeyi toplar, ancak bu süreç çok israflıdır. Finansal çılgınlık, yeni teknolojinin altyapısını (Örn: İnternet kabloları) kurmak için gerekli devasa sermayeyi toplar, ancak bu süreç çok israflıdır. Dalganın içindeki dört evre detaylandırılır: Patlama, Çılgınlık, Sinerji ve Olgunluk. Patlama (Irruption). ↳ Teknolojinin yeni yeni filizlendiği, eski modelin ise stagflasyonla boğuştuğu evre. Çılgınlık (Frenzy). ↳ Finansın üretimin önüne geçtiği, borsa balonlarının şiştiği ve kibrin arttığı evre. Sinerji (Synergy). ↳ Kurumsal uyumun sağlandığı, üretimin odak noktası olduğu ve refahın yayıldığı gerçek "Altın Çağ". Olgunluk (Maturity). ↳ Pazarın doyduğu, yatırım fırsatlarının azaldığı ve bir sonraki devrimin tohumlarının atıldığı durgunluk evresi. Gelişimin Büyük Dalgaları dünya çapında eşzamanlı fenomenler değildir. ↳ Merkez ülkelerden çevre ülkelere doğru dalgalar halinde yayılır. Olgunlaşan teknolojiler, kâr oranları düştükçe çevre ülkelere transfer edilir. ↳ Bu durum çevre ülkelerin sanayileşmesine yardımcı olur ama onları eski teknolojilere hapseder. Gelişmekte olan ülkeler için kalkınma, "hareketli bir hedefi" (teknolojik fırsat pencerelerini) yakalama kapasitesidir. Teknolojik Devrimler ve Finansal Sermaye (Technological Revolutions and Financial Capital) Carlota Perez
+
+---
+Generated via Telegram Bot 🤖
