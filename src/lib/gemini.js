@@ -6,7 +6,9 @@
 const GEMINI_KEY = process.env.GEMINI_API_KEY
 
 if (!GEMINI_KEY) {
-  console.warn('GEMINI_API_KEY is not defined. AI categorization will not work.')
+  console.warn(
+    'GEMINI_API_KEY is not defined. AI categorization will not work.',
+  )
 }
 
 /**
@@ -115,7 +117,25 @@ KATEGORİ SEÇİMİ (3 ana kategori):
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
 
-  const linkData = JSON.parse(cleanResponse)
+  // Try to extract JSON from response if it contains extra text
+  const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
+  if (jsonMatch) {
+    cleanResponse = jsonMatch[0]
+  }
+
+  let linkData
+  try {
+    linkData = JSON.parse(cleanResponse)
+  } catch (parseError) {
+    console.error('Failed to parse Gemini response as JSON:', cleanResponse)
+    // Fallback: extract info from URL
+    const urlObj = new URL(url)
+    linkData = {
+      title: urlObj.hostname,
+      description: url,
+      type: 'diger',
+    }
+  }
 
   return {
     type: 'link',
@@ -174,7 +194,26 @@ KATEGORİ SEÇİMİ (5 kategori):
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
 
-  const noteData = JSON.parse(cleanResponse)
+  // Try to extract JSON from response if it contains extra text
+  const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
+  if (jsonMatch) {
+    cleanResponse = jsonMatch[0]
+  }
+
+  let noteData
+  try {
+    noteData = JSON.parse(cleanResponse)
+  } catch (parseError) {
+    console.error('Failed to parse Gemini response as JSON:', cleanResponse)
+    // Fallback: use original text as-is with default category
+    noteData = {
+      text: text,
+      author: null,
+      source: null,
+      category: 'genel',
+      tags: [],
+    }
+  }
 
   return {
     type: 'quote',
@@ -224,7 +263,27 @@ KATEGORİ SEÇİMİ (4 kategori):
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
 
-  const videoData = JSON.parse(cleanResponse)
+  // Try to extract JSON from response if it contains extra text
+  const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
+  if (jsonMatch) {
+    cleanResponse = jsonMatch[0]
+  }
+
+  let videoData
+  try {
+    videoData = JSON.parse(cleanResponse)
+  } catch (parseError) {
+    console.error('Failed to parse Gemini response as JSON:', cleanResponse)
+    // Fallback: use original text as-is with default category
+    videoData = {
+      text: text,
+      author: null,
+      source: null,
+      category: 'youtube',
+      url: null,
+      tags: [],
+    }
+  }
 
   return {
     type: 'video',
@@ -275,7 +334,27 @@ KATEGORİ SEÇİMİ (5 kategori):
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
 
-  const bookData = JSON.parse(cleanResponse)
+  // Try to extract JSON from response if it contains extra text
+  const jsonMatch = cleanResponse.match(/\{[\s\S]*\}/)
+  if (jsonMatch) {
+    cleanResponse = jsonMatch[0]
+  }
+
+  let bookData
+  try {
+    bookData = JSON.parse(cleanResponse)
+  } catch (parseError) {
+    console.error('Failed to parse Gemini response as JSON:', cleanResponse)
+    // Fallback: use original text as-is with default category
+    bookData = {
+      text: text,
+      author: null,
+      source: null,
+      category: 'selfhelp',
+      url: null,
+      tags: [],
+    }
+  }
 
   return {
     type: 'book',
