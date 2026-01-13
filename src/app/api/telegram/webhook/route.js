@@ -12,7 +12,9 @@ import {
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 const ALLOWED_USER_IDS = process.env.TELEGRAM_ALLOWED_USER_IDS
-  ? process.env.TELEGRAM_ALLOWED_USER_IDS.split(',').map((id) => parseInt(id.trim()))
+  ? process.env.TELEGRAM_ALLOWED_USER_IDS.split(',').map((id) =>
+      parseInt(id.trim()),
+    )
   : []
 
 /**
@@ -59,17 +61,19 @@ function parseMessage(text) {
   const commands = {
     '/link': 'link',
     '/quote': 'quote',
+    '/alinti': 'quote',
     '/video': 'video',
     '/book': 'book',
+    '/kitap': 'book',
   }
 
-  // Check for commands
+  // Check for commands (support both "/cmd text" and "/cmd\ntext" formats)
   for (const [cmd, type] of Object.entries(commands)) {
-    if (text.startsWith(cmd)) {
-      return {
-        type,
-        content: text.replace(cmd, '').trim(),
-      }
+    if (text.startsWith(cmd + ' ') || text.startsWith(cmd + '\n')) {
+      // Extract content after command (remove command and leading whitespace/newlines)
+      const regex = new RegExp(`^${cmd}[\\s\\n]+`, 'i')
+      const content = text.replace(regex, '').trim()
+      return { type, content }
     }
   }
 
@@ -106,7 +110,9 @@ export async function POST(request) {
     const userId = message.from.id
     const text = message.text
 
-    console.log(`Telegram message from user ${userId}: ${text.substring(0, 50)}...`)
+    console.log(
+      `Telegram message from user ${userId}: ${text.substring(0, 50)}...`,
+    )
 
     // Check user authorization
     if (ALLOWED_USER_IDS.length > 0 && !ALLOWED_USER_IDS.includes(userId)) {
@@ -243,10 +249,7 @@ ${error.message}
       await sendTelegramMessage(chatId, errorMessage)
     }
 
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 },
-    )
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
 

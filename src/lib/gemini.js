@@ -235,9 +235,9 @@ KATEGORİ SEÇİMİ (5 kategori):
 export async function handleVideo(text) {
   const prompt = `Aşağıdaki video notunu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "text": "Video notu",
-  "author": "Kanal/içerik üreticisi adı, yoksa null",
-  "source": "Video başlığı veya kaynak, yoksa null",
+  "text": "Video'dan alınan notlar veya alıntılar (orijinal formatı koru, satır satır ayır)",
+  "author": "Konuşmacı veya içerik üreticisi adı (örn: Jensen Huang, Lex Fridman)",
+  "source": "Video başlığı veya konu (örn: AI Bubble, Trump, Arms Race with China)",
   "category": "youtube/documentary/course/podcast kategorilerinden en uygun olanı",
   "url": "Video URL'i varsa, yoksa null",
   "tags": ["tag1", "tag2"]
@@ -245,14 +245,21 @@ export async function handleVideo(text) {
 
 Video Notu: ${text}
 
+PARSE KURALLARI:
+1. Tırnak içindeki metinler ("...") alıntılardır, bunları text alanına koy
+2. İsimler (Jensen Huang, Elon Musk vs.) author alanına git
+3. "on ...", "about ...", "hakkında" gibi ifadeler source/konu olarak çıkarılmalı
+4. Birden fazla alıntı varsa hepsini text'e satır satır ekle
+5. text alanında orijinal satır yapısını koru (\\n ile ayır)
+
 KATEGORİ SEÇİMİ (4 kategori):
-- youtube: YouTube videoları, vlogs, kısa videolar
+- youtube: YouTube videoları, röportajlar, vlogs
 - documentary: Belgeseller, uzun format içerikler
 - course: Kurs, eğitim, tutorial serisi
 - podcast: Podcast'ler, ses içerikleri
 
 ÖNEMLI:
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.
+- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma
 - URL varsa mutlaka çıkar
 - Tags 2-3 adet olmalı`
 
@@ -305,9 +312,9 @@ KATEGORİ SEÇİMİ (4 kategori):
 export async function handleBook(text) {
   const prompt = `Aşağıdaki kitap notunu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "text": "Kitap notu/alıntı",
-  "author": "Yazar adı, yoksa null",
-  "source": "Kitap adı, yoksa null",
+  "text": "Kitaptan alınan notlar veya alıntılar (orijinal formatı koru, satır satır ayır)",
+  "author": "Kitabın yazarı (örn: James Clear, Yuval Noah Harari)",
+  "source": "Kitap adı (örn: Atomic Habits, Sapiens)",
   "category": "science/selfhelp/biography/fiction/health kategorilerinden en uygun olanı",
   "url": "Kitap link'i varsa (Amazon, Goodreads vs.), yoksa null",
   "tags": ["tag1", "tag2"]
@@ -315,16 +322,24 @@ export async function handleBook(text) {
 
 Kitap Notu: ${text}
 
+PARSE KURALLARI:
+1. Tırnak içindeki metinler ("...") alıntılardır, bunları text alanına koy
+2. "Yazar:", "Author:", "by" veya "-" ile belirtilen isimler author alanına git
+3. "Kitap:", "Book:", "from", "Kaynak:" ile belirtilen başlıklar source alanına git
+4. Birden fazla alıntı varsa hepsini text'e satır satır ekle (\\n ile ayır)
+5. Notlar Türkçe veya İngilizce olabilir, her iki dili de destekle
+
 KATEGORİ SEÇİMİ (5 kategori):
-- science: Bilim, araştırma, akademik konular
-- selfhelp: Kişisel gelişim, self-help, motivasyon
+- science: Bilim, araştırma, akademik, tarih, felsefe
+- selfhelp: Kişisel gelişim, self-help, motivasyon, alışkanlıklar
 - biography: Biyografi, otobiyografi, anı
-- fiction: Roman, kurgu, hikaye
-- health: Sağlık, fitness, beslenme
+- fiction: Roman, kurgu, hikaye, edebiyat
+- health: Sağlık, fitness, beslenme, psikoloji
 
 ÖNEMLI:
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.
-- Kaynak mutlaka kitap adı olmalı
+- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma
+- author alanına mutlaka kitabın yazarını koy (varsa)
+- source alanına mutlaka kitap adını koy (varsa)
 - Tags 2-3 adet olmalı`
 
   const aiResponse = await callGemini(prompt)
