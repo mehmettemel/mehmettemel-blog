@@ -145,7 +145,6 @@ KATEGORİ SEÇİMİ (3 ana kategori):
     url: url,
     author: null,
     source: null,
-    tags: [],
   }
 }
 
@@ -160,8 +159,7 @@ export async function handleNote(text) {
   "text": "Notun kendisi (tırnak işaretlerini koruyarak)",
   "author": "Varsa yazar adı, yoksa null",
   "source": "Varsa kaynak (kitap adı, makale başlığı, konuşma ismi vs.), yoksa null",
-  "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı",
-  "tags": ["tag1", "tag2"]
+  "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı"
 }
 
 Not: ${text}
@@ -183,7 +181,6 @@ KATEGORİ SEÇİMİ (5 kategori):
 ÖNEMLI:
 - Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.
 - text alanında tırnak işaretlerini koruyarak düzgün escape et.
-- Tags 2-3 adet, kısa ve öz olmalı
 - Kategori seçiminde en spesifik kategoriyi tercih et (örn: sağlık konusu ise "genel" yerine "saglik")`
 
   const aiResponse = await callGemini(prompt)
@@ -211,7 +208,6 @@ KATEGORİ SEÇİMİ (5 kategori):
       author: null,
       source: null,
       category: 'genel',
-      tags: [],
     }
   }
 
@@ -223,7 +219,6 @@ KATEGORİ SEÇİMİ (5 kategori):
     url: null,
     author: noteData.author,
     source: noteData.source,
-    tags: noteData.tags || [],
   }
 }
 
@@ -239,8 +234,7 @@ export async function handleVideo(text) {
   "author": "Konuşmacı veya içerik üreticisi adı (örn: Jensen Huang, Lex Fridman)",
   "source": "Video başlığı veya konu (örn: AI Bubble Interview)",
   "category": "youtube/documentary/course/podcast kategorilerinden en uygun olanı",
-  "url": "Video URL'i varsa, yoksa null",
-  "tags": ["tag1", "tag2"]
+  "url": "Video URL'i varsa, yoksa null"
 }
 
 Video Notu: ${text}
@@ -288,7 +282,6 @@ KATEGORİ SEÇİMİ (4 kategori):
       source: null,
       category: 'youtube',
       url: null,
-      tags: [],
     }
   }
 
@@ -308,7 +301,6 @@ KATEGORİ SEÇİMİ (4 kategori):
     url: videoData.url,
     author: videoData.author,
     source: videoData.source,
-    tags: videoData.tags || [],
   }))
 }
 
@@ -324,8 +316,7 @@ export async function handleBook(text) {
   "author": "Kitabın yazarı (örn: James Clear, Yuval Noah Harari)",
   "source": "Kitap adı (örn: Atomic Habits, Sapiens)",
   "category": "science/selfhelp/biography/fiction/health kategorilerinden en uygun olanı",
-  "url": "Kitap link'i varsa (Amazon, Goodreads vs.), yoksa null",
-  "tags": ["tag1", "tag2"]
+  "url": "Kitap link'i varsa (Amazon, Goodreads vs.), yoksa null"
 }
 
 Kitap Notu: ${text}
@@ -374,7 +365,6 @@ KATEGORİ SEÇİMİ (5 kategori):
       source: null,
       category: 'selfhelp',
       url: null,
-      tags: [],
     }
   }
 
@@ -394,7 +384,6 @@ KATEGORİ SEÇİMİ (5 kategori):
     url: bookData.url,
     author: bookData.author,
     source: bookData.source,
-    tags: bookData.tags || [],
   }))
 }
 

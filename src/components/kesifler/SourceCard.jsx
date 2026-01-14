@@ -66,8 +66,8 @@ export function SourceCard({
 
       {/* Modal with all notes - Responsive */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-h-[90vh] w-[95vw] max-w-4xl overflow-hidden sm:w-full">
-          <DialogHeader className="border-b border-border pb-4">
+        <DialogContent className="flex h-[85vh] w-[95vw] max-w-4xl flex-col overflow-hidden sm:h-auto sm:max-h-[85vh] sm:w-full">
+          <DialogHeader className="flex-shrink-0 border-b border-border pb-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <span className="text-2xl">{emoji}</span>
               <div className="flex-1">
@@ -85,7 +85,7 @@ export function SourceCard({
           </DialogHeader>
 
           {/* Notes list - Responsive grid */}
-          <div className="max-h-[65vh] overflow-auto py-4 sm:max-h-[70vh]">
+          <div className="flex-1 overflow-auto py-4 pb-8">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {notes.map((note, idx) => (
                 <div
@@ -95,18 +95,6 @@ export function SourceCard({
                   <blockquote className="text-sm leading-relaxed whitespace-pre-line text-foreground">
                     {note.text}
                   </blockquote>
-                  {note.tags && note.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {note.tags.map((tag, tagIdx) => (
-                        <span
-                          key={tagIdx}
-                          className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>

@@ -6,6 +6,21 @@ import Link from 'next/link'
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 import { AnimatedThemeToggle } from './ui/animated-theme-toggle'
 import { Container } from './Container'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from './ui/navigation-menu'
+
+const kesiflerItems = [
+  { href: '/kesifler?tab=links', label: 'Linkler', emoji: '📚' },
+  { href: '/kesifler?tab=quotes', label: 'Alıntılar', emoji: '💭' },
+  { href: '/kesifler?tab=video', label: 'Video', emoji: '🎬' },
+  { href: '/kesifler?tab=books', label: 'Kitap', emoji: '📖' },
+]
 
 function NavLink({ href, children }) {
   return (
@@ -20,12 +35,42 @@ function NavLink({ href, children }) {
 
 function DesktopNav() {
   return (
-    <nav className="hidden items-center md:flex">
-      <NavLink href="/incelemeler">İncelemeler</NavLink>
-      <NavLink href="/kesifler">Keşifler</NavLink>
-      <NavLink href="/bu-hafta">Bu Hafta</NavLink>
-      <NavLink href="/iletisim">İletişim</NavLink>
-    </nav>
+    <NavigationMenu className="hidden md:flex">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavLink href="/incelemeler">İncelemeler</NavLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Keşifler</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[200px] gap-1 p-2">
+              {kesiflerItems.map((item) => (
+                <li key={item.href}>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary"
+                    >
+                      <span>{item.emoji}</span>
+                      <span>{item.label}</span>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavLink href="/bu-hafta">Bu Hafta</NavLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavLink href="/iletisim">İletişim</NavLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   )
 }
 
@@ -56,17 +101,27 @@ function MobileNav() {
           >
             İncelemeler
           </Link>
-          <Link
-            href="/kesifler"
-            onClick={closeSheet}
-            className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
-          >
+
+          {/* Keşifler Section */}
+          <div className="mt-2 mb-1 px-3 text-xs font-semibold text-muted-foreground/60">
             Keşifler
-          </Link>
+          </div>
+          {kesiflerItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={closeSheet}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
+            >
+              <span>{item.emoji}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+
           <Link
             href="/bu-hafta"
             onClick={closeSheet}
-            className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
+            className="mt-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
           >
             Bu Hafta
           </Link>
