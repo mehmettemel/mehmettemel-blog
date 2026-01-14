@@ -43,7 +43,7 @@ async function sendTelegramMessage(chatId, text) {
         body: JSON.stringify({
           chat_id: chatId,
           text: text.substring(0, 4096), // Telegram has 4096 char limit
-          parse_mode: 'Markdown',
+          parse_mode: 'HTML', // HTML is more reliable than Markdown
         }),
       },
     )
@@ -130,9 +130,9 @@ export async function POST(request) {
     if (text === '/help') {
       await sendTelegramMessage(
         chatId,
-        `📚 *Keşifler Bot Kullanım Kılavuzu*
+        `📚 <b>Keşifler Bot Kullanım Kılavuzu</b>
 
-*Komutlar:*
+<b>Komutlar:</b>
 /link [url] - Link ekle
 /quote [text] - Alıntı/not ekle
 /video [text] - Video notu ekle
@@ -140,22 +140,24 @@ export async function POST(request) {
 /stats - İstatistikler
 /help - Bu mesaj
 
-*Örnekler:*
-\`\`\`
+<b>Örnekler:</b>
+<pre>
 /link https://ui-skills.com
 
 /quote D vitamini bağışıklık için önemlidir
 Yazar: Osman Müftüoğlu
 
-/video React hooks explained
-Source: freeCodeCamp
+/video https://youtube.com/watch?v=xxx
+"First insight from video"
+Author: Speaker Name
+Source: Video Title
 
 /book Consistency is key
 Author: James Clear
 Source: Atomic Habits
-\`\`\`
+</pre>
 
-*Not:* URL gönderirseniz otomatik link olarak algılanır.`,
+<b>Not:</b> URL gönderirseniz otomatik link olarak algılanır.`,
       )
       return NextResponse.json({ ok: true })
     }
@@ -166,7 +168,7 @@ Source: Atomic Habits
         const stats = await getNotesStats()
         const byType = stats.byType || {}
 
-        const statsText = `📊 *İstatistikler*
+        const statsText = `📊 <b>İstatistikler</b>
 
 📝 Toplam: ${stats.total} not
 
@@ -280,13 +282,25 @@ Source: Atomic Habits
         .filter((id) => id != null)
         .join(', ') || 'N/A'
 
-      const successMessage = `✅ ${emoji} *${savedNotes.length} not eklendi!*
+      // Escape HTML special characters
+      const escapeHtml = (text) => {
+        if (!text) return ''
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      }
 
-📁 Kategori: ${firstNote?.category || 'Belirtilmemiş'}
-📖 Kaynak: ${firstNote?.source || 'Belirtilmemiş'}
-✍️ Yazar: ${firstNote?.author || 'Belirtilmemiş'}
+      const successMessage = `✅ ${emoji} <b>${savedNotes.length} not eklendi!</b>
+
+📁 Kategori: ${escapeHtml(firstNote?.category || 'Belirtilmemiş')}
+📖 Kaynak: ${escapeHtml(firstNote?.source || 'Belirtilmemiş')}
+✍️ Yazar: ${escapeHtml(firstNote?.author || 'Belirtilmemiş')}
 🆔 ID'ler: ${noteIds}`
 
+      console.log('Sending success message:', successMessage)
       await sendTelegramMessage(chatId, successMessage)
 
       return NextResponse.json({
@@ -310,11 +324,23 @@ Source: Atomic Habits
       parsed.type
     ] || '📝'
 
-    const successMessage = `✅ ${emoji} *Not eklendi!*
+    // Escape HTML special characters
+    const escapeHtml = (text) => {
+      if (!text) return ''
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+    }
 
-📁 Kategori: ${categorizedData?.category || 'Belirtilmemiş'}
+    const successMessage = `✅ ${emoji} <b>Not eklendi!</b>
+
+📁 Kategori: ${escapeHtml(categorizedData?.category || 'Belirtilmemiş')}
 🆔 ID: ${note?.id || 'N/A'}`
 
+    console.log('Sending success message:', successMessage)
     await sendTelegramMessage(chatId, successMessage)
 
     return NextResponse.json({ ok: true, noteId: note.id })
@@ -344,7 +370,7 @@ Source: Atomic Habits
           hint = '\n\n💡 İpucu: AI işleme sırasında bir sorun oluştu. Lütfen tekrar deneyin.'
         }
 
-        const errorMessage = `❌ *Hata oluştu*
+        const errorMessage = `❌ <b>Hata oluştu</b>
 
 ${userMessage}${hint}
 
