@@ -43,8 +43,8 @@ async function sendTelegramMessage(chatId, text) {
 
     console.log('Sending Telegram message:', {
       chat_id: chatId,
-      text_length: text.length,
-      text_preview: text.substring(0, 100) + '...'
+      text_length: text?.length || 0,
+      text_preview: (text || '').substring(0, 100) + '...'
     })
 
     const response = await fetch(
@@ -295,27 +295,35 @@ Source: Atomic Habits
         ? categorizedData[0]
         : {}
 
-      const noteIds = savedNotes
-        .map((n) => n?.id)
-        .filter((id) => id != null)
-        .join(', ') || 'N/A'
+      // Safe array operations
+      const noteIds = Array.isArray(savedNotes) && savedNotes.length > 0
+        ? savedNotes
+            .map((n) => n?.id)
+            .filter((id) => id != null)
+            .join(', ')
+        : 'N/A'
 
       // Escape HTML special characters
       const escapeHtml = (text) => {
         if (!text) return ''
-        return String(text)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;')
+        try {
+          return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;')
+        } catch (e) {
+          console.error('escapeHtml error:', e)
+          return ''
+        }
       }
 
       const category = escapeHtml(firstNote?.category || 'Belirtilmemiş')
       const source = escapeHtml(firstNote?.source || 'Belirtilmemiş')
       const author = escapeHtml(firstNote?.author || 'Belirtilmemiş')
 
-      const successMessage = `✅ ${emoji} <b>${savedNotes.length} not eklendi!</b>
+      const successMessage = `✅ ${emoji} <b>${savedNotes?.length || 0} not eklendi!</b>
 
 Kategori: ${category}
 Kaynak: ${source}
@@ -369,12 +377,17 @@ ID: ${noteIds}`
     // Escape HTML special characters
     const escapeHtml = (text) => {
       if (!text) return ''
-      return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;')
+      try {
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;')
+      } catch (e) {
+        console.error('escapeHtml error:', e)
+        return ''
+      }
     }
 
     const category = escapeHtml(categorizedData?.category || 'Belirtilmemiş')
@@ -419,8 +432,11 @@ ID: ${note?.id || 'N/A'}`
         // Get user-friendly error message
         let userMessage = error?.message || String(error) || 'Bilinmeyen bir hata oluştu.'
 
+        // Ensure userMessage is a string
+        userMessage = String(userMessage)
+
         // Truncate very long error messages
-        if (userMessage.length > 500) {
+        if (userMessage && userMessage.length > 500) {
           userMessage = userMessage.substring(0, 500) + '...'
         }
 
