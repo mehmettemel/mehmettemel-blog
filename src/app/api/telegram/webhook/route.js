@@ -25,36 +25,50 @@ const ALLOWED_USER_IDS = process.env.TELEGRAM_ALLOWED_USER_IDS
 async function sendTelegramMessage(chatId, text) {
   if (!TELEGRAM_BOT_TOKEN) {
     console.error('TELEGRAM_BOT_TOKEN not defined')
-    return
+    throw new Error('Telegram bot token not configured')
   }
 
   // Validate text parameter
   if (!text || typeof text !== 'string') {
     console.error('Invalid text parameter for Telegram message:', text)
-    return
+    throw new Error('Invalid message text')
   }
 
   try {
+    const payload = {
+      chat_id: chatId,
+      text: text.substring(0, 4096), // Telegram has 4096 char limit
+      parse_mode: 'HTML', // HTML is more reliable than Markdown
+    }
+
+    console.log('Sending Telegram message:', {
+      chat_id: chatId,
+      text_length: text.length,
+      text_preview: text.substring(0, 100) + '...'
+    })
+
     const response = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: text.substring(0, 4096), // Telegram has 4096 char limit
-          parse_mode: 'HTML', // HTML is more reliable than Markdown
-        }),
+        body: JSON.stringify(payload),
       },
     )
 
+    const responseData = await response.json()
+
     if (!response.ok) {
-      const error = await response.text()
-      console.error('Telegram sendMessage error:', error)
+      console.error('Telegram API error response:', JSON.stringify(responseData, null, 2))
+      throw new Error(`Telegram API error: ${responseData.description || 'Unknown error'}`)
     }
+
+    console.log('Telegram message sent successfully')
+    return responseData
   } catch (error) {
     console.error('Failed to send Telegram message:', error)
     console.error('Message text:', text)
+    throw error
   }
 }
 
@@ -188,7 +202,11 @@ Source: Atomic Habits
     }
 
     // Start processing message
-    await sendTelegramMessage(chatId, '⏳ Not işleniyor...')
+    try {
+      await sendTelegramMessage(chatId, '⏳ Not işleniyor...')
+    } catch (statusError) {
+      console.warn('Failed to send status message, continuing...', statusError)
+    }
 
     // Parse message
     let parsed = parseMessage(text)
@@ -293,19 +311,43 @@ Source: Atomic Habits
           .replace(/'/g, '&#039;')
       }
 
+      const category = escapeHtml(firstNote?.category || 'Belirtilmemiş')
+      const source = escapeHtml(firstNote?.source || 'Belirtilmemiş')
+      const author = escapeHtml(firstNote?.author || 'Belirtilmemiş')
+
       const successMessage = `✅ ${emoji} <b>${savedNotes.length} not eklendi!</b>
 
-📁 Kategori: ${escapeHtml(firstNote?.category || 'Belirtilmemiş')}
-📖 Kaynak: ${escapeHtml(firstNote?.source || 'Belirtilmemiş')}
-✍️ Yazar: ${escapeHtml(firstNote?.author || 'Belirtilmemiş')}
-🆔 ID'ler: ${noteIds}`
+Kategori: ${category}
+Kaynak: ${source}
+Yazar: ${author}
+ID: ${noteIds}`
 
       console.log('Sending success message:', successMessage)
-      await sendTelegramMessage(chatId, successMessage)
 
+      // Try to send success message but don't let it fail the whole operation
+      try {
+        await sendTelegramMessage(chatId, successMessage)
+      } catch (msgError) {
+        console.error('Failed to send formatted success message:', msgError)
+        // Fallback: send simple message without special formatting
+        try {
+          await sendTelegramMessage(chatId, `✅ ${savedNotes.length} not eklendi! ID: ${noteIds}`)
+        } catch (fallbackError) {
+          console.error('Failed to send fallback message too:', fallbackError)
+          // Last resort: send minimal message without any variables
+          try {
+            await sendTelegramMessage(chatId, '✅ Not eklendi!')
+          } catch (minimalError) {
+            console.error('All message attempts failed, but note was saved:', minimalError)
+            // Don't throw - note was saved successfully
+          }
+        }
+      }
+
+      // Always return success if notes were saved
       return NextResponse.json({
         ok: true,
-        noteIds: savedNotes.map((n) => n.id),
+        noteIds: savedNotes.map((n) => n?.id).filter(Boolean),
       })
     }
 
@@ -335,14 +377,36 @@ Source: Atomic Habits
         .replace(/'/g, '&#039;')
     }
 
+    const category = escapeHtml(categorizedData?.category || 'Belirtilmemiş')
+
     const successMessage = `✅ ${emoji} <b>Not eklendi!</b>
 
-📁 Kategori: ${escapeHtml(categorizedData?.category || 'Belirtilmemiş')}
-🆔 ID: ${note?.id || 'N/A'}`
+Kategori: ${category}
+ID: ${note?.id || 'N/A'}`
 
     console.log('Sending success message:', successMessage)
-    await sendTelegramMessage(chatId, successMessage)
 
+    // Try to send success message but don't let it fail the whole operation
+    try {
+      await sendTelegramMessage(chatId, successMessage)
+    } catch (msgError) {
+      console.error('Failed to send formatted success message:', msgError)
+      // Fallback: send simple message without special formatting
+      try {
+        await sendTelegramMessage(chatId, `✅ Not eklendi! ID: ${note.id}`)
+      } catch (fallbackError) {
+        console.error('Failed to send fallback message too:', fallbackError)
+        // Last resort: send minimal message
+        try {
+          await sendTelegramMessage(chatId, '✅ Not eklendi!')
+        } catch (minimalError) {
+          console.error('All message attempts failed, but note was saved:', minimalError)
+          // Don't throw - note was saved successfully
+        }
+      }
+    }
+
+    // Always return success if note was saved
     return NextResponse.json({ ok: true, noteId: note.id })
   } catch (error) {
     console.error('Telegram webhook error:', error)
