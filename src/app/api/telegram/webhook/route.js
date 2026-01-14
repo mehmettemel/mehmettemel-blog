@@ -28,6 +28,12 @@ async function sendTelegramMessage(chatId, text) {
     return
   }
 
+  // Validate text parameter
+  if (!text || typeof text !== 'string') {
+    console.error('Invalid text parameter for Telegram message:', text)
+    return
+  }
+
   try {
     const response = await fetch(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -36,7 +42,7 @@ async function sendTelegramMessage(chatId, text) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text,
+          text: text.substring(0, 4096), // Telegram has 4096 char limit
           parse_mode: 'Markdown',
         }),
       },
@@ -48,6 +54,7 @@ async function sendTelegramMessage(chatId, text) {
     }
   } catch (error) {
     console.error('Failed to send Telegram message:', error)
+    console.error('Message text:', text)
   }
 }
 
@@ -216,6 +223,8 @@ Source: Atomic Habits
 
     // Check if multi-note (video/book can return arrays)
     const isMultiNote = Array.isArray(categorizedData)
+    console.log('Is multi-note:', isMultiNote)
+    console.log('Categorized data length:', Array.isArray(categorizedData) ? categorizedData.length : 'N/A')
 
     // Validate array has items
     if (isMultiNote && categorizedData.length === 0) {
@@ -223,10 +232,18 @@ Source: Atomic Habits
     }
 
     if (isMultiNote) {
+      console.log('Processing multiple notes...')
       // Handle multiple notes
       const savedNotes = []
 
-      for (const noteData of categorizedData) {
+      for (let i = 0; i < categorizedData.length; i++) {
+        const noteData = categorizedData[i]
+        console.log(`Processing note ${i + 1}/${categorizedData.length}:`, {
+          hasType: !!noteData?.type,
+          hasText: !!noteData?.text,
+          hasCategory: !!noteData?.category
+        })
+
         if (!noteData || !noteData.type || !noteData.text) {
           console.warn('Invalid note data, skipping:', noteData)
           continue
@@ -242,6 +259,8 @@ Source: Atomic Habits
         })
       }
 
+      console.log(`Saved ${savedNotes.length} notes successfully`)
+
       // Check if any notes were saved
       if (savedNotes.length === 0) {
         throw new Error('Notlar kaydedilemedi. Lütfen formatı kontrol edin.')
@@ -250,15 +269,23 @@ Source: Atomic Habits
       // Send success message for multiple notes
       const emoji = { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[
         parsed.type
-      ]
+      ] || '📝'
 
-      const firstNote = categorizedData[0] || {}
+      const firstNote = Array.isArray(categorizedData) && categorizedData.length > 0
+        ? categorizedData[0]
+        : {}
+
+      const noteIds = savedNotes
+        .map((n) => n?.id)
+        .filter((id) => id != null)
+        .join(', ') || 'N/A'
+
       const successMessage = `✅ ${emoji} *${savedNotes.length} not eklendi!*
 
-📁 Kategori: ${firstNote.category || 'Belirtilmemiş'}
-📖 Kaynak: ${firstNote.source || 'Belirtilmemiş'}
-✍️ Yazar: ${firstNote.author || 'Belirtilmemiş'}
-🆔 ID'ler: ${savedNotes.map((n) => n.id).join(', ')}`
+📁 Kategori: ${firstNote?.category || 'Belirtilmemiş'}
+📖 Kaynak: ${firstNote?.source || 'Belirtilmemiş'}
+✍️ Yazar: ${firstNote?.author || 'Belirtilmemiş'}
+🆔 ID'ler: ${noteIds}`
 
       await sendTelegramMessage(chatId, successMessage)
 
@@ -269,7 +296,7 @@ Source: Atomic Habits
     }
 
     // Validate single note data
-    if (!categorizedData.type || !categorizedData.category) {
+    if (!categorizedData || !categorizedData.type || !categorizedData.category) {
       throw new Error('Not formatı hatalı. Lütfen tekrar deneyin.')
     }
 
@@ -281,43 +308,60 @@ Source: Atomic Habits
     // Send success message
     const emoji = { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[
       parsed.type
-    ]
+    ] || '📝'
 
     const successMessage = `✅ ${emoji} *Not eklendi!*
 
-📁 Kategori: ${categorizedData.category || 'Belirtilmemiş'}
-🆔 ID: ${note.id}`
+📁 Kategori: ${categorizedData?.category || 'Belirtilmemiş'}
+🆔 ID: ${note?.id || 'N/A'}`
 
     await sendTelegramMessage(chatId, successMessage)
 
     return NextResponse.json({ ok: true, noteId: note.id })
   } catch (error) {
     console.error('Telegram webhook error:', error)
-    console.error('Error stack:', error.stack)
+    console.error('Error stack:', error?.stack)
+    console.error('Error type:', typeof error)
 
     // Send error message to user
     if (chatId) {
-      // Get user-friendly error message
-      let userMessage = error.message || 'Bilinmeyen bir hata oluştu.'
+      try {
+        // Get user-friendly error message
+        let userMessage = error?.message || String(error) || 'Bilinmeyen bir hata oluştu.'
 
-      // Add hints based on error type
-      let hint = ''
-      if (userMessage.includes('parse')) {
-        hint = '\n\n💡 İpucu: Mesajınızın formatını kontrol edin.'
-      } else if (userMessage.includes('length')) {
-        hint = '\n\n💡 İpucu: Not eklerken doğru formatı kullanın.'
-      }
+        // Truncate very long error messages
+        if (userMessage.length > 500) {
+          userMessage = userMessage.substring(0, 500) + '...'
+        }
 
-      const errorMessage = `❌ *Hata oluştu*
+        // Add hints based on error type
+        let hint = ''
+        if (userMessage.includes('parse')) {
+          hint = '\n\n💡 İpucu: Mesajınızın formatını kontrol edin.'
+        } else if (userMessage.includes('length') || userMessage.includes('undefined')) {
+          hint = '\n\n💡 İpucu: Not eklerken doğru formatı kullanın. /help ile örneklere bakın.'
+        } else if (userMessage.includes('Gemini')) {
+          hint = '\n\n💡 İpucu: AI işleme sırasında bir sorun oluştu. Lütfen tekrar deneyin.'
+        }
+
+        const errorMessage = `❌ *Hata oluştu*
 
 ${userMessage}${hint}
 
 📖 /help komutu ile kullanım kılavuzunu görebilirsiniz.`
 
-      await sendTelegramMessage(chatId, errorMessage)
+        await sendTelegramMessage(chatId, errorMessage)
+      } catch (msgError) {
+        console.error('Failed to send error message to user:', msgError)
+        // Try to send a simple fallback message
+        await sendTelegramMessage(chatId, '❌ Bir hata oluştu. Lütfen tekrar deneyin.')
+      }
     }
 
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json(
+      { error: error?.message || 'Unknown error' },
+      { status: 500 }
+    )
   }
 }
 
