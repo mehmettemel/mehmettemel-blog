@@ -1,0 +1,18 @@
+---
+id: 54
+type: book
+category: science
+
+author: Gad Saad
+source: "The Parasitic Mind"
+tags: []
+created_at: Wed Jan 14 2026 10:47:15 GMT+0000 (Coordinated Universal Time)
+url: null
+---
+
+# Kümülatif kanıtların nomolojik ağları; bir iddianı
+
+Kümülatif kanıtların nomolojik ağları; bir iddianın doğruluğunu farklı disiplinlerden, farklı kültürlerden ve farklı zaman dilimlerinden gelen kanıtlarla bir bulmaca gibi birleştirme yöntemidir.
+
+---
+Generated via Telegram Bot 🤖
