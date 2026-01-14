@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
-import { createNote, getNotesStats } from '@/lib/db'
+import { createNote, getNotesStats, createCacheItem } from '@/lib/db'
 import {
   callGemini,
   handleLink,
   handleNote,
   handleVideo,
   handleBook,
+  handleCacheItem,
   isURL,
 } from '@/lib/gemini'
 
@@ -85,6 +86,9 @@ function parseMessage(text) {
     '/video': 'video',
     '/book': 'book',
     '/kitap': 'book',
+    '/cache-kitap': 'cache-kitap',
+    '/cache-film': 'cache-film',
+    '/cache-urun': 'cache-urun',
   }
 
   // Check for commands (support both "/cmd text" and "/cmd\ntext" formats)
@@ -151,6 +155,9 @@ export async function POST(request) {
 /quote [text] - Alıntı/not ekle
 /video [text] - Video notu ekle
 /book [text] - Kitap notu ekle
+/cache-kitap [name] - Kitap ekle (Cache)
+/cache-film [name] - Film/dizi ekle (Cache)
+/cache-urun [name] - Ürün ekle (Cache)
 /stats - İstatistikler
 /help - Bu mesaj
 
@@ -169,6 +176,10 @@ Source: Video Title
 /book Consistency is key
 Author: James Clear
 Source: Atomic Habits
+
+/cache-kitap Atomic Habits
+/cache-film Breaking Bad
+/cache-urun iPhone 15 Pro
 </pre>
 
 <b>Not:</b> URL gönderirseniz otomatik link olarak algılanır.`,
@@ -214,6 +225,28 @@ Source: Atomic Habits
     // If no command found, default to quote
     if (!parsed) {
       parsed = { type: 'quote', content: text }
+    }
+
+    // Handle cache items separately (no AI categorization needed)
+    if (parsed.type === 'cache-kitap' || parsed.type === 'cache-film' || parsed.type === 'cache-urun') {
+      const cacheType = parsed.type.replace('cache-', '')
+      const cacheData = handleCacheItem(cacheType, parsed.content)
+
+      try {
+        const cacheItem = await createCacheItem(cacheData)
+
+        const emoji = { kitap: '📚', film: '🎬', urun: '🛍️' }[cacheType] || '📋'
+        const categoryName = { kitap: 'Kitap', film: 'Film/Dizi', urun: 'Ürün' }[cacheType] || 'Cache'
+
+        await sendTelegramMessage(
+          chatId,
+          `✅ ${emoji} <b>${categoryName} eklendi!</b>\n\n${cacheItem.name}\n\nID: ${cacheItem.id}`
+        )
+
+        return NextResponse.json({ ok: true, cacheId: cacheItem.id })
+      } catch (error) {
+        throw new Error(`Cache item eklenemedi: ${error.message}`)
+      }
     }
 
     // Categorize content with Gemini AI

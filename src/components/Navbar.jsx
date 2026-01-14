@@ -22,11 +22,17 @@ const kesiflerItems = [
   { href: '/kesifler/kitaplar', label: 'Kitaplar', emoji: '📖' },
 ]
 
+const cacheItems = [
+  { href: '/cache/kitap', label: 'Kitap', emoji: '📚' },
+  { href: '/cache/film', label: 'Film & Dizi', emoji: '🎬' },
+  { href: '/cache/urun', label: 'Ürünler', emoji: '🛍️' },
+]
+
 function NavLink({ href, children }) {
   return (
     <Link
       href={href}
-      className="px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+      className="inline-flex h-9 items-center justify-center rounded-md px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
     >
       {children}
     </Link>
@@ -42,7 +48,7 @@ function DesktopNav() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground data-[state=open]:text-foreground bg-transparent hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent">
+          <NavigationMenuTrigger className="bg-transparent px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-foreground">
             Keşifler
           </NavigationMenuTrigger>
           <NavigationMenuContent>
@@ -76,7 +82,37 @@ function DesktopNav() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavLink href="/bu-hafta">Bu Hafta</NavLink>
+          <NavigationMenuTrigger className="bg-transparent px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-foreground">
+            Cache
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[200px] gap-1 p-2">
+              <li>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href="/cache"
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-secondary"
+                  >
+                    <span>📋</span>
+                    <span>Tümü</span>
+                  </Link>
+                </NavigationMenuLink>
+              </li>
+              {cacheItems.map((item) => (
+                <li key={item.href}>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={item.href}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary"
+                    >
+                      <span>{item.emoji}</span>
+                      <span>{item.label}</span>
+                    </Link>
+                  </NavigationMenuLink>
+                </li>
+              ))}
+            </ul>
+          </NavigationMenuContent>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
@@ -131,13 +167,22 @@ function MobileNav() {
             </Link>
           ))}
 
-          <Link
-            href="/bu-hafta"
-            onClick={closeSheet}
-            className="mt-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
-          >
-            Bu Hafta
-          </Link>
+          {/* Cache Section */}
+          <div className="mt-2 mb-1 px-3 text-xs font-semibold text-muted-foreground/60">
+            Cache
+          </div>
+          {cacheItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={closeSheet}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary/50 hover:text-foreground"
+            >
+              <span>{item.emoji}</span>
+              <span>{item.label}</span>
+            </Link>
+          ))}
+
           <Link
             href="/iletisim"
             onClick={closeSheet}

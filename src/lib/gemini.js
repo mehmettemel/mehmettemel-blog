@@ -416,6 +416,19 @@ KATEGORİ SEÇİMİ (5 kategori):
 }
 
 /**
+ * Handle cache item (no AI needed, simple text extraction)
+ * @param {string} type - Cache type: 'kitap', 'film', or 'urun'
+ * @param {string} text - Item name
+ * @returns {Object} Cache item data
+ */
+export function handleCacheItem(type, text) {
+  return {
+    name: text.trim(),
+    cache_type: type,
+  }
+}
+
+/**
  * Detect if text is a URL
  * @param {string} text - Text to check
  * @returns {boolean} True if URL
