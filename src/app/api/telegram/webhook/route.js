@@ -7,6 +7,7 @@ import {
   handleVideo,
   handleBook,
   handleCacheItem,
+  handleCacheItemWithAI,
   isURL,
 } from '@/lib/gemini'
 
@@ -79,28 +80,31 @@ async function sendTelegramMessage(chatId, text) {
  * @returns {Object|null} { type, content } or null if needs AI detection
  */
 function parseMessage(text) {
-  const commands = {
-    '/link': 'link',
-    '/quote': 'quote',
-    '/alinti': 'quote',
-    '/video': 'video',
-    '/book': 'book',
-    '/kitap': 'book',
-    // Short cache commands (new)
-    '/k': 'cache-kitap',
-    '/f': 'cache-film',
-    '/u': 'cache-urun',
-    // Long cache commands (backward compatibility)
-    '/cache-kitap': 'cache-kitap',
-    '/cache-film': 'cache-film',
-    '/cache-urun': 'cache-urun',
-  }
+  // IMPORTANT: Order commands by length (longest first) to avoid conflicts
+  // For example: /cache-kitap before /kitap, /kitap before /k
+  const commands = [
+    // Long cache commands first
+    ['/cache-kitap', 'cache-kitap'],
+    ['/cache-film', 'cache-film'],
+    ['/cache-urun', 'cache-urun'],
+    // Medium length commands
+    ['/kitap', 'book'],
+    ['/alinti', 'quote'],
+    ['/video', 'video'],
+    ['/quote', 'quote'],
+    ['/book', 'book'],
+    ['/link', 'link'],
+    // Short cache commands last (single letter)
+    ['/k', 'cache-kitap'],
+    ['/f', 'cache-film'],
+    ['/u', 'cache-urun'],
+  ]
 
   // Check for commands (support both "/cmd text" and "/cmd\ntext" formats)
-  for (const [cmd, type] of Object.entries(commands)) {
+  for (const [cmd, type] of commands) {
     if (text.startsWith(cmd + ' ') || text.startsWith(cmd + '\n')) {
       // Extract content after command (remove command and leading whitespace/newlines)
-      const regex = new RegExp(`^${cmd}[\\s\\n]+`, 'i')
+      const regex = new RegExp(`^${cmd.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\n]+`, 'i')
       const content = text.replace(regex, '').trim()
       return { type, content }
     }
@@ -236,12 +240,13 @@ export async function POST(request) {
       parsed = { type: 'quote', content: text }
     }
 
-    // Handle cache items separately (no AI categorization needed)
+    // Handle cache items with AI enrichment
     if (parsed.type === 'cache-kitap' || parsed.type === 'cache-film' || parsed.type === 'cache-urun') {
       const cacheType = parsed.type.replace('cache-', '')
-      const cacheData = handleCacheItem(cacheType, parsed.content)
 
       try {
+        // Use AI to find author/director/brand
+        const cacheData = await handleCacheItemWithAI(cacheType, parsed.content)
         const cacheItem = await createCacheItem(cacheData)
 
         const emoji = { kitap: '📚', film: '🎬', urun: '🛍️' }[cacheType] || '📋'

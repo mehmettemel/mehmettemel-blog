@@ -416,6 +416,77 @@ KATEGORİ SEÇİMİ (5 kategori):
 }
 
 /**
+ * Handle cache item with AI - finds author/director/brand automatically
+ * Uses Gemini AI to enrich cache items with metadata
+ *
+ * @param {string} type - Cache type: 'kitap' (book), 'film' (movie/show), 'urun' (product)
+ * @param {string} text - Item name (e.g., "Zero to One", "Inception", "iPhone 15")
+ * @returns {Promise<Object>} Cache item data with name, author, and cache_type
+ */
+export async function handleCacheItemWithAI(type, text) {
+  const trimmedText = text.trim()
+
+  // Determine what to search for based on type
+  const searchType = {
+    kitap: 'book author',
+    film: 'movie/TV show director',
+    urun: 'product brand/manufacturer',
+  }[type] || 'creator'
+
+  const prompt = `Find information about this ${type === 'kitap' ? 'book' : type === 'film' ? 'movie or TV show' : 'product'}:
+"${trimmedText}"
+
+${type === 'kitap' ? 'Find the author of this book.' : ''}
+${type === 'film' ? 'Find the director of this movie or TV show.' : ''}
+${type === 'urun' ? 'Find the brand or manufacturer of this product.' : ''}
+
+Return ONLY a JSON object with this exact format (no markdown, no explanation):
+{
+  "name": "full correct name of the ${type === 'kitap' ? 'book' : type === 'film' ? 'movie/show' : 'product'}",
+  "author": "${type === 'kitap' ? 'author name' : type === 'film' ? 'director name' : 'brand name'}"
+}
+
+If you cannot find the ${searchType}, return:
+{
+  "name": "${trimmedText}",
+  "author": null
+}
+
+Important: Return ONLY the JSON object, nothing else.`
+
+  try {
+    const response = await callGemini(prompt, 3, 2000)
+
+    // Extract JSON from response
+    const textContent = response.candidates[0].content.parts[0].text.trim()
+
+    // Remove markdown code blocks if present
+    let jsonText = textContent
+    if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/```json?\n?/g, '').replace(/```\n?$/g, '')
+    }
+
+    const data = JSON.parse(jsonText)
+
+    console.log('[AI Cache] Enriched cache item:', data)
+
+    return {
+      name: data.name || trimmedText,
+      author: data.author || null,
+      cache_type: type,
+    }
+  } catch (error) {
+    console.error('[AI Cache] Failed to enrich cache item:', error)
+    // Fallback: return without author
+    return {
+      name: trimmedText,
+      author: null,
+      cache_type: type,
+    }
+  }
+}
+
+/**
  * Handle cache item (no AI needed, simple text extraction)
  * @param {string} type - Cache type: 'kitap', 'film', or 'urun'
  * @param {string} text - Item name
