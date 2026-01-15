@@ -164,7 +164,7 @@ export async function handleNote(text) {
   "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı"
 }
 
-Not: ${text}
+${text}
 
 KAYNAK TESPİTİ:
 - "Kaynak: ..." ifadesi varsa kaynağı çıkar
@@ -239,7 +239,7 @@ export async function handleVideo(text) {
   "url": "Video URL'i varsa, yoksa null"
 }
 
-Video Notu: ${text}
+ ${text}
 
 PARSE KURALLARI:
 1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
@@ -335,7 +335,7 @@ export async function handleBook(text) {
   "url": "Kitap link'i varsa (Amazon, Goodreads vs.), yoksa null"
 }
 
-Kitap Notu: ${text}
+${text}
 
 PARSE KURALLARI:
 1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
@@ -429,11 +429,12 @@ export async function handleCacheItemWithAI(type, text) {
   const trimmedText = text.trim()
 
   // Determine what to search for based on type
-  const searchType = {
-    kitap: 'book author',
-    film: 'movie/TV show director',
-    urun: 'product brand/manufacturer',
-  }[type] || 'creator'
+  const searchType =
+    {
+      kitap: 'book author',
+      film: 'movie/TV show director',
+      urun: 'product brand/manufacturer',
+    }[type] || 'creator'
 
   const prompt = `Find information about this ${type === 'kitap' ? 'book' : type === 'film' ? 'movie or TV show' : 'product'}:
 "${trimmedText}"
