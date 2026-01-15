@@ -50,7 +50,11 @@ export default async function CachePage() {
               >
                 {/* Icon & Name */}
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="text-3xl" role="img" aria-label={category.name}>
+                  <span
+                    className="text-3xl"
+                    role="img"
+                    aria-label={category.name}
+                  >
                     {category.emoji}
                   </span>
                   <h2 className="text-xl font-semibold text-foreground transition-colors group-hover:text-primary">
@@ -82,13 +86,6 @@ export default async function CachePage() {
               </Link>
             )
           })}
-        </div>
-
-        {/* Info */}
-        <div className="mt-8 rounded-lg border border-border/40 bg-muted/20 p-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            💡 Telegram bot ile yeni item ekleyebilirsiniz: <code className="rounded bg-background px-1.5 py-0.5">/cache-kitap</code>, <code className="rounded bg-background px-1.5 py-0.5">/cache-film</code>, <code className="rounded bg-background px-1.5 py-0.5">/cache-urun</code>
-          </p>
         </div>
       </div>
     </Container>
