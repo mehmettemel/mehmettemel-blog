@@ -466,11 +466,10 @@ Important:
   try {
     const response = await callGemini(prompt, 3, 2000)
 
-    // Extract JSON from response
-    const textContent = response.candidates[0].content.parts[0].text.trim()
+    // callGemini already returns the text content directly
+    let jsonText = response.trim()
 
     // Remove markdown code blocks if present
-    let jsonText = textContent
     if (jsonText.startsWith('```')) {
       jsonText = jsonText.replace(/```json?\n?/g, '').replace(/```\n?$/g, '')
     }

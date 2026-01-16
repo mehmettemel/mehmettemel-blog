@@ -330,9 +330,10 @@ AI otomatik yazar/yönetmen/marka bulur:
         const categoryName = { kitap: 'Kitap', film: 'Film/Dizi', urun: 'Ürün' }[cacheType] || 'Cache'
 
         const authorText = cacheItem.author ? `\n✍️ ${cacheItem.author}` : ''
+        const descriptionText = cacheItem.description ? `\n\n📖 ${cacheItem.description}` : ''
         await sendTelegramMessage(
           chatId,
-          `✅ ${emoji} <b>${categoryName} eklendi!</b>\n\n📝 ${cacheItem.name}${authorText}\n\nID: ${cacheItem.id}`
+          `✅ ${emoji} <b>${categoryName} eklendi!</b>\n\n📝 ${cacheItem.name}${authorText}${descriptionText}\n\nID: ${cacheItem.id}`
         )
 
         return NextResponse.json({ ok: true, cacheId: cacheItem.id })
