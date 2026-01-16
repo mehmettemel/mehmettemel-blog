@@ -1,87 +1,106 @@
 # 📚 Dokümantasyon
 
-## 🚀 Hızlı Başlangıç
+Kişisel web sitesi - Telegram bot entegrasyonu, cache sistemi, ve keşifler notu sistemi.
 
-**Yeni misin? Buradan başla:**
+## Hızlı Başlangıç
 
-1. **[TELEGRAM_QUICK_START.md](./TELEGRAM_QUICK_START.md)** - Telegram bot komutları (1 sayfa özet)
-2. **[CURRENT_SYSTEM.md](./CURRENT_SYSTEM.md)** - Güncel sistem durumu (v2.0.0)
+### Telegram Botunu Kullan
+**[COMMANDS.md](./COMMANDS.md)** - Tüm Telegram komutları ve örnekler
 
----
+```bash
+/k zero to one          # Kitap ekle (AI yazar bulur)
+/f inception            # Film ekle (AI yönetmen bulur)
+/l https://example.com  # Link ekle
+/a güzel bir alıntı     # Alıntı ekle
+```
 
-## 📖 Detaylı Dokümantasyon
+### Sistem Detayları
+**[SYSTEM.md](./SYSTEM.md)** - Sistem mimarisi, database, API'ler
 
-### Telegram Entegrasyonu
-- **[TELEGRAM_QUICK_START.md](./TELEGRAM_QUICK_START.md)** - Kısa komut referansı
-- **[TELEGRAM_AUTOMATION.md](./TELEGRAM_AUTOMATION.md)** - Detaylı otomasyon açıklaması (Türkçe)
-- **[TELEGRAM_COMMANDS.md](./TELEGRAM_COMMANDS.md)** - Tüm komutlar ve test senaryoları
-
-### Cache Sistemi
-- **[CACHE_SYSTEM.md](./CACHE_SYSTEM.md)** - Cache sistemi detaylı dokümantasyonu (Türkçe)
-
-### Genel
-- **[CURRENT_SYSTEM.md](./CURRENT_SYSTEM.md)** - Sistem durumu ve değişiklik geçmişi
-
----
-
-## 🎯 Hangi Dosyayı Okumalıyım?
-
-### Telegram botunu kullanacaksam:
-→ **[TELEGRAM_QUICK_START.md](./TELEGRAM_QUICK_START.md)** ile başla
-
-### Cache sistemi nasıl çalışıyor?
-→ **[CACHE_SYSTEM.md](./CACHE_SYSTEM.md)** oku
-
-### Sistem neler değişti?
-→ **[CURRENT_SYSTEM.md](./CURRENT_SYSTEM.md)** oku
-
-### Tüm komutları görmek istiyorum:
-→ **[TELEGRAM_COMMANDS.md](./TELEGRAM_COMMANDS.md)** oku
-
-### AI nasıl çalışıyor?
-→ **[TELEGRAM_AUTOMATION.md](./TELEGRAM_AUTOMATION.md)** oku (AI Kategorilendirme bölümü)
+- Cache sistemi nasıl çalışır
+- Telegram webhook kurulumu
+- Database şemaları
+- AI kategorilendirme
 
 ---
 
-## 🆕 v2.0.0 Değişiklikleri (15 Ocak 2026)
+## Sistem Özeti
 
-### ✅ Yeni Özellikler
-- Kısa komutlar: `/k`, `/f`, `/u`, `/l`, `/a`, `/v`, `/b`
+### 3 Ana Modül
+
+**1. Cache Sistemi** (`/cache/*`)
+- Kitap, film/dizi, ürün okuma/izleme listesi
+- Checkbox ile tamamlama ve beğeni takibi
 - AI ile otomatik yazar/yönetmen/marka bulma
-- Direkt Vercel webhook (Google Apps Script kapatıldı)
-- Detaylı debug logları
+- Description generation
 
-### 🔧 Düzeltmeler
-- SQL syntax Neon'un yeni API'sine uyarlandı
-- Author field cache sistemine eklendi
-- parseMessage() fonksiyonu tamamen yeniden yazıldı
+**2. Keşifler** (`/kesifler`)
+- Link, alıntı, video, kitap notları
+- AI ile otomatik kategorizasyon
+- Çoklu not desteği (video/kitap)
 
-### 📋 Değişiklikler
-- `/cache-kitap` → `/k` (eski hala çalışıyor)
-- `/link` → `/l` (eski hala çalışıyor)
-- `/quote` → `/a` (eski hala çalışıyor)
-
----
-
-## 📞 Yardım
-
-Sorun mu var?
-
-1. **[DEBUG_STEPS.md](../DEBUG_STEPS.md)** dosyasına bak
-2. **[CURRENT_SYSTEM.md](./CURRENT_SYSTEM.md)** → "Bilinen Sorunlar" bölümü
-3. Webhook kontrolü: `curl https://mehmettemel.com/api/telegram/webhook`
+**3. Telegram Bot**
+- Hızlı not ekleme
+- 8 kısa komut: `/k /f /u /l /a /v /b /help`
+- AI ile zenginleştirme
+- User authentication
 
 ---
 
-## 📝 Diğer Dokümantasyon
+## Environment Variables
 
-- `COLOR_SCHEME.md` - Renk paleti
-- `FONT_SETUP.md` - Font yapılandırması
-- `SEO_SETUP.md` - SEO en iyi pratikler
-- `ANALYTICS_SETUP.md` - Analytics kurulumu
-- `FILE_STRUCTURE.md` - Dosya yapısı
-- `project-overview.md` - Proje mimarisi
+```env
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_ALLOWED_USER_IDS=...
+GEMINI_API_KEY=...
+DATABASE_URL=...
+```
 
 ---
 
-**Son Güncelleme:** 15 Ocak 2026 | **Versiyon:** v2.0.0
+## Dosya Yapısı
+
+```
+docs/
+├── README.md       # Bu dosya (giriş)
+├── COMMANDS.md     # Telegram komutları
+└── SYSTEM.md       # Teknik detaylar
+
+src/
+├── app/
+│   ├── cache/      # Cache sayfaları
+│   ├── kesifler/   # Keşifler sayfası
+│   └── api/
+│       ├── telegram/webhook/   # Telegram webhook
+│       └── cache/[id]/toggle/  # Checkbox API
+├── lib/
+│   ├── db.js       # Database fonksiyonları
+│   └── gemini.js   # AI kategorilendirme
+└── components/
+    └── cache/      # Cache UI bileşenleri
+
+scripts/
+├── create-cache-table.sql
+├── add-description-to-cache.sql
+└── add-author-to-cache.sql
+```
+
+---
+
+## Quick Debug
+
+```bash
+# Webhook kontrolü
+curl https://mehmettemel.com/api/telegram/webhook
+
+# Vercel logs
+vercel logs
+
+# Database migration
+node scripts/run-migration.js
+```
+
+---
+
+**Versiyon:** v2.0.1
+**Son Güncelleme:** 16 Ocak 2026
