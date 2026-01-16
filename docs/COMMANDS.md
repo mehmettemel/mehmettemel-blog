@@ -13,7 +13,9 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 ```bash
 /k zero to one
 ```
+
 **AI bulur:**
+
 - Yazar: Peter Thiel
 - Description: Startup ve yenilik üzerine... (3-4 satır Türkçe)
 
@@ -27,7 +29,9 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 /f inception
 /f american primeval
 ```
+
 **AI bulur:**
+
 - Yönetmen: Christopher Nolan
 - Description: Film hakkında kısa açıklama... (3-4 satır Türkçe)
 
@@ -41,7 +45,9 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 /u iphone 15 pro
 /u sony wh-1000xm5
 ```
+
 **AI bulur:**
+
 - Marka: Apple
 - Description: Ürün hakkında kısa açıklama... (3-4 satır Türkçe)
 
@@ -59,6 +65,7 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 /l https://waitbutwhy.com
 /l https://paulgraham.com/articles.html
 ```
+
 **AI bulur:** Başlık, açıklama, kategori (teknik/icerik/diger)
 
 **Gider:** `/kesifler`
@@ -67,11 +74,29 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 
 ### `/a [metin]` - Alıntı Ekle
 
+**Tek alıntı:**
+
 ```bash
 /a Tutarlılık başarının anahtarıdır
+```
+
+**Tek alıntı + kaynak (- ile):**
+
+```bash
 /a The dose makes the poison - Paracelsus
 ```
-**AI bulur:** Kategori (kisisel/saglik/gida/seyahat/genel), yazar (varsa)
+
+→ `notes: ["The dose makes the poison"], author: "Paracelsus"`
+
+**Çoklu alıntı (tırnak içi):**
+
+```bash
+/a "Hayat kısa" "Yarın önemli" - Steve Jobs Stanford Konuşması
+```
+
+→ `notes: ["Hayat kısa", "Yarın önemli"], author: "Steve Jobs", source: "Stanford Konuşması"`
+
+**AI bulur:** Kategori (kisisel/saglik/gida/seyahat/genel), yazar, kaynak
 
 **Gider:** `/kesifler`
 
@@ -80,19 +105,28 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 ### `/v [metin]` - Video Notu
 
 **Tek not:**
+
 ```bash
-/v Huberman Lab: 10-30 minutes morning sunlight improves sleep
+/v Huberman Lab: 10-30 minutes morning sunlight
 ```
 
-**Çoklu not:**
+**Tek not + kaynak (- ile):**
+
 ```bash
-/v
-1. Huberman Lab: Sleep Toolkit - Morning sunlight
-2. Veritasium: Science of Thinking - Cognitive biases
-3. Lex Fridman: AI Podcast - GPT architecture
+/v "Focus is the key to mastery" - Huberman Lab Sleep Toolkit
 ```
 
-**AI bulur:** Kategori (youtube/documentary/course/podcast), kaynak
+→ `notes: ["Focus is the key to mastery"], author: "Huberman", source: "Sleep Toolkit"`
+
+**Çoklu not (tırnak içi, yan yana):**
+
+```bash
+/v "AI is the future" "Scaling is key" "Data matters" - Jensen Huang AI Interview
+```
+
+→ `notes: ["AI is the future", "Scaling is key", "Data matters"], author: "Jensen Huang", source: "AI Interview"`
+
+**AI bulur:** Kategori (youtube/documentary/course/podcast), konuşmacı, kaynak
 
 **Gider:** `/kesifler`
 
@@ -101,17 +135,28 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 ### `/b [metin]` - Kitap Notu
 
 **Tek not:**
+
 ```bash
-/b Atomic Habits by James Clear - 1% better every day
+/b Focus is the key - Atomic Habits James Clear
 ```
 
-**Çoklu not:**
+→ `notes: ["Focus is the key"], source: "Atomic Habits", author: "James Clear"`
+
+**Tek not + kaynak (- ile):**
+
 ```bash
-/b
-1. Atomic Habits - James Clear - Small habits compound
-2. Deep Work - Cal Newport - Focus enables mastery
-3. The Power of Now - Eckhart Tolle - Present moment awareness
+/b "1% better every day" - Atomic Habits James Clear
 ```
+
+→ `notes: ["1% better every day"], source: "Atomic Habits", author: "James Clear"`
+
+**Çoklu not (tırnak içi, yan yana):**
+
+```bash
+/b "Small habits compound" "Identity change is key" - Atomic Habits James Clear
+```
+
+→ `notes: ["Small habits compound", "Identity change is key"], source: "Atomic Habits", author: "James Clear"`
 
 **AI bulur:** Kategori (science/selfhelp/biography/fiction/health), yazar, kaynak
 
@@ -126,7 +171,9 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 ```bash
 /stats
 ```
+
 **Gösterir:**
+
 - Toplam not sayısı (link, alıntı, video, kitap)
 - Cache istatistikleri (kitap, film, ürün)
 
@@ -137,7 +184,9 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 ```bash
 /help
 ```
+
 **Gösterir:**
+
 - Tüm komutlar
 - Örnekler
 - İpuçları
@@ -146,15 +195,15 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 
 ## 🎯 Komut Karşılaştırma
 
-| Komut | Tablo | Sayfa | AI Özelliği |
-|-------|-------|-------|-------------|
-| `/k` | `cache_items` | `/cache/kitap` | Yazar + Description |
-| `/f` | `cache_items` | `/cache/film` | Yönetmen + Description |
-| `/u` | `cache_items` | `/cache/urun` | Marka + Description |
-| `/l` | `notes` | `/kesifler` | Kategori |
-| `/a` | `notes` | `/kesifler` | Kategori + Yazar |
-| `/v` | `notes` | `/kesifler` | Kategori + Kaynak |
-| `/b` | `notes` | `/kesifler` | Kategori + Yazar + Kaynak |
+| Komut | Tablo         | Sayfa          | AI Özelliği                    |
+| ----- | ------------- | -------------- | ------------------------------ |
+| `/k`  | `cache_items` | `/cache/kitap` | Yazar + Description            |
+| `/f`  | `cache_items` | `/cache/film`  | Yönetmen + Description         |
+| `/u`  | `cache_items` | `/cache/urun`  | Marka + Description            |
+| `/l`  | `notes`       | `/kesifler`    | Kategori + Başlık              |
+| `/a`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Yazar     |
+| `/v`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Konuşmacı |
+| `/b`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Yazar     |
 
 ---
 
@@ -180,25 +229,32 @@ Eski komutlar hala çalışır (backward compatibility):
 1. **Boşluk önemli** - `/k zero` ✅ `/kzero` ❌
 2. **Küçük harf OK** - Büyük/küçük harf önemli değil
 3. **URL otomatik** - Direkt URL gönder, otomatik `/l` olarak algılanır
-4. **Çoklu not** - Video/kitap notları numaralı liste ile eklenebilir
-5. **Description otomatik** - Cache komutları için AI 3-4 satır Türkçe açıklama üretir
+4. **"-" = Kaynak** - Tire işaretinden sonra gelen metin kaynak/yazar olarak algılanır
+5. **"..." = Ayrı notlar** - Tırnak içindeki her metin ayrı bir not olarak kaydedilir
+6. **Yan yana notlar** - `"Not 1" "Not 2" "Not 3"` şeklinde yan yana yazılabilir
+7. **Description otomatik** - Cache komutları için AI 3-4 satır Türkçe açıklama üretir
 
 ---
 
 ## ⚠️ Yaygın Hatalar
 
 ### "Bot yanıt vermiyor"
+
 **Çözüm:**
+
 ```bash
 curl https://mehmettemel.com/api/telegram/webhook
 ```
+
 `"version": "2.0.1"` görmeli.
 
 ### "Cache komutu keşiflere gidiyor"
+
 **Neden:** parseMessage() hatası
 **Çözüm:** Vercel logs kontrol et, `/k` → `cache-kitap` parse olmalı
 
 ### "AI yazar/description bulmuyor"
+
 **Neden:** Gemini API hatası
 **Çözüm:** Fallback çalışır, null olarak kaydedilir
 
@@ -207,16 +263,19 @@ curl https://mehmettemel.com/api/telegram/webhook
 ## 🐛 Debug
 
 ### Vercel Logs
+
 ```bash
 vercel logs --follow
 ```
 
 ### Test Komutu
+
 ```bash
 /k zero to one
 ```
 
 **Beklenen log:**
+
 ```
 [parseMessage] Matched: /k → cache-kitap
 [AI Cache] Enriched: { name: "Zero to One", author: "Peter Thiel", description: "..." }
@@ -225,5 +284,5 @@ vercel logs --follow
 
 ---
 
-**Versiyon:** v2.0.1
+**Versiyon:** v2.1.0
 **Son Güncelleme:** 16 Ocak 2026

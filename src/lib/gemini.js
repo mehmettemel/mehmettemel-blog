@@ -152,38 +152,48 @@ KATEGORİ SEÇİMİ (3 ana kategori):
 
 /**
  * Handle quote/note categorization with Gemini AI
+ * Supports multiple quotes with "-" for source
  * @param {string} text - Note text
- * @returns {Promise<Object>} Categorized note data
+ * @returns {Promise<Object|Array>} Categorized note data (single object or array)
  */
 export async function handleNote(text) {
-  const prompt = `Aşağıdaki notu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
+  const prompt = `Aşağıdaki alıntıyı/notu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "text": "Notun kendisi (tırnak işaretlerini koruyarak)",
+  "notes": ["Alıntı 1", "Alıntı 2", "Alıntı 3"],
   "author": "Varsa yazar adı, yoksa null",
-  "source": "Varsa kaynak (kitap adı, makale başlığı, konuşma ismi vs.), yoksa null",
+  "source": "Varsa kaynak (kitap adı, konuşma, makale vs.), yoksa null",
   "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı"
 }
 
 ${text}
 
-KAYNAK TESPİTİ:
-- "Kaynak: ..." ifadesi varsa kaynağı çıkar
-- "- Kitap Adı" gibi ifadeler varsa kaynak olarak kullan
-- "(Kitap/Konuşma/Makale adı)" şeklinde parantez içinde bilgi varsa kaynağı çıkar
-- Yazar adı ile kaynak ayrı tutulmalı (örn: Yazar: Steve Jobs, Kaynak: Stanford Konuşması)
-- Kaynak yoksa null döndür
+PARSE KURALLARI:
+1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
+2. Yan yana yazılan farklı cümleler/notlar ayrı ayrı parse edilmeli
+3. "-" işaretinden sonra gelen metin KAYNAK'tır (source), alıntı DEĞİLDİR
+   Örnek: "Hayat kısa" "Yarın önemli" - Steve Jobs Stanford Konuşması
+   → notes: ["Hayat kısa", "Yarın önemli"], source: "Stanford Konuşması", author: "Steve Jobs"
+4. Virgülle veya boşlukla ayrılmış tırnak içi metinler: "Not 1" "Not 2" "Not 3"
+   → Her biri ayrı bir alıntı olarak notes array'ine eklenmeli
+5. "by", "from", "-" gibi ifadelerden sonra gelen isim author veya source olabilir
+
+KAYNAK TESPİTİ (ÖNCELİK SIRASI):
+1. "- Kaynak adı" formatı → source alanına
+2. "-" sonrası isim + konu varsa → isim author'a, konu source'a
+3. "Yazar adı" tek başına ise → author alanına
+4. Parantez içindeki bilgi → source olabilir
 
 KATEGORİ SEÇİMİ (5 kategori):
 - kisisel: Kişisel gelişim, motivasyon, ilham verici alıntılar, hayat dersleri, başarı, mutluluk
 - saglik: Sağlık tavsiyeleri, fitness, bağışıklık, vitaminler, egzersiz, mental sağlık
 - gida: Yemek tarifleri, beslenme, mutfak ipuçları, gıda bilgisi, diyet
 - seyahat: Gezi, tatil, keşif, macera, yer önerileri, seyahat ipuçları
-- genel: Yukarıdaki kategorilere uymayan diğer tüm konular (teknoloji, yazılım, tasarım, bilim, kültür, vs.)
+- genel: Yukarıdaki kategorilere uymayan diğer tüm konular
 
 ÖNEMLI:
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma.
-- text alanında tırnak işaretlerini koruyarak düzgün escape et.
-- Kategori seçiminde en spesifik kategoriyi tercih et (örn: sağlık konusu ise "genel" yerine "saglik")`
+- notes bir ARRAY olmalı, her alıntı ayrı bir string
+- Tek alıntı varsa bile array olarak döndür: ["Tek alıntı"]
+- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma`
 
   const aiResponse = await callGemini(prompt)
 
@@ -206,47 +216,74 @@ KATEGORİ SEÇİMİ (5 kategori):
     console.error('Failed to parse Gemini response as JSON:', cleanResponse)
     // Fallback: use original text as-is with default category
     noteData = {
-      text: text,
+      notes: [text],
       author: null,
       source: null,
       category: 'genel',
     }
   }
 
-  return {
-    type: 'quote',
-    category: noteData.category,
-    title: null,
-    text: noteData.text,
-    url: null,
-    author: noteData.author,
-    source: noteData.source,
+  // Ensure notes is an array
+  let notesArray = noteData?.notes
+  if (!Array.isArray(notesArray) || notesArray.length === 0) {
+    if (noteData?.text) {
+      notesArray = [noteData.text]
+    } else {
+      notesArray = [text]
+    }
   }
+
+  // Filter out empty notes
+  notesArray = notesArray.filter((note) => note && note.trim().length > 0)
+
+  if (notesArray.length === 0) {
+    notesArray = [text]
+  }
+
+  // Return array of note objects
+  return notesArray.map((noteText) => ({
+    type: 'quote',
+    category: noteData?.category || 'genel',
+    title: null,
+    text: noteText.trim(),
+    url: null,
+    author: noteData?.author || null,
+    source: noteData?.source || null,
+  }))
 }
 
 /**
  * Handle video note categorization with Gemini AI
+ * Supports multiple notes with "-" for source
  * @param {string} text - Video note text
- * @returns {Promise<Object>} Categorized video note data
+ * @returns {Promise<Array>} Categorized video note data array
  */
 export async function handleVideo(text) {
   const prompt = `Aşağıdaki video notunu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
   "notes": ["Alıntı 1", "Alıntı 2", "Alıntı 3"],
   "author": "Konuşmacı veya içerik üreticisi adı (örn: Jensen Huang, Lex Fridman)",
-  "source": "Video başlığı veya konu (örn: AI Bubble Interview)",
+  "source": "Video başlığı veya konu (örn: AI Bubble Interview, Huberman Lab)",
   "category": "youtube/documentary/course/podcast kategorilerinden en uygun olanı",
   "url": "Video URL'i varsa, yoksa null"
 }
 
- ${text}
+${text}
 
 PARSE KURALLARI:
 1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
-2. Satır başındaki her farklı cümle/paragraf ayrı bir not olabilir
-3. İsimler (Jensen Huang, Elon Musk vs.) author alanına git
-4. "on ...", "about ...", "hakkında" gibi ifadeler source/konu olarak çıkarılmalı
-5. Her alıntıyı notes array'inde AYRI bir eleman olarak döndür
+2. Yan yana yazılan farklı notlar ayrı ayrı parse edilmeli
+   Örnek: "Not 1" "Not 2" "Not 3" → notes: ["Not 1", "Not 2", "Not 3"]
+3. "-" işaretinden sonra gelen metin KAYNAK (source) veya KONUŞMACI (author)'dır, NOT DEĞİLDİR
+   Örnek: "AI önemli" "Gelecek parlak" - Jensen Huang AI Interview
+   → notes: ["AI önemli", "Gelecek parlak"], author: "Jensen Huang", source: "AI Interview"
+4. İsimler (Jensen Huang, Elon Musk, Huberman vs.) author alanına gitmeli
+5. Konu/video başlığı (AI Bubble, Sleep Toolkit, Interview) source alanına gitmeli
+
+KAYNAK TESPİTİ (ÖNCELİK SIRASI):
+1. "-" sonrası isim + konu varsa → isim author'a, konu source'a
+2. Sadece isim varsa → author alanına
+3. Kanal/program adı (Huberman Lab, Lex Fridman Podcast) → source alanına
 
 KATEGORİ SEÇİMİ (4 kategori):
 - youtube: YouTube videoları, röportajlar, vlogs
