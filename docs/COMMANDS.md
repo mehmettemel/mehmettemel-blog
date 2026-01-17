@@ -80,21 +80,26 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 /a Tutarlılık başarının anahtarıdır
 ```
 
-**Tek alıntı + kaynak (- ile):**
+**Uzun alıntı + kaynak (- ile):**
 
 ```bash
-/a The dose makes the poison - Paracelsus
+/a İnsanlar reformcu veya vizyoner olmanızı değil, onların "oyununa" uymanızı isterler.
+
+Eğer bir şeyi değiştirmek istiyorsanız, mevcut kesişim noktasını bulup, onu yavaşça kaydırmanız gerekir.
+
+Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarlarına" bak.
+
+- Professor Jiang
 ```
 
-→ `notes: ["The dose makes the poison"], author: "Paracelsus"`
+→ Tüm metin **tek bir alıntı** olarak kaydedilir
+→ `author: "Professor Jiang"`
 
-**Çoklu alıntı (tırnak içi):**
+**Önemli:**
 
-```bash
-/a "Hayat kısa" "Yarın önemli" - Steve Jobs Stanford Konuşması
-```
-
-→ `notes: ["Hayat kısa", "Yarın önemli"], author: "Steve Jobs", source: "Stanford Konuşması"`
+- Tüm metin olduğu gibi tek not olarak kaydedilir
+- Metin parçalanmaz, orijinal format korunur
+- "-" işaretinden sonraki metin yazar/kaynak olarak algılanır
 
 **AI bulur:** Kategori (kisisel/saglik/gida/seyahat/genel), yazar, kaynak
 
@@ -229,9 +234,9 @@ Eski komutlar hala çalışır (backward compatibility):
 1. **Boşluk önemli** - `/k zero` ✅ `/kzero` ❌
 2. **Küçük harf OK** - Büyük/küçük harf önemli değil
 3. **URL otomatik** - Direkt URL gönder, otomatik `/l` olarak algılanır
-4. **"-" = Kaynak** - Tire işaretinden sonra gelen metin kaynak/yazar olarak algılanır
-5. **"..." = Ayrı notlar** - Tırnak içindeki her metin ayrı bir not olarak kaydedilir
-6. **Yan yana notlar** - `"Not 1" "Not 2" "Not 3"` şeklinde yan yana yazılabilir
+4. **"-" = Kaynak** - Alıntılarda tire işaretinden sonra gelen metin yazar/kaynak olarak algılanır
+5. **Alıntılar TEK not** - Tüm metin olduğu gibi tek alıntı olarak kaydedilir (parçalanmaz)
+6. **Video/Kitap çoklu** - `/v` ve `/b` komutlarında `"..."` tırnak içi metinler ayrı notlar olarak kaydedilir
 7. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
 
 ---

@@ -152,36 +152,41 @@ KATEGORİ SEÇİMİ (3 ana kategori):
 
 /**
  * Handle quote/note categorization with Gemini AI
- * Supports multiple quotes with "-" for source
+ * Saves the ENTIRE text as ONE note (no splitting)
+ * Only extracts author, source and category
  * @param {string} text - Note text
- * @returns {Promise<Object|Array>} Categorized note data (single object or array)
+ * @returns {Promise<Object>} Categorized note data (single object)
  */
 export async function handleNote(text) {
+  // Separate the main text from the author/source part
+  // If there's a "-" at the end, that's the author/source
+  // IMPORTANT: Preserve internal line breaks and whitespace!
+  let mainText = text
+  let authorHint = null
+
+  // Check if text ends with "- Author Name" pattern (on last line)
+  // Match: everything before the last "- Something" at the end
+  const dashMatch = text.match(/^([\s\S]+?)\n?\s*-\s*([^\n-]+)$/)
+  if (dashMatch) {
+    // Keep original whitespace/line breaks, only trim the very edges
+    mainText = dashMatch[1].replace(/^\s+|\s+$/g, '')
+    authorHint = dashMatch[2].trim()
+  } else {
+    // No author pattern found, just trim edges but keep internal formatting
+    mainText = text.replace(/^\s+|\s+$/g, '')
+  }
+
   const prompt = `Aşağıdaki alıntıyı/notu analiz et ve JSON formatında şu bilgileri döndür (sadece JSON döndür, markdown kod bloğu kullanma):
 {
-  "notes": ["Alıntı 1", "Alıntı 2", "Alıntı 3"],
   "author": "Varsa yazar adı, yoksa null",
   "source": "Varsa kaynak (kitap adı, konuşma, makale vs.), yoksa null",
   "category": "kisisel/saglik/gida/seyahat/genel kategorilerinden en uygun olanı"
 }
 
-${text}
+${authorHint ? `Yazar/Kaynak ipucu: ${authorHint}` : ''}
 
-PARSE KURALLARI:
-1. Tırnak içindeki her metin ("...") AYRI BİR ALINTIDIR - notes array'ine ayrı ayrı ekle
-2. Yan yana yazılan farklı cümleler/notlar ayrı ayrı parse edilmeli
-3. "-" işaretinden sonra gelen metin KAYNAK'tır (source), alıntı DEĞİLDİR
-   Örnek: "Hayat kısa" "Yarın önemli" - Steve Jobs Stanford Konuşması
-   → notes: ["Hayat kısa", "Yarın önemli"], source: "Stanford Konuşması", author: "Steve Jobs"
-4. Virgülle veya boşlukla ayrılmış tırnak içi metinler: "Not 1" "Not 2" "Not 3"
-   → Her biri ayrı bir alıntı olarak notes array'ine eklenmeli
-5. "by", "from", "-" gibi ifadelerden sonra gelen isim author veya source olabilir
-
-KAYNAK TESPİTİ (ÖNCELİK SIRASI):
-1. "- Kaynak adı" formatı → source alanına
-2. "-" sonrası isim + konu varsa → isim author'a, konu source'a
-3. "Yazar adı" tek başına ise → author alanına
-4. Parantez içindeki bilgi → source olabilir
+Metin:
+${mainText}
 
 KATEGORİ SEÇİMİ (5 kategori):
 - kisisel: Kişisel gelişim, motivasyon, ilham verici alıntılar, hayat dersleri, başarı, mutluluk
@@ -190,10 +195,12 @@ KATEGORİ SEÇİMİ (5 kategori):
 - seyahat: Gezi, tatil, keşif, macera, yer önerileri, seyahat ipuçları
 - genel: Yukarıdaki kategorilere uymayan diğer tüm konular
 
-ÖNEMLI:
-- notes bir ARRAY olmalı, her alıntı ayrı bir string
-- Tek alıntı varsa bile array olarak döndür: ["Tek alıntı"]
-- Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma`
+KAYNAK TESPİTİ:
+- İsim varsa → author alanına (örn: "Professor Jiang", "Steve Jobs")
+- Kaynak varsa → source alanına (örn: "Stanford Konuşması", "Atomic Habits")
+- İkisi birlikte varsa ayrı ayrı doldur
+
+ÖNEMLI: Sadece düz JSON döndür, \`\`\`json gibi markdown formatı kullanma`
 
   const aiResponse = await callGemini(prompt)
 
@@ -216,40 +223,23 @@ KATEGORİ SEÇİMİ (5 kategori):
     console.error('Failed to parse Gemini response as JSON:', cleanResponse)
     // Fallback: use original text as-is with default category
     noteData = {
-      notes: [text],
-      author: null,
+      author: authorHint || null,
       source: null,
       category: 'genel',
     }
   }
 
-  // Ensure notes is an array
-  let notesArray = noteData?.notes
-  if (!Array.isArray(notesArray) || notesArray.length === 0) {
-    if (noteData?.text) {
-      notesArray = [noteData.text]
-    } else {
-      notesArray = [text]
-    }
-  }
-
-  // Filter out empty notes
-  notesArray = notesArray.filter((note) => note && note.trim().length > 0)
-
-  if (notesArray.length === 0) {
-    notesArray = [text]
-  }
-
-  // Return array of note objects
-  return notesArray.map((noteText) => ({
+  // Return SINGLE note object (not array)
+  // The entire mainText is preserved as one note
+  return {
     type: 'quote',
     category: noteData?.category || 'genel',
     title: null,
-    text: noteText.trim(),
+    text: mainText,
     url: null,
     author: noteData?.author || null,
     source: noteData?.source || null,
-  }))
+  }
 }
 
 /**
