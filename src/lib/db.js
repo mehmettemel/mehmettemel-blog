@@ -217,79 +217,79 @@ export async function getRecentNotes(limit = 10) {
 }
 
 /**
- * Get cache items with optional filtering
- * @param {string} type - Cache type: 'kitap', 'film', or 'urun'
+ * Get list items with optional filtering
+ * @param {string} type - List type: 'kitap', 'film', or 'urun'
  * @param {string} [status='all'] - Filter by status: 'all', 'completed', 'pending', 'liked'
- * @returns {Promise<Array>} Cache items
+ * @returns {Promise<Array>} List items
  */
-export async function getCacheItems(type, status = 'all') {
+export async function getListItems(type, status = 'all') {
   try {
     let items
 
     if (status === 'completed') {
       items = await sql`
-        SELECT * FROM cache_items
-        WHERE cache_type = ${type} AND is_completed = true
+        SELECT * FROM list_items
+        WHERE list_type = ${type} AND is_completed = true
         ORDER BY created_at DESC
       `
     } else if (status === 'pending') {
       items = await sql`
-        SELECT * FROM cache_items
-        WHERE cache_type = ${type} AND is_completed = false
+        SELECT * FROM list_items
+        WHERE list_type = ${type} AND is_completed = false
         ORDER BY created_at DESC
       `
     } else if (status === 'liked') {
       items = await sql`
-        SELECT * FROM cache_items
-        WHERE cache_type = ${type} AND is_liked = true
+        SELECT * FROM list_items
+        WHERE list_type = ${type} AND is_liked = true
         ORDER BY created_at DESC
       `
     } else {
       // 'all' - show pending first, then completed
       items = await sql`
-        SELECT * FROM cache_items
-        WHERE cache_type = ${type}
+        SELECT * FROM list_items
+        WHERE list_type = ${type}
         ORDER BY is_completed ASC, created_at DESC
       `
     }
 
     return items
   } catch (error) {
-    console.error('Database error in getCacheItems:', error)
-    throw new Error(`Failed to get cache items: ${error.message}`)
+    console.error('Database error in getListItems:', error)
+    throw new Error(`Failed to get list items: ${error.message}`)
   }
 }
 
 /**
- * Create a new cache item
- * @param {Object} data - Cache item data
+ * Create a new list item
+ * @param {Object} data - List item data
  * @param {string} data.name - Item name
- * @param {string} data.cache_type - Type: 'kitap', 'film', or 'urun'
+ * @param {string} data.list_type - Type: 'kitap', 'film', or 'urun'
  * @param {string} data.author - Author/Director/Brand name (optional)
  * @param {string} data.description - AI-generated description (optional)
- * @returns {Promise<Object>} Created cache item
+ * @returns {Promise<Object>} Created list item
  */
-export async function createCacheItem(data) {
+export async function createListItem(data) {
   try {
     const result = await sql`
-      INSERT INTO cache_items (name, cache_type, author, description)
-      VALUES (${data.name}, ${data.cache_type}, ${data.author || null}, ${data.description || null})
+      INSERT INTO list_items (name, list_type, author, description)
+      VALUES (${data.name}, ${data.list_type}, ${data.author || null}, ${data.description || null})
       RETURNING *
     `
     return result[0]
   } catch (error) {
-    console.error('Database error in createCacheItem:', error)
-    throw new Error(`Failed to create cache item: ${error.message}`)
+    console.error('Database error in createListItem:', error)
+    throw new Error(`Failed to create list item: ${error.message}`)
   }
 }
 
 /**
- * Toggle cache item checkbox (completed or liked)
- * @param {number} id - Cache item ID
+ * Toggle list item checkbox (completed or liked)
+ * @param {number} id - List item ID
  * @param {string} field - Field to toggle: 'is_completed' or 'is_liked'
- * @returns {Promise<Object>} Updated cache item
+ * @returns {Promise<Object>} Updated list item
  */
-export async function toggleCacheCheckbox(id, field) {
+export async function toggleListCheckbox(id, field) {
   try {
     // Validate field
     if (field !== 'is_completed' && field !== 'is_liked') {
@@ -298,11 +298,11 @@ export async function toggleCacheCheckbox(id, field) {
 
     // Get current item state
     const current = await sql`
-      SELECT * FROM cache_items WHERE id = ${id}
+      SELECT * FROM list_items WHERE id = ${id}
     `
 
     if (current.length === 0) {
-      throw new Error('Cache item not found')
+      throw new Error('List item not found')
     }
 
     const item = current[0]
@@ -312,7 +312,7 @@ export async function toggleCacheCheckbox(id, field) {
     if (field === 'is_completed' && !newValue) {
       // If setting completed to false, also set liked to false
       const result = await sql`
-        UPDATE cache_items
+        UPDATE list_items
         SET is_completed = false, is_liked = false, updated_at = NOW()
         WHERE id = ${id}
         RETURNING *
@@ -330,14 +330,14 @@ export async function toggleCacheCheckbox(id, field) {
     let result
     if (field === 'is_completed') {
       result = await sql`
-        UPDATE cache_items
+        UPDATE list_items
         SET is_completed = ${newValue}, updated_at = NOW()
         WHERE id = ${id}
         RETURNING *
       `
     } else if (field === 'is_liked') {
       result = await sql`
-        UPDATE cache_items
+        UPDATE list_items
         SET is_liked = ${newValue}, updated_at = NOW()
         WHERE id = ${id}
         RETURNING *
@@ -348,29 +348,29 @@ export async function toggleCacheCheckbox(id, field) {
 
     return result[0]
   } catch (error) {
-    console.error('Database error in toggleCacheCheckbox:', error)
+    console.error('Database error in toggleListCheckbox:', error)
     throw new Error(`Failed to toggle checkbox: ${error.message}`)
   }
 }
 
 /**
- * Get cache statistics
+ * Get list statistics
  * @returns {Promise<Object>} Statistics by type
  */
-export async function getCacheStats() {
+export async function getListStats() {
   try {
     const stats = await sql`
       SELECT
-        cache_type,
+        list_type,
         COUNT(*) as total,
         SUM(CASE WHEN is_completed THEN 1 ELSE 0 END) as completed,
         SUM(CASE WHEN is_liked THEN 1 ELSE 0 END) as liked
-      FROM cache_items
-      GROUP BY cache_type
+      FROM list_items
+      GROUP BY list_type
     `
 
     return stats.reduce((acc, row) => {
-      acc[row.cache_type] = {
+      acc[row.list_type] = {
         total: parseInt(row.total),
         completed: parseInt(row.completed),
         liked: parseInt(row.liked),
@@ -378,7 +378,7 @@ export async function getCacheStats() {
       return acc
     }, {})
   } catch (error) {
-    console.error('Database error in getCacheStats:', error)
-    throw new Error(`Failed to get cache stats: ${error.message}`)
+    console.error('Database error in getListStats:', error)
+    throw new Error(`Failed to get list stats: ${error.message}`)
   }
 }

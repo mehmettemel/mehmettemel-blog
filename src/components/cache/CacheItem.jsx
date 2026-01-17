@@ -23,7 +23,7 @@ export function CacheItem({ item, onUpdate }) {
     setIsUpdating(true)
 
     try {
-      const response = await fetch(`/api/cache/${item.id}/toggle`, {
+      const response = await fetch(`/api/listeler/${item.id}/toggle`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ field }),
@@ -70,44 +70,33 @@ export function CacheItem({ item, onUpdate }) {
 
   return (
     <div
-      className={`
-        group relative flex items-center gap-2 sm:gap-3
-        rounded-lg border
-        bg-card text-card-foreground
-        p-3 sm:p-4
-        transition-all duration-200
-        ${isCompleted
+      className={`group relative flex items-center gap-2 rounded-lg border bg-card p-3 text-card-foreground transition-all duration-200 sm:gap-3 sm:p-4 ${
+        isCompleted
           ? 'border-border/40 bg-muted/30 dark:bg-muted/20'
           : 'border-border/60 hover:border-border hover:shadow-sm dark:border-border/40 dark:hover:border-border/60'
-        }
-        ${isUpdating ? 'pointer-events-none opacity-50' : ''}
-      `}
+      } ${isUpdating ? 'pointer-events-none opacity-50' : ''} `}
     >
       {/* Completed Checkbox - Fixed width container */}
       <div
         onClick={() => !isUpdating && handleCompletedChange(!isCompleted)}
-        className="flex items-center justify-center shrink-0 w-5 h-5 cursor-pointer"
+        className="flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center"
       >
         <Checkbox
           checked={isCompleted}
           disabled={isUpdating}
-          className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+          className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
         />
       </div>
 
       {/* Item Name and Author - Flexible width */}
-      <div className="flex-1 min-w-0 py-0.5">
+      <div className="min-w-0 flex-1 py-0.5">
         <div className="flex items-start gap-1.5">
           <p
-            className={`
-              flex-1 text-sm sm:text-base font-medium
-              transition-all duration-200
-              break-words
-              ${isCompleted
-                ? 'line-through text-muted-foreground dark:text-muted-foreground/80'
+            className={`flex-1 text-sm font-medium break-words transition-all duration-200 sm:text-base ${
+              isCompleted
+                ? 'text-muted-foreground line-through dark:text-muted-foreground/80'
                 : 'text-foreground dark:text-foreground'
-              }
-            `}
+            } `}
           >
             {item.name}
           </p>
@@ -116,12 +105,16 @@ export function CacheItem({ item, onUpdate }) {
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button className="shrink-0 mt-0.5 text-muted-foreground/60 hover:text-muted-foreground dark:text-muted-foreground/40 dark:hover:text-muted-foreground/80 transition-colors">
+                  <button className="mt-0.5 shrink-0 text-muted-foreground/60 transition-colors hover:text-muted-foreground dark:text-muted-foreground/40 dark:hover:text-muted-foreground/80">
                     <Info className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="top" align="start" className="max-w-xs sm:max-w-sm">
-                  <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-wrap">
+                <TooltipContent
+                  side="top"
+                  align="start"
+                  className="max-w-xs sm:max-w-sm"
+                >
+                  <p className="text-xs leading-relaxed whitespace-pre-wrap sm:text-sm">
                     {item.description}
                   </p>
                 </TooltipContent>
@@ -133,15 +126,15 @@ export function CacheItem({ item, onUpdate }) {
           <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground/70 mt-1 break-words cursor-help">
+                <p className="mt-1 cursor-help text-xs break-words text-muted-foreground sm:text-sm dark:text-muted-foreground/70">
                   {item.author}
                 </p>
               </TooltipTrigger>
               <TooltipContent side="bottom" align="start">
                 <p className="font-medium">
-                  {item.cache_type === 'kitap' && 'Yazar: '}
-                  {item.cache_type === 'film' && 'Yönetmen: '}
-                  {item.cache_type === 'urun' && 'Marka: '}
+                  {item.list_type === 'kitap' && 'Yazar: '}
+                  {item.list_type === 'film' && 'Yönetmen: '}
+                  {item.list_type === 'urun' && 'Marka: '}
                   {item.author}
                 </p>
               </TooltipContent>
@@ -152,30 +145,23 @@ export function CacheItem({ item, onUpdate }) {
 
       {/* Liked Button - Fixed width container */}
       <button
-        onClick={() => !isUpdating && isCompleted && handleLikedChange(!isLiked)}
+        onClick={() =>
+          !isUpdating && isCompleted && handleLikedChange(!isLiked)
+        }
         disabled={!isCompleted || isUpdating}
-        className={`
-          flex items-center justify-center shrink-0
-          w-9 h-9 sm:w-10 sm:h-10
-          rounded-full
-          transition-all duration-200
-          ${isCompleted
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-200 sm:h-10 sm:w-10 ${
+          isCompleted
             ? 'cursor-pointer hover:bg-accent/50 dark:hover:bg-accent/30'
             : 'cursor-not-allowed opacity-30'
-          }
-          ${isLiked
+        } ${
+          isLiked
             ? 'text-red-500 dark:text-red-400'
             : 'text-muted-foreground/60 dark:text-muted-foreground/40'
-          }
-        `}
+        } `}
         aria-label={isLiked ? 'Remove from liked' : 'Add to liked'}
       >
         <Heart
-          className={`
-            h-5 w-5 sm:h-5 sm:w-5
-            transition-all duration-200
-            ${isLiked ? 'fill-current scale-110' : 'scale-100'}
-          `}
+          className={`h-5 w-5 transition-all duration-200 sm:h-5 sm:w-5 ${isLiked ? 'scale-110 fill-current' : 'scale-100'} `}
           strokeWidth={2}
         />
       </button>

@@ -1,24 +1,24 @@
 import { Container } from '@/components/Container'
-import { getCacheItems } from '@/lib/db'
+import { getListItems } from '@/lib/db'
 import { CacheList } from '@/components/cache/CacheList'
-import { getCacheCategory } from '@/data/cache'
+import { getListCategory } from '@/data/list'
 
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Film & Dizi - Cache',
+  title: 'Film & Dizi - Listeler',
   description: 'İzlemek istediğim ve izlediğim filmler ve diziler',
 }
 
-export default async function FilmCachePage() {
-  const category = getCacheCategory('film')
+export default async function FilmListePage() {
+  const category = getListCategory('film')
 
-  // Fetch cache items
+  // Fetch list items
   let items = []
   try {
-    items = await getCacheItems('film')
+    items = await getListItems('film')
   } catch (error) {
-    console.error('Failed to fetch cache items:', error)
+    console.error('Failed to fetch list items:', error)
   }
 
   return (

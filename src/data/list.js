@@ -1,9 +1,9 @@
 /**
- * Cache Categories Configuration
- * Defines the categories available in the cache system
+ * List Categories Configuration
+ * Defines the categories available in the list system
  */
 
-export const cacheCategories = [
+export const listCategories = [
   {
     id: 'kitap',
     name: 'Kitap',
@@ -32,6 +32,6 @@ export const cacheCategories = [
  * @param {string} id - Category ID
  * @returns {Object|null} Category config or null
  */
-export function getCacheCategory(id) {
-  return cacheCategories.find((cat) => cat.id === id) || null
+export function getListCategory(id) {
+  return listCategories.find((cat) => cat.id === id) || null
 }

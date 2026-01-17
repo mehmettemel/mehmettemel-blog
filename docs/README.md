@@ -1,10 +1,11 @@
 # 📚 Dokümantasyon
 
-Kişisel web sitesi - Telegram bot entegrasyonu, cache sistemi, ve keşifler notu sistemi.
+Kişisel web sitesi - Telegram bot entegrasyonu, listeler sistemi, ve keşifler notu sistemi.
 
 ## Hızlı Başlangıç
 
 ### Telegram Botunu Kullan
+
 **[COMMANDS.md](./COMMANDS.md)** - Tüm Telegram komutları ve örnekler
 
 ```bash
@@ -15,9 +16,10 @@ Kişisel web sitesi - Telegram bot entegrasyonu, cache sistemi, ve keşifler not
 ```
 
 ### Sistem Detayları
+
 **[SYSTEM.md](./SYSTEM.md)** - Sistem mimarisi, database, API'ler
 
-- Cache sistemi nasıl çalışır
+- Listeler sistemi nasıl çalışır
 - Telegram webhook kurulumu
 - Database şemaları
 - AI kategorilendirme
@@ -28,18 +30,21 @@ Kişisel web sitesi - Telegram bot entegrasyonu, cache sistemi, ve keşifler not
 
 ### 3 Ana Modül
 
-**1. Cache Sistemi** (`/cache/*`)
+**1. Listeler Sistemi** (`/listeler/*`)
+
 - Kitap, film/dizi, ürün okuma/izleme listesi
 - Checkbox ile tamamlama ve beğeni takibi
 - AI ile otomatik yazar/yönetmen/marka bulma
 - Description generation
 
 **2. Keşifler** (`/kesifler`)
+
 - Link, alıntı, video, kitap notları
 - AI ile otomatik kategorizasyon
 - Çoklu not desteği (video/kitap)
 
 **3. Telegram Bot**
+
 - Hızlı not ekleme
 - 8 kısa komut: `/k /f /u /l /a /v /b /help`
 - AI ile zenginleştirme
@@ -68,16 +73,16 @@ docs/
 
 src/
 ├── app/
-│   ├── cache/      # Cache sayfaları
+│   ├── listeler/   # Listeler sayfaları
 │   ├── kesifler/   # Keşifler sayfası
 │   └── api/
-│       ├── telegram/webhook/   # Telegram webhook
-│       └── cache/[id]/toggle/  # Checkbox API
+│       ├── telegram/webhook/    # Telegram webhook
+│       └── listeler/[id]/toggle/  # Checkbox API
 ├── lib/
 │   ├── db.js       # Database fonksiyonları
 │   └── gemini.js   # AI kategorilendirme
 └── components/
-    └── cache/      # Cache UI bileşenleri
+    └── cache/      # Liste UI bileşenleri
 
 scripts/
 ├── create-cache-table.sql
@@ -102,5 +107,5 @@ node scripts/run-migration.js
 
 ---
 
-**Versiyon:** v2.0.1
-**Son Güncelleme:** 16 Ocak 2026
+**Versiyon:** v2.2.0
+**Son Güncelleme:** 17 Ocak 2026

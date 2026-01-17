@@ -1,23 +1,23 @@
 import Link from 'next/link'
 import { Container } from '@/components/Container'
-import { getCacheStats } from '@/lib/db'
-import { cacheCategories } from '@/data/cache'
+import { getListStats } from '@/lib/db'
+import { listCategories } from '@/data/list'
 
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Cache - Takip Listelerim',
+  title: 'Listeler - Takip Listelerim',
   description:
     'Okumak/izlemek/almak istediğim ve tamamladığım kitaplar, filmler, diziler ve ürünler.',
 }
 
-export default async function CachePage() {
+export default async function ListelerPage() {
   // Get stats for all categories
   let stats = {}
   try {
-    stats = await getCacheStats()
+    stats = await getListStats()
   } catch (error) {
-    console.error('Failed to fetch cache stats:', error)
+    console.error('Failed to fetch list stats:', error)
   }
 
   return (
@@ -26,7 +26,7 @@ export default async function CachePage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="mb-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            📋 Cache
+            📋 Listeler
           </h1>
           <p className="text-base text-muted-foreground sm:text-lg">
             Takip etmek istediğim kitaplar, filmler ve ürünler
@@ -35,7 +35,7 @@ export default async function CachePage() {
 
         {/* Category Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cacheCategories.map((category) => {
+          {listCategories.map((category) => {
             const categoryStats = stats[category.id] || {
               total: 0,
               completed: 0,
@@ -45,7 +45,7 @@ export default async function CachePage() {
             return (
               <Link
                 key={category.id}
-                href={`/cache/${category.id}`}
+                href={`/listeler/${category.id}`}
                 className="group flex flex-col rounded-xl border border-border bg-card p-6 transition-all duration-200 hover:border-primary/40 hover:bg-secondary/20 hover:shadow-lg"
               >
                 {/* Icon & Name */}

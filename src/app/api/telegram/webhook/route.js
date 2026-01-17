@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
-import { createNote, getNotesStats, createCacheItem } from '@/lib/db'
+import { createNote, getNotesStats, createListItem } from '@/lib/db'
 import {
   callGemini,
   handleLink,
   handleNote,
   handleVideo,
   handleBook,
-  handleCacheItem,
-  handleCacheItemWithAI,
+  handleListItem,
+  handleListItemWithAI,
   isURL,
 } from '@/lib/gemini'
 
@@ -46,7 +46,7 @@ async function sendTelegramMessage(chatId, text) {
     console.log('Sending Telegram message:', {
       chat_id: chatId,
       text_length: text?.length || 0,
-      text_preview: (text || '').substring(0, 100) + '...'
+      text_preview: (text || '').substring(0, 100) + '...',
     })
 
     const response = await fetch(
@@ -61,8 +61,13 @@ async function sendTelegramMessage(chatId, text) {
     const responseData = await response.json()
 
     if (!response.ok) {
-      console.error('Telegram API error response:', JSON.stringify(responseData, null, 2))
-      throw new Error(`Telegram API error: ${responseData.description || 'Unknown error'}`)
+      console.error(
+        'Telegram API error response:',
+        JSON.stringify(responseData, null, 2),
+      )
+      throw new Error(
+        `Telegram API error: ${responseData.description || 'Unknown error'}`,
+      )
     }
 
     console.log('Telegram message sent successfully')
@@ -90,24 +95,24 @@ function parseMessage(text) {
   // CLEAN COMMAND STRUCTURE - NO CONFLICTS
   // Commands are organized by purpose, not length
 
-  // CACHE COMMANDS (Okuma/İzleme/Alışveriş Listesi)
-  // These go to cache_items table
+  // LIST COMMANDS (Okuma/İzleme/Alışveriş Listesi)
+  // These go to list_items table
   if (text.startsWith('/k ') || text === '/k') {
     const content = text.slice(2).trim()
-    console.log('[parseMessage] ✅ MATCHED: /k → cache-kitap')
+    console.log('[parseMessage] ✅ MATCHED: /k → list-kitap')
     console.log('[parseMessage] Content:', content)
     console.log('==== PARSE MESSAGE END ====')
-    return { type: 'cache-kitap', content }
+    return { type: 'list-kitap', content }
   }
   if (text.startsWith('/f ') || text === '/f') {
     const content = text.slice(2).trim()
-    console.log('[parseMessage] Matched: /f → cache-film')
-    return { type: 'cache-film', content }
+    console.log('[parseMessage] Matched: /f → list-film')
+    return { type: 'list-film', content }
   }
   if (text.startsWith('/u ') || text === '/u') {
     const content = text.slice(2).trim()
-    console.log('[parseMessage] Matched: /u → cache-urun')
-    return { type: 'cache-urun', content }
+    console.log('[parseMessage] Matched: /u → list-urun')
+    return { type: 'list-urun', content }
   }
 
   // KEŞİFLER COMMANDS (Notlar/İçerik)
@@ -157,18 +162,18 @@ function parseMessage(text) {
   }
   if (text.startsWith('/cache-kitap ')) {
     const content = text.slice(12).trim()
-    console.log('[parseMessage] Matched: /cache-kitap → cache-kitap')
-    return { type: 'cache-kitap', content }
+    console.log('[parseMessage] Matched: /cache-kitap → list-kitap')
+    return { type: 'list-kitap', content }
   }
   if (text.startsWith('/cache-film ')) {
     const content = text.slice(11).trim()
-    console.log('[parseMessage] Matched: /cache-film → cache-film')
-    return { type: 'cache-film', content }
+    console.log('[parseMessage] Matched: /cache-film → list-film')
+    return { type: 'list-film', content }
   }
   if (text.startsWith('/cache-urun ')) {
     const content = text.slice(11).trim()
-    console.log('[parseMessage] Matched: /cache-urun → cache-urun')
-    return { type: 'cache-urun', content }
+    console.log('[parseMessage] Matched: /cache-urun → list-urun')
+    return { type: 'list-urun', content }
   }
 
   // Auto-detect URL as link
@@ -204,13 +209,13 @@ export async function POST(request) {
     const userId = message.from.id
     const text = message.text
 
-    console.log('=' .repeat(80))
+    console.log('='.repeat(80))
     console.log('[TELEGRAM WEBHOOK] New message received')
     console.log('[TELEGRAM WEBHOOK] User ID:', userId)
     console.log('[TELEGRAM WEBHOOK] Full text:', text)
     console.log('[TELEGRAM WEBHOOK] Text length:', text.length)
     console.log('[TELEGRAM WEBHOOK] First char code:', text.charCodeAt(0))
-    console.log('=' .repeat(80))
+    console.log('='.repeat(80))
 
     // Check user authorization
     if (ALLOWED_USER_IDS.length > 0 && !ALLOWED_USER_IDS.includes(userId)) {
@@ -308,37 +313,45 @@ AI otomatik yazar/yönetmen/marka bulur:
       console.log('✅ [TELEGRAM] Command recognized:', parsed.type)
     }
 
-    // Handle cache items with AI enrichment
-    if (parsed.type === 'cache-kitap' || parsed.type === 'cache-film' || parsed.type === 'cache-urun') {
-      console.log('🎯 [CACHE] Cache command detected!')
-      console.log('🎯 [CACHE] Type:', parsed.type)
-      console.log('🎯 [CACHE] Content:', parsed.content)
+    // Handle list items with AI enrichment
+    if (
+      parsed.type === 'list-kitap' ||
+      parsed.type === 'list-film' ||
+      parsed.type === 'list-urun'
+    ) {
+      console.log('🎯 [LIST] List command detected!')
+      console.log('🎯 [LIST] Type:', parsed.type)
+      console.log('🎯 [LIST] Content:', parsed.content)
 
-      const cacheType = parsed.type.replace('cache-', '')
+      const listType = parsed.type.replace('list-', '')
 
       try {
-        console.log('🤖 [CACHE] Calling AI to enrich item...')
+        console.log('🤖 [LIST] Calling AI to enrich item...')
         // Use AI to find author/director/brand
-        const cacheData = await handleCacheItemWithAI(cacheType, parsed.content)
-        console.log('🤖 [CACHE] AI result:', cacheData)
+        const listData = await handleListItemWithAI(listType, parsed.content)
+        console.log('🤖 [LIST] AI result:', listData)
 
-        console.log('💾 [CACHE] Saving to database...')
-        const cacheItem = await createCacheItem(cacheData)
-        console.log('💾 [CACHE] Saved successfully! ID:', cacheItem.id)
+        console.log('💾 [LIST] Saving to database...')
+        const listItem = await createListItem(listData)
+        console.log('💾 [LIST] Saved successfully! ID:', listItem.id)
 
-        const emoji = { kitap: '📚', film: '🎬', urun: '🛍️' }[cacheType] || '📋'
-        const categoryName = { kitap: 'Kitap', film: 'Film/Dizi', urun: 'Ürün' }[cacheType] || 'Cache'
+        const emoji = { kitap: '📚', film: '🎬', urun: '🛍️' }[listType] || '📋'
+        const categoryName =
+          { kitap: 'Kitap', film: 'Film/Dizi', urun: 'Ürün' }[listType] ||
+          'Liste'
 
-        const authorText = cacheItem.author ? `\n✍️ ${cacheItem.author}` : ''
-        const descriptionText = cacheItem.description ? `\n\n📖 ${cacheItem.description}` : ''
+        const authorText = listItem.author ? `\n✍️ ${listItem.author}` : ''
+        const descriptionText = listItem.description
+          ? `\n\n📖 ${listItem.description}`
+          : ''
         await sendTelegramMessage(
           chatId,
-          `✅ ${emoji} <b>${categoryName} eklendi!</b>\n\n📝 ${cacheItem.name}${authorText}${descriptionText}\n\nID: ${cacheItem.id}`
+          `✅ ${emoji} <b>${categoryName} eklendi!</b>\n\n📝 ${listItem.name}${authorText}${descriptionText}\n\nID: ${listItem.id}`,
         )
 
-        return NextResponse.json({ ok: true, cacheId: cacheItem.id })
+        return NextResponse.json({ ok: true, listId: listItem.id })
       } catch (error) {
-        throw new Error(`Cache item eklenemedi: ${error.message}`)
+        throw new Error(`Liste item eklenemedi: ${error.message}`)
       }
     }
 
@@ -370,7 +383,10 @@ AI otomatik yazar/yönetmen/marka bulur:
     // Check if multi-note (video/book can return arrays)
     const isMultiNote = Array.isArray(categorizedData)
     console.log('Is multi-note:', isMultiNote)
-    console.log('Categorized data length:', Array.isArray(categorizedData) ? categorizedData.length : 'N/A')
+    console.log(
+      'Categorized data length:',
+      Array.isArray(categorizedData) ? categorizedData.length : 'N/A',
+    )
 
     // Validate array has items
     if (isMultiNote && categorizedData.length === 0) {
@@ -387,7 +403,7 @@ AI otomatik yazar/yönetmen/marka bulur:
         console.log(`Processing note ${i + 1}/${categorizedData.length}:`, {
           hasType: !!noteData?.type,
           hasText: !!noteData?.text,
-          hasCategory: !!noteData?.category
+          hasCategory: !!noteData?.category,
         })
 
         if (!noteData || !noteData.type || !noteData.text) {
@@ -413,21 +429,23 @@ AI otomatik yazar/yönetmen/marka bulur:
       }
 
       // Send success message for multiple notes
-      const emoji = { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[
-        parsed.type
-      ] || '📝'
+      const emoji =
+        { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[parsed.type] ||
+        '📝'
 
-      const firstNote = Array.isArray(categorizedData) && categorizedData.length > 0
-        ? categorizedData[0]
-        : {}
+      const firstNote =
+        Array.isArray(categorizedData) && categorizedData.length > 0
+          ? categorizedData[0]
+          : {}
 
       // Safe array operations
-      const noteIds = Array.isArray(savedNotes) && savedNotes.length > 0
-        ? savedNotes
-            .map((n) => n?.id)
-            .filter((id) => id != null)
-            .join(', ')
-        : 'N/A'
+      const noteIds =
+        Array.isArray(savedNotes) && savedNotes.length > 0
+          ? savedNotes
+              .map((n) => n?.id)
+              .filter((id) => id != null)
+              .join(', ')
+          : 'N/A'
 
       // Escape HTML special characters
       const escapeHtml = (text) => {
@@ -465,14 +483,20 @@ ID: ${noteIds}`
         console.error('Failed to send formatted success message:', msgError)
         // Fallback: send simple message without special formatting
         try {
-          await sendTelegramMessage(chatId, `✅ ${savedNotes.length} not eklendi! ID: ${noteIds}`)
+          await sendTelegramMessage(
+            chatId,
+            `✅ ${savedNotes.length} not eklendi! ID: ${noteIds}`,
+          )
         } catch (fallbackError) {
           console.error('Failed to send fallback message too:', fallbackError)
           // Last resort: send minimal message without any variables
           try {
             await sendTelegramMessage(chatId, '✅ Not eklendi!')
           } catch (minimalError) {
-            console.error('All message attempts failed, but note was saved:', minimalError)
+            console.error(
+              'All message attempts failed, but note was saved:',
+              minimalError,
+            )
             // Don't throw - note was saved successfully
           }
         }
@@ -486,7 +510,11 @@ ID: ${noteIds}`
     }
 
     // Validate single note data
-    if (!categorizedData || !categorizedData.type || !categorizedData.category) {
+    if (
+      !categorizedData ||
+      !categorizedData.type ||
+      !categorizedData.category
+    ) {
       throw new Error('Not formatı hatalı. Lütfen tekrar deneyin.')
     }
 
@@ -496,9 +524,8 @@ ID: ${noteIds}`
     console.log(`Created note #${note.id} (${note.note_type}/${note.category})`)
 
     // Send success message
-    const emoji = { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[
-      parsed.type
-    ] || '📝'
+    const emoji =
+      { link: '🔗', quote: '💭', video: '🎬', book: '📖' }[parsed.type] || '📝'
 
     // Escape HTML special characters
     const escapeHtml = (text) => {
@@ -539,7 +566,10 @@ ID: ${note?.id || 'N/A'}`
         try {
           await sendTelegramMessage(chatId, '✅ Not eklendi!')
         } catch (minimalError) {
-          console.error('All message attempts failed, but note was saved:', minimalError)
+          console.error(
+            'All message attempts failed, but note was saved:',
+            minimalError,
+          )
           // Don't throw - note was saved successfully
         }
       }
@@ -556,7 +586,8 @@ ID: ${note?.id || 'N/A'}`
     if (chatId) {
       try {
         // Get user-friendly error message
-        let userMessage = error?.message || String(error) || 'Bilinmeyen bir hata oluştu.'
+        let userMessage =
+          error?.message || String(error) || 'Bilinmeyen bir hata oluştu.'
 
         // Ensure userMessage is a string
         userMessage = String(userMessage)
@@ -570,10 +601,15 @@ ID: ${note?.id || 'N/A'}`
         let hint = ''
         if (userMessage.includes('parse')) {
           hint = '\n\n💡 İpucu: Mesajınızın formatını kontrol edin.'
-        } else if (userMessage.includes('length') || userMessage.includes('undefined')) {
-          hint = '\n\n💡 İpucu: Not eklerken doğru formatı kullanın. /help ile örneklere bakın.'
+        } else if (
+          userMessage.includes('length') ||
+          userMessage.includes('undefined')
+        ) {
+          hint =
+            '\n\n💡 İpucu: Not eklerken doğru formatı kullanın. /help ile örneklere bakın.'
         } else if (userMessage.includes('Gemini')) {
-          hint = '\n\n💡 İpucu: AI işleme sırasında bir sorun oluştu. Lütfen tekrar deneyin.'
+          hint =
+            '\n\n💡 İpucu: AI işleme sırasında bir sorun oluştu. Lütfen tekrar deneyin.'
         }
 
         const errorMessage = `❌ <b>Hata oluştu</b>
@@ -586,13 +622,16 @@ ${userMessage}${hint}
       } catch (msgError) {
         console.error('Failed to send error message to user:', msgError)
         // Try to send a simple fallback message
-        await sendTelegramMessage(chatId, '❌ Bir hata oluştu. Lütfen tekrar deneyin.')
+        await sendTelegramMessage(
+          chatId,
+          '❌ Bir hata oluştu. Lütfen tekrar deneyin.',
+        )
       }
     }
 
     return NextResponse.json(
       { error: error?.message || 'Unknown error' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

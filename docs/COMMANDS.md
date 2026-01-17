@@ -1,10 +1,10 @@
 # Telegram Bot Komutları
 
-Telegram üzerinden hızlı not ekleme ve cache yönetimi.
+Telegram üzerinden hızlı not ekleme ve liste yönetimi.
 
 ---
 
-## 📚 Cache Komutları
+## 📚 Listeler Komutları
 
 AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 
@@ -19,7 +19,7 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 - Yazar: Peter Thiel
 - Description: Startup ve yenilik üzerine... (3-4 satır Türkçe)
 
-**Gider:** `/cache/kitap`
+**Gider:** `/listeler/kitap`
 
 ---
 
@@ -35,7 +35,7 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 - Yönetmen: Christopher Nolan
 - Description: Film hakkında kısa açıklama... (3-4 satır Türkçe)
 
-**Gider:** `/cache/film`
+**Gider:** `/listeler/film`
 
 ---
 
@@ -51,7 +51,7 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 - Marka: Apple
 - Description: Ürün hakkında kısa açıklama... (3-4 satır Türkçe)
 
-**Gider:** `/cache/urun`
+**Gider:** `/listeler/urun`
 
 ---
 
@@ -195,15 +195,15 @@ AI ile kategorize edilir ve `notes` tablosuna eklenir.
 
 ## 🎯 Komut Karşılaştırma
 
-| Komut | Tablo         | Sayfa          | AI Özelliği                    |
-| ----- | ------------- | -------------- | ------------------------------ |
-| `/k`  | `cache_items` | `/cache/kitap` | Yazar + Description            |
-| `/f`  | `cache_items` | `/cache/film`  | Yönetmen + Description         |
-| `/u`  | `cache_items` | `/cache/urun`  | Marka + Description            |
-| `/l`  | `notes`       | `/kesifler`    | Kategori + Başlık              |
-| `/a`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Yazar     |
-| `/v`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Konuşmacı |
-| `/b`  | `notes`       | `/kesifler`    | Çoklu not + Kaynak + Yazar     |
+| Komut | Tablo        | Sayfa             | AI Özelliği                    |
+| ----- | ------------ | ----------------- | ------------------------------ |
+| `/k`  | `list_items` | `/listeler/kitap` | Yazar + Description            |
+| `/f`  | `list_items` | `/listeler/film`  | Yönetmen + Description         |
+| `/u`  | `list_items` | `/listeler/urun`  | Marka + Description            |
+| `/l`  | `notes`      | `/kesifler`       | Kategori + Başlık              |
+| `/a`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Yazar     |
+| `/v`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Konuşmacı |
+| `/b`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Yazar     |
 
 ---
 
@@ -232,7 +232,7 @@ Eski komutlar hala çalışır (backward compatibility):
 4. **"-" = Kaynak** - Tire işaretinden sonra gelen metin kaynak/yazar olarak algılanır
 5. **"..." = Ayrı notlar** - Tırnak içindeki her metin ayrı bir not olarak kaydedilir
 6. **Yan yana notlar** - `"Not 1" "Not 2" "Not 3"` şeklinde yan yana yazılabilir
-7. **Description otomatik** - Cache komutları için AI 3-4 satır Türkçe açıklama üretir
+7. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
 
 ---
 
@@ -284,5 +284,5 @@ vercel logs --follow
 
 ---
 
-**Versiyon:** v2.1.0
-**Son Güncelleme:** 16 Ocak 2026
+**Versiyon:** v2.2.0
+**Son Güncelleme:** 17 Ocak 2026

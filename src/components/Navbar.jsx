@@ -22,10 +22,10 @@ const kesiflerItems = [
   { href: '/kesifler/kitaplar', label: 'Kitaplar', emoji: '📖' },
 ]
 
-const cacheItems = [
-  { href: '/cache/kitap', label: 'Kitap', emoji: '📚' },
-  { href: '/cache/film', label: 'Film & Dizi', emoji: '🎬' },
-  { href: '/cache/urun', label: 'Ürünler', emoji: '🛍️' },
+const listelerItems = [
+  { href: '/listeler/kitap', label: 'Kitap', emoji: '📚' },
+  { href: '/listeler/film', label: 'Film & Dizi', emoji: '🎬' },
+  { href: '/listeler/urun', label: 'Ürünler', emoji: '🛍️' },
 ]
 
 function NavLink({ href, children }) {
@@ -83,14 +83,14 @@ function DesktopNav() {
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="bg-transparent px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-transparent hover:text-foreground focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-foreground">
-            Cache
+            Listeler
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[200px] gap-1 p-2">
               <li>
                 <NavigationMenuLink asChild>
                   <Link
-                    href="/cache"
+                    href="/listeler"
                     className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold transition-colors hover:bg-secondary"
                   >
                     <span>📋</span>
@@ -98,7 +98,7 @@ function DesktopNav() {
                   </Link>
                 </NavigationMenuLink>
               </li>
-              {cacheItems.map((item) => (
+              {listelerItems.map((item) => (
                 <li key={item.href}>
                   <NavigationMenuLink asChild>
                     <Link
@@ -167,11 +167,11 @@ function MobileNav() {
             </Link>
           ))}
 
-          {/* Cache Section */}
+          {/* Listeler Section */}
           <div className="mt-2 mb-1 px-3 text-xs font-semibold text-muted-foreground/60">
-            Cache
+            Listeler
           </div>
-          {cacheItems.map((item) => (
+          {listelerItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

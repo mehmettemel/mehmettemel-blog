@@ -8,7 +8,7 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
 
 1. [Sistem Mimarisi](#sistem-mimarisi)
 2. [Database Şemaları](#database-şemaları)
-3. [Cache Sistemi](#cache-sistemi)
+3. [Listeler Sistemi](#listeler-sistemi)
 4. [Telegram Entegrasyonu](#telegram-entegrasyonu)
 5. [AI Kategorilendirme](#ai-kategorilendirme)
 6. [API Referansı](#api-referansı)
@@ -29,7 +29,7 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
         │              │              │
         ▼              ▼              ▼
 ┌──────────────┐ ┌──────────┐ ┌──────────────┐
-│   CACHE      │ │ KEŞİFLER │ │    STATS     │
+│  LİSTELER   │ │ KEŞİFLER │ │    STATS     │
 │ (Simple DB)  │ │ (AI+DB)  │ │     (DB)     │
 └──────┬───────┘ └────┬─────┘ └──────┬───────┘
        │              │              │
@@ -44,7 +44,7 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
                       ▼
          ┌─────────────────────────┐
          │   WEB PAGES (ISR 60s)   │
-         │  - /cache/*             │
+         │  - /listeler/*          │
          │  - /kesifler            │
          └─────────────────────────┘
 ```
@@ -52,6 +52,7 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
 ### Veri Akışı
 
 **Cache Ekleme (`/k`, `/f`, `/u`):**
+
 ```
 Telegram → parseMessage() → handleCacheItemWithAI()
   → Gemini API (yazar/yönetmen/marka/description)
@@ -60,6 +61,7 @@ Telegram → parseMessage() → handleCacheItemWithAI()
 ```
 
 **Keşifler Ekleme (`/l`, `/a`, `/v`, `/b`):**
+
 ```
 Telegram → parseMessage() → handleLink/Note/Video/Book()
   → Gemini API (kategori, kaynak)
@@ -71,16 +73,16 @@ Telegram → parseMessage() → handleLink/Note/Video/Book()
 
 ## Database Şemaları
 
-### cache_items
+### list_items
 
 ```sql
-CREATE TABLE cache_items (
+CREATE TABLE list_items (
   id BIGSERIAL PRIMARY KEY,
 
   -- Temel alanlar
   name VARCHAR(500) NOT NULL,
-  cache_type VARCHAR(20) NOT NULL
-    CHECK (cache_type IN ('kitap', 'film', 'urun')),
+  list_type VARCHAR(20) NOT NULL
+    CHECK (list_type IN ('kitap', 'film', 'urun')),
 
   -- AI ile bulunan alanlar
   author VARCHAR(200),              -- Yazar/Yönetmen/Marka
@@ -95,24 +97,24 @@ CREATE TABLE cache_items (
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
   -- İş mantığı: Beğenmek için önce tamamlanmış olmalı
-  CONSTRAINT check_liked_requires_completed
+  CONSTRAINT list_items_liked_requires_completed
     CHECK (is_liked = FALSE OR is_completed = TRUE)
 );
 
 -- İndeksler
-CREATE INDEX idx_cache_type ON cache_items(cache_type);
-CREATE INDEX idx_cache_completed ON cache_items(is_completed);
-CREATE INDEX idx_cache_created_at ON cache_items(created_at DESC);
+CREATE INDEX idx_list_type ON list_items(list_type);
+CREATE INDEX idx_list_completed ON list_items(is_completed);
+CREATE INDEX idx_list_created_at ON list_items(created_at DESC);
 ```
 
 **Önemli Kısıtlamalar:**
+
 - `is_liked = true` → `is_completed` mutlaka `true` olmalı
 - `is_completed` false yapılırsa → `is_liked` otomatik false olur
 
 **Migrations:**
-- `scripts/create-cache-table.sql` - İlk tablo oluşturma
-- `scripts/add-author-to-cache.sql` - Author field ekleme
-- `scripts/add-description-to-cache.sql` - Description field ekleme
+
+- `scripts/rename-cache-to-list.sql` - cache_items → list_items migration
 
 ---
 
@@ -157,11 +159,13 @@ CREATE INDEX idx_notes_type_category ON notes(note_type, category);
 **Kategoriler:**
 
 **Link:**
+
 - `teknik` - Yazılım, programlama, developer tools
 - `icerik` - Blog, makale, tutorial
 - `diger` - Diğer
 
 **Quote:**
+
 - `kisisel` - Kişisel gelişim, motivasyon
 - `saglik` - Sağlık, fitness, mental sağlık
 - `gida` - Yemek, beslenme
@@ -169,12 +173,14 @@ CREATE INDEX idx_notes_type_category ON notes(note_type, category);
 - `genel` - Diğer
 
 **Video:**
+
 - `youtube` - YouTube videoları
 - `documentary` - Belgeseller
 - `course` - Kurslar, eğitimler
 - `podcast` - Podcast'ler
 
 **Book:**
+
 - `science` - Bilim, araştırma
 - `selfhelp` - Kişisel gelişim
 - `biography` - Biyografi
@@ -183,35 +189,38 @@ CREATE INDEX idx_notes_type_category ON notes(note_type, category);
 
 ---
 
-## Cache Sistemi
+## Listeler Sistemi
 
 ### Sayfa Yapısı
 
-- `/cache` - Ana sayfa (3 kategori kartı + istatistikler)
-- `/cache/kitap` - Kitap listesi
-- `/cache/film` - Film/dizi listesi
-- `/cache/urun` - Ürün listesi
+- `/listeler` - Ana sayfa (3 kategori kartı + istatistikler)
+- `/listeler/kitap` - Kitap listesi
+- `/listeler/film` - Film/dizi listesi
+- `/listeler/urun` - Ürün listesi
 
 **ISR:** Her sayfa 60 saniye cache'lenir (`export const revalidate = 60`)
 
 ### Checkbox Mantığı
 
 **Tamamlandı Checkbox:**
+
 - Her zaman tıklanabilir
 - Toggle edilir (true ↔ false)
 - False yapılırsa → `is_liked` otomatik false olur
 
 **Beğendim (Heart) Button:**
+
 - Sadece `is_completed = true` iken aktif
 - `is_completed = false` ise disabled (gri)
 - Toggle edilir (true ↔ false)
 
 **Frontend State Yönetimi:**
+
 ```javascript
 const toggleCheckbox = async (field) => {
-  const response = await fetch(`/api/cache/${item.id}/toggle`, {
+  const response = await fetch(`/api/listeler/${item.id}/toggle`, {
     method: 'PATCH',
-    body: JSON.stringify({ field })
+    body: JSON.stringify({ field }),
   })
 
   const data = await response.json()
@@ -225,6 +234,7 @@ const toggleCheckbox = async (field) => {
 ### Database Fonksiyonları
 
 **getCacheItems(type, status)**
+
 ```javascript
 // Tüm kitapları getir
 await getCacheItems('kitap')
@@ -240,16 +250,18 @@ await getCacheItems('kitap', 'liked')
 ```
 
 **createCacheItem(data)**
+
 ```javascript
 await createCacheItem({
   name: 'Zero to One',
   cache_type: 'kitap',
-  author: 'Peter Thiel',          // AI bulur
-  description: 'Startup ve...'    // AI üretir (3-4 satır Türkçe)
+  author: 'Peter Thiel', // AI bulur
+  description: 'Startup ve...', // AI üretir (3-4 satır Türkçe)
 })
 ```
 
 **toggleCacheCheckbox(id, field)**
+
 ```javascript
 // Tamamlandı toggle
 await toggleCacheCheckbox(123, 'is_completed')
@@ -259,6 +271,7 @@ await toggleCacheCheckbox(123, 'is_liked')
 ```
 
 **getCacheStats()**
+
 ```javascript
 const stats = await getCacheStats()
 // {
@@ -275,6 +288,7 @@ const stats = await getCacheStats()
 ### Webhook URL
 
 **Production:**
+
 ```
 https://mehmettemel.com/api/telegram/webhook
 ```
@@ -282,6 +296,7 @@ https://mehmettemel.com/api/telegram/webhook
 ### Kurulum
 
 **1. Bot Token Al**
+
 ```bash
 # @BotFather'dan bot oluştur
 /newbot
@@ -293,12 +308,14 @@ Token: 1234567890:ABCdefGHI...
 ```
 
 **2. User ID Öğren**
+
 ```bash
 # @userinfobot'a mesaj gönder
 Your user ID: 123456789
 ```
 
 **3. Environment Variables**
+
 ```env
 TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHI...
 TELEGRAM_ALLOWED_USER_IDS=123456789,987654321
@@ -307,6 +324,7 @@ DATABASE_URL=...
 ```
 
 **4. Webhook Ayarla**
+
 ```bash
 curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://mehmettemel.com/api/telegram/webhook"
 
@@ -346,9 +364,9 @@ null → default: 'quote'
 ### User Authentication
 
 ```javascript
-const ALLOWED_USER_IDS = process.env.TELEGRAM_ALLOWED_USER_IDS
-  .split(',')
-  .map(id => parseInt(id.trim()))
+const ALLOWED_USER_IDS = process.env.TELEGRAM_ALLOWED_USER_IDS.split(',').map(
+  (id) => parseInt(id.trim()),
+)
 
 // Her mesajda kontrol
 if (!ALLOWED_USER_IDS.includes(message.from.id)) {
@@ -366,6 +384,7 @@ if (!ALLOWED_USER_IDS.includes(message.from.id)) {
 ### callGemini(prompt, retries, delay)
 
 **Retry Logic:**
+
 - Toplam 3 deneme
 - Exponential backoff: 2s, 4s, 6s
 - Retry durumları:
@@ -381,11 +400,13 @@ const response = await callGemini(prompt, 3, 2000)
 ### handleCacheItemWithAI(type, text)
 
 **Input:**
+
 ```javascript
 handleCacheItemWithAI('kitap', 'zero to one')
 ```
 
 **AI Prompt:**
+
 ```
 Find information about this book: "zero to one"
 
@@ -400,6 +421,7 @@ Return ONLY a JSON object:
 ```
 
 **Output:**
+
 ```javascript
 {
   name: 'Zero to One',
@@ -420,10 +442,12 @@ Alıntı/not kategorize eder, yazar/kaynak ayıklar.
 ### handleVideo(text) / handleBook(text)
 
 Çoklu not desteği. Numaralı liste parse eder:
+
 ```
 1. Video Title - Note
 2. Another Title - Another Note
 ```
+
 Array döner.
 
 ---
@@ -435,6 +459,7 @@ Array döner.
 Health check ve version kontrolü.
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -455,27 +480,30 @@ Telegram mesajlarını işler.
 **Request:** Telegram webhook format
 
 **Response:**
+
 ```json
 {
   "ok": true,
-  "noteId": 123  // veya cacheId
+  "noteId": 123 // veya cacheId
 }
 ```
 
 ---
 
-### PATCH /api/cache/[id]/toggle
+### PATCH /api/listeler/[id]/toggle
 
 Checkbox durumunu değiştirir.
 
 **Request:**
+
 ```json
 {
-  "field": "is_completed"  // veya "is_liked"
+  "field": "is_completed" // veya "is_liked"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -494,6 +522,7 @@ Checkbox durumunu değiştirir.
 ```
 
 **Hatalar:**
+
 ```json
 {
   "success": false,
@@ -517,6 +546,7 @@ DATABASE_URL=...
 ### Database Migrations
 
 **İlk kurulum:**
+
 ```bash
 # 1. Ana tablo
 psql $DATABASE_URL -f scripts/create-cache-table.sql
@@ -529,6 +559,7 @@ psql $DATABASE_URL -f scripts/add-description-to-cache.sql
 ```
 
 **Node.js ile:**
+
 ```bash
 node scripts/run-migration.js
 ```
@@ -553,6 +584,7 @@ curl https://mehmettemel.com/api/telegram/webhook
 ### Bot yanıt vermiyor
 
 **1. Webhook kontrolü:**
+
 ```bash
 curl https://mehmettemel.com/api/telegram/webhook
 # Beklenen: {"status": "ok", "version": "2.0.1"}
@@ -562,6 +594,7 @@ curl "https://api.telegram.org/bot<TOKEN>/getWebhookInfo"
 ```
 
 **2. User ID yetkili mi?**
+
 ```bash
 # Vercel logs kontrol et
 vercel logs --follow
@@ -569,6 +602,7 @@ vercel logs --follow
 ```
 
 **3. Environment variables?**
+
 - Vercel Dashboard → Settings → Environment Variables
 - `TELEGRAM_BOT_TOKEN` var mı?
 - `TELEGRAM_ALLOWED_USER_IDS` doğru mu?
@@ -580,6 +614,7 @@ vercel logs --follow
 **Neden:** parseMessage() hatası
 
 **Debug:**
+
 ```bash
 # Vercel logs
 vercel logs --follow
@@ -594,6 +629,7 @@ vercel logs --follow
 ```
 
 **Çözüm:**
+
 - `src/app/api/telegram/webhook/route.js` → `parseMessage()` kontrol et
 - `/k ` (boşluklu) regex doğru çalışıyor mu?
 
@@ -604,12 +640,14 @@ vercel logs --follow
 **Neden:** Gemini API hatası veya quota
 
 **Debug:**
+
 ```bash
 # Vercel logs
 [AI Cache] Failed to enrich cache item: Gemini API error
 ```
 
 **Çözüm:**
+
 - Fallback çalışır, `author` ve `description` null olur
 - Gemini API key kontrol et
 - Quota kontrol et: https://ai.google.dev/
@@ -625,6 +663,7 @@ ERROR: new row violates check constraint "check_liked_requires_completed"
 **Neden:** `is_liked = true` ama `is_completed = false`
 
 **Çözüm:**
+
 - Önce `is_completed` true yap
 - Sonra `is_liked` true yap
 - Frontend otomatik kontrol eder
@@ -634,15 +673,17 @@ ERROR: new row violates check constraint "check_liked_requires_completed"
 ### Checkbox toggle çalışmıyor
 
 **Debug:**
+
 ```bash
 # Browser console
-fetch('/api/cache/123/toggle', {
+fetch('/api/listeler/123/toggle', {
   method: 'PATCH',
   body: JSON.stringify({ field: 'is_completed' })
 })
 ```
 
 **Olası hata:**
+
 - `field` parametresi yanlış (sadece `is_completed` veya `is_liked`)
 - ID yanlış
 - Database connection hatası
@@ -651,23 +692,38 @@ fetch('/api/cache/123/toggle', {
 
 ## Değişiklik Geçmişi
 
+### v2.2.0 (17 Ocak 2026)
+
+- ✅ `/cache` route'u `/listeler` olarak yeniden adlandırıldı
+- ✅ Tüm dokümantasyon güncellendi (cache → listeler)
+- ✅ API endpoint'leri güncellendi (/api/listeler)
+
+### v2.1.0 (16 Ocak 2026)
+
+- ✅ Esnek not formatlaması (tırnak içi çoklu not)
+- ✅ "-" ile kaynak/yazar ayrıştırma
+- ✅ handleNote artık array döndürüyor
+
 ### v2.0.1 (16 Ocak 2026)
+
 - ✅ Description field eklendi (AI-generated Türkçe 3-4 satır)
 - ✅ Dokümantasyon temizlendi (6 dosya → 3 dosya)
 - ✅ COMMANDS.md description örnekleri eklendi
 
 ### v2.0.0 (15 Ocak 2026)
+
 - ✅ Kısa komutlar: /k, /f, /u, /l, /a, /v, /b
 - ✅ AI ile otomatik author bulma
 - ✅ Direkt Vercel webhook
 - ✅ SQL syntax Neon'a uyumlu
 
 ### v1.0.0 (Önceki)
+
 - ❌ Uzun komutlar
 - ❌ Google Apps Script kullanımı
 - ❌ Manuel author girişi
 
 ---
 
-**Versiyon:** v2.0.1
-**Son Güncelleme:** 16 Ocak 2026
+**Versiyon:** v2.2.0
+**Son Güncelleme:** 17 Ocak 2026

@@ -455,14 +455,14 @@ KATEGORİ SEÇİMİ (5 kategori):
 }
 
 /**
- * Handle cache item with AI - finds author/director/brand automatically
- * Uses Gemini AI to enrich cache items with metadata
+ * Handle list item with AI - finds author/director/brand automatically
+ * Uses Gemini AI to enrich list items with metadata
  *
- * @param {string} type - Cache type: 'kitap' (book), 'film' (movie/show), 'urun' (product)
+ * @param {string} type - List type: 'kitap' (book), 'film' (movie/show), 'urun' (product)
  * @param {string} text - Item name (e.g., "Zero to One", "Inception", "iPhone 15")
- * @returns {Promise<Object>} Cache item data with name, author, and cache_type
+ * @returns {Promise<Object>} List item data with name, author, and list_type
  */
-export async function handleCacheItemWithAI(type, text) {
+export async function handleListItemWithAI(type, text) {
   const trimmedText = text.trim()
 
   // Determine what to search for based on type
@@ -513,7 +513,7 @@ Important:
 
     const data = JSON.parse(jsonText)
 
-    console.log('[AI Cache] Enriched cache item:', data)
+    console.log('[AI List] Enriched list item:', data)
 
     // Apply title case formatting to name and author
     const name = toTitleCase(data.name || trimmedText)
@@ -524,30 +524,30 @@ Important:
       name,
       author,
       description,
-      cache_type: type,
+      list_type: type,
     }
   } catch (error) {
-    console.error('[AI Cache] Failed to enrich cache item:', error)
+    console.error('[AI List] Failed to enrich list item:', error)
     // Fallback: return without author and description (still apply title case)
     return {
       name: toTitleCase(trimmedText),
       author: null,
       description: null,
-      cache_type: type,
+      list_type: type,
     }
   }
 }
 
 /**
- * Handle cache item (no AI needed, simple text extraction)
- * @param {string} type - Cache type: 'kitap', 'film', or 'urun'
+ * Handle list item (no AI needed, simple text extraction)
+ * @param {string} type - List type: 'kitap', 'film', or 'urun'
  * @param {string} text - Item name
- * @returns {Object} Cache item data
+ * @returns {Object} List item data
  */
-export function handleCacheItem(type, text) {
+export function handleListItem(type, text) {
   return {
     name: toTitleCase(text.trim()),
-    cache_type: type,
+    list_type: type,
   }
 }
 

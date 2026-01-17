@@ -1,24 +1,24 @@
 import { Container } from '@/components/Container'
-import { getCacheItems } from '@/lib/db'
+import { getListItems } from '@/lib/db'
 import { CacheList } from '@/components/cache/CacheList'
-import { getCacheCategory } from '@/data/cache'
+import { getListCategory } from '@/data/list'
 
 export const revalidate = 60
 
 export const metadata = {
-  title: 'Ürünler - Cache',
-  description: 'Almak istediğim ve aldığım ürünler',
+  title: 'Kitaplar - Listeler',
+  description: 'Okumak istediğim ve okuduğum kitaplar',
 }
 
-export default async function UrunCachePage() {
-  const category = getCacheCategory('urun')
+export default async function KitapListePage() {
+  const category = getListCategory('kitap')
 
-  // Fetch cache items
+  // Fetch list items
   let items = []
   try {
-    items = await getCacheItems('urun')
+    items = await getListItems('kitap')
   } catch (error) {
-    console.error('Failed to fetch cache items:', error)
+    console.error('Failed to fetch list items:', error)
   }
 
   return (
@@ -31,7 +31,7 @@ export default async function UrunCachePage() {
               {category?.emoji}
             </span>
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              {category?.name || 'Ürünler'}
+              {category?.name || 'Kitaplar'}
             </h1>
           </div>
           <p className="text-base text-muted-foreground">
