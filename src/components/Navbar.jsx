@@ -27,6 +27,7 @@ const listelerItems = [
   { href: '/listeler/film', label: 'Film & Dizi', emoji: '🎬' },
   { href: '/listeler/urun', label: 'Ürünler', emoji: '🛍️' },
   { href: '/listeler/rusca', label: 'Rusça', emoji: '🇷🇺' },
+  { href: '/listeler/seyahat', label: 'Seyahat', emoji: '✈️' },
 ]
 
 function NavLink({ href, children }) {

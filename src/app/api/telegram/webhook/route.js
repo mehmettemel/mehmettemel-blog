@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server'
-import { createNote, getNotesStats, createListItem } from '@/lib/db'
+import {
+  createNote,
+  getNotesStats,
+  createListItem,
+  createTravelPlace,
+} from '@/lib/db'
 import {
   callGemini,
   handleLink,
@@ -8,6 +13,7 @@ import {
   handleBook,
   handleListItem,
   handleListItemWithAI,
+  handleTravelPlace,
   isURL,
 } from '@/lib/gemini'
 
@@ -113,6 +119,13 @@ function parseMessage(text) {
     const content = text.slice(2).trim()
     console.log('[parseMessage] Matched: /u → list-urun')
     return { type: 'list-urun', content }
+  }
+
+  // TRAVEL COMMAND (Seyahat)
+  if (text.startsWith('/t ') || text === '/t') {
+    const content = text.slice(2).trim()
+    console.log('[parseMessage] Matched: /t → travel')
+    return { type: 'travel', content }
   }
 
   // KEŞİFLER COMMANDS (Notlar/İçerik)
@@ -235,6 +248,10 @@ AI otomatik yazar/yönetmen/marka bulur:
 • /f [isim] - Film/dizi ekle
 • /u [isim] - Ürün ekle
 
+✈️ <b>SEYAHAT</b>
+AI otomatik kıta/ülke/şehir belirler:
+• /t [yer] - Seyahat yeri ekle
+
 📝 <b>KEŞİFLER (Notlar/İçerik)</b>
 • /l [url] - Link ekle
 • /a [metin] - Alıntı ekle
@@ -256,6 +273,16 @@ AI otomatik yazar/yönetmen/marka bulur:
 
 <code>/u iphone 15 pro</code>
 → AI bulur: Apple
+
+<b>Seyahat (AI ile):</b>
+<code>/t Paris</code>
+→ AI belirler: Avrupa → Fransa → Paris
+
+<code>/t Eiffel Tower</code>
+→ AI belirler: Avrupa → Fransa (Turistik Yer)
+
+<code>/t Kapadokya</code>
+→ AI belirler: Asya → Türkiye (Bölge)
 
 <b>Keşifler:</b>
 <code>/l https://example.com</code>
@@ -352,6 +379,47 @@ AI otomatik yazar/yönetmen/marka bulur:
         return NextResponse.json({ ok: true, listId: listItem.id })
       } catch (error) {
         throw new Error(`Liste item eklenemedi: ${error.message}`)
+      }
+    }
+
+    // Handle travel places with AI enrichment
+    if (parsed.type === 'travel') {
+      console.log('🗺️ [TRAVEL] Travel command detected!')
+      console.log('🗺️ [TRAVEL] Content:', parsed.content)
+
+      try {
+        console.log('🤖 [TRAVEL] Calling AI to analyze place...')
+        const travelData = await handleTravelPlace(parsed.content)
+        console.log('🤖 [TRAVEL] AI result:', travelData)
+
+        console.log('💾 [TRAVEL] Saving to database...')
+        const travelPlace = await createTravelPlace(travelData)
+        console.log('💾 [TRAVEL] Saved successfully! ID:', travelPlace.id)
+
+        const typeEmoji = {
+          city: '🏙️',
+          attraction: '🗼',
+          region: '🏞️',
+        }[travelPlace.place_type] || '📍'
+
+        const typeLabel = {
+          city: 'Şehir',
+          attraction: 'Turistik Yer',
+          region: 'Bölge',
+        }[travelPlace.place_type] || 'Yer'
+
+        const descriptionText = travelPlace.description
+          ? `\n\n📖 ${travelPlace.description}`
+          : ''
+
+        await sendTelegramMessage(
+          chatId,
+          `✅ ${typeEmoji} <b>Seyahat yeri eklendi!</b>\n\n🌍 ${travelPlace.continent} → ${travelPlace.country}\n📍 ${travelPlace.place_name} (${typeLabel})${descriptionText}\n\nID: ${travelPlace.id}`,
+        )
+
+        return NextResponse.json({ ok: true, placeId: travelPlace.id })
+      } catch (error) {
+        throw new Error(`Seyahat yeri eklenemedi: ${error.message}`)
       }
     }
 

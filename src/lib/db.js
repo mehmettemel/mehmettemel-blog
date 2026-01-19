@@ -382,3 +382,232 @@ export async function getListStats() {
     throw new Error(`Failed to get list stats: ${error.message}`)
   }
 }
+
+// ============================================================
+// TRAVEL SYSTEM FUNCTIONS
+// ============================================================
+
+/**
+ * Get travel data with full hierarchy (continents → countries → places)
+ * @returns {Promise<Array>} Hierarchical travel data
+ */
+export async function getTravelHierarchy() {
+  try {
+    // Get all continents
+    const continents = await sql`
+      SELECT id, name, name_en, emoji, display_order
+      FROM travel_continents
+      ORDER BY display_order, name
+    `
+
+    // Get all countries
+    const countries = await sql`
+      SELECT id, continent_id, name, name_en, emoji, display_order
+      FROM travel_countries
+      ORDER BY display_order, name
+    `
+
+    // Get all places
+    const places = await sql`
+      SELECT
+        id, country_id, name, place_type, description,
+        is_visited, is_liked, created_at, updated_at
+      FROM travel_places
+      ORDER BY is_visited ASC, created_at DESC
+    `
+
+    // Build hierarchy
+    const hierarchy = continents.map((continent) => ({
+      ...continent,
+      countries: countries
+        .filter((country) => country.continent_id === continent.id)
+        .map((country) => ({
+          ...country,
+          places: places.filter((place) => place.country_id === country.id),
+        })),
+    }))
+
+    // Filter out continents with no countries or countries with no places
+    return hierarchy
+      .map((continent) => ({
+        ...continent,
+        countries: continent.countries.filter(
+          (country) => country.places.length > 0
+        ),
+      }))
+      .filter((continent) => continent.countries.length > 0)
+  } catch (error) {
+    console.error('Database error in getTravelHierarchy:', error)
+    throw new Error(`Failed to get travel hierarchy: ${error.message}`)
+  }
+}
+
+/**
+ * Create a new travel place (finds or creates continent/country)
+ * @param {Object} data - Travel place data from AI
+ * @param {string} data.continent - Continent name (Turkish)
+ * @param {string} data.country - Country name (Turkish)
+ * @param {string} data.place_name - Place name
+ * @param {string} data.place_type - Type: 'city', 'attraction', or 'region'
+ * @param {string} [data.description] - AI-generated description
+ * @returns {Promise<Object>} Created travel place with continent/country info
+ */
+export async function createTravelPlace(data) {
+  try {
+    // 1. Find or create continent
+    let continent = await sql`
+      SELECT id FROM travel_continents WHERE name = ${data.continent}
+    `
+
+    if (continent.length === 0) {
+      // Create continent if doesn't exist
+      continent = await sql`
+        INSERT INTO travel_continents (name, name_en, display_order)
+        VALUES (${data.continent}, ${data.continent}, 999)
+        RETURNING id
+      `
+    }
+    const continentId = continent[0].id
+
+    // 2. Find or create country
+    let country = await sql`
+      SELECT id FROM travel_countries
+      WHERE continent_id = ${continentId} AND name = ${data.country}
+    `
+
+    if (country.length === 0) {
+      // Create country if doesn't exist
+      country = await sql`
+        INSERT INTO travel_countries (continent_id, name, name_en, display_order)
+        VALUES (${continentId}, ${data.country}, ${data.country}, 999)
+        RETURNING id
+      `
+    }
+    const countryId = country[0].id
+
+    // 3. Check for duplicate place
+    const existingPlace = await sql`
+      SELECT id FROM travel_places
+      WHERE country_id = ${countryId} AND name = ${data.place_name}
+    `
+
+    if (existingPlace.length > 0) {
+      throw new Error(`${data.place_name} zaten ${data.country} için eklenmiş`)
+    }
+
+    // 4. Create place
+    const result = await sql`
+      INSERT INTO travel_places (
+        country_id, name, place_type, description
+      )
+      VALUES (
+        ${countryId},
+        ${data.place_name},
+        ${data.place_type},
+        ${data.description || null}
+      )
+      RETURNING *
+    `
+
+    return {
+      ...result[0],
+      continent: data.continent,
+      country: data.country,
+    }
+  } catch (error) {
+    console.error('Database error in createTravelPlace:', error)
+    throw new Error(`Failed to create travel place: ${error.message}`)
+  }
+}
+
+/**
+ * Toggle travel place checkbox (visited or liked)
+ * @param {number} id - Place ID
+ * @param {string} field - Field to toggle: 'is_visited' or 'is_liked'
+ * @returns {Promise<Object>} Updated place
+ */
+export async function toggleTravelPlaceCheckbox(id, field) {
+  try {
+    // Validate field
+    if (field !== 'is_visited' && field !== 'is_liked') {
+      throw new Error('Invalid field. Must be is_visited or is_liked')
+    }
+
+    // Get current place state
+    const current = await sql`
+      SELECT * FROM travel_places WHERE id = ${id}
+    `
+
+    if (current.length === 0) {
+      throw new Error('Travel place not found')
+    }
+
+    const place = current[0]
+    const newValue = !place[field]
+
+    // Special handling for toggling visited to false
+    if (field === 'is_visited' && !newValue) {
+      // If setting visited to false, also set liked to false
+      const result = await sql`
+        UPDATE travel_places
+        SET is_visited = false, is_liked = false, updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING *
+      `
+      return result[0]
+    }
+
+    // Special handling for toggling liked to true
+    if (field === 'is_liked' && newValue && !place.is_visited) {
+      throw new Error('Cannot like a place that has not been visited')
+    }
+
+    // Normal toggle
+    let result
+    if (field === 'is_visited') {
+      result = await sql`
+        UPDATE travel_places
+        SET is_visited = ${newValue}, updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING *
+      `
+    } else if (field === 'is_liked') {
+      result = await sql`
+        UPDATE travel_places
+        SET is_liked = ${newValue}, updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING *
+      `
+    }
+
+    return result[0]
+  } catch (error) {
+    console.error('Database error in toggleTravelPlaceCheckbox:', error)
+    throw new Error(`Failed to toggle checkbox: ${error.message}`)
+  }
+}
+
+/**
+ * Get travel statistics
+ * @returns {Promise<Object>} Statistics (total places, visited, liked)
+ */
+export async function getTravelStats() {
+  try {
+    const stats = await sql`
+      SELECT
+        COUNT(*) as total,
+        SUM(CASE WHEN is_visited THEN 1 ELSE 0 END) as visited,
+        SUM(CASE WHEN is_liked THEN 1 ELSE 0 END) as liked
+      FROM travel_places
+    `
+
+    return {
+      total: parseInt(stats[0].total),
+      completed: parseInt(stats[0].visited), // Use 'completed' for consistency with list_items
+      liked: parseInt(stats[0].liked),
+    }
+  } catch (error) {
+    console.error('Database error in getTravelStats:', error)
+    throw new Error(`Failed to get travel stats: ${error.message}`)
+  }
+}

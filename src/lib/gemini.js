@@ -552,3 +552,101 @@ export function isURL(text) {
     /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$|^www\.[\w-]+\.[\w-]+(\/[\w-./?%&=]*)?$/i
   return urlPattern.test(text.trim())
 }
+
+/**
+ * Handle travel place with AI - determines continent → country → city/place
+ * Uses Gemini AI to analyze travel locations and categorize them hierarchically
+ *
+ * @param {string} text - Place name (e.g., "Eiffel Tower", "Istanbul", "Cappadocia")
+ * @returns {Promise<Object>} Travel place data with continent, country, place_name, place_type, description
+ */
+export async function handleTravelPlace(text) {
+  const trimmedText = text.trim()
+
+  const prompt = `Analyze this travel location and return a JSON object:
+"${trimmedText}"
+
+Return ONLY a JSON object with this exact format (no markdown, no explanation):
+{
+  "continent": "continent name in Turkish (Avrupa, Asya, Afrika, Kuzey Amerika, Güney Amerika, Okyanusya)",
+  "country": "country name in Turkish",
+  "place_name": "specific place name (city, attraction, or region)",
+  "place_type": "city|attraction|region",
+  "description": "2-3 line description in Turkish about what makes this place special"
+}
+
+CLASSIFICATION RULES:
+- place_type "city": Paris, Tokyo, Istanbul (urban areas)
+- place_type "attraction": Eiffel Tower, Colosseum, Great Wall (specific landmarks/monuments)
+- place_type "region": Cappadocia, Tuscany, Provence (geographic regions/areas)
+
+CONTINENT MAPPING (ONLY use these exact Turkish values):
+- Avrupa: All European countries
+- Asya: All Asian countries (including Turkey if context is Asian side)
+- Afrika: All African countries
+- Kuzey Amerika: USA, Canada, Mexico, Caribbean
+- Güney Amerika: South American countries
+- Okyanusya: Australia, New Zealand, Pacific Islands
+
+COUNTRY NAMES (use Turkish names):
+- France → Fransa
+- Italy → İtalya
+- Turkey → Türkiye
+- Japan → Japonya
+- United States → Amerika Birleşik Devletleri
+- United Kingdom → İngiltere
+- Spain → İspanya
+- Germany → Almanya
+- etc.
+
+Examples:
+Input: "Eiffel Tower"
+Output: {"continent": "Avrupa", "country": "Fransa", "place_name": "Eiffel Tower", "place_type": "attraction", "description": "Paris'in simgesi olan 330 metre yüksekliğindeki demir kule. 1889'da inşa edildi ve yılda 7 milyon turisti ağırlıyor."}
+
+Input: "Tokyo"
+Output: {"continent": "Asya", "country": "Japonya", "place_name": "Tokyo", "place_type": "city", "description": "Japonya'nın başkenti ve dünyanın en büyük metropollerinden biri. Modern teknoloji ile geleneksel kültürün birleşimi."}
+
+Input: "Cappadocia"
+Output: {"continent": "Asya", "country": "Türkiye", "place_name": "Kapadokya", "place_type": "region", "description": "Nevşehir'de yer alan volkanik kayalıklar ve peri bacaları ile ünlü tarihi bölge. Balon turları ve yer altı şehirleri ile meşhur."}
+
+Input: "Grand Canyon"
+Output: {"continent": "Kuzey Amerika", "country": "Amerika Birleşik Devletleri", "place_name": "Grand Canyon", "place_type": "region", "description": "Arizona'da Colorado Nehri tarafından oyulmuş 446 km uzunluğunda muhteşem kanyon. Dünyanın en büyük doğal harikalarından biri."}
+
+Important:
+- description must be in Turkish
+- Use exact continent names from the list above
+- Return ONLY the JSON object`
+
+  try {
+    const response = await callGemini(prompt, 3, 2000)
+
+    let jsonText = response.trim()
+
+    // Remove markdown code blocks if present
+    if (jsonText.startsWith('```')) {
+      jsonText = jsonText.replace(/```json?\n?/g, '').replace(/```\n?$/g, '')
+    }
+
+    const data = JSON.parse(jsonText)
+
+    console.log('[AI Travel] Analyzed travel place:', data)
+
+    return {
+      continent: data.continent,
+      country: data.country,
+      place_name: data.place_name,
+      place_type: data.place_type,
+      description: data.description,
+    }
+  } catch (error) {
+    console.error('[AI Travel] Failed to process travel place:', error)
+    // Fallback: return with minimal info
+    return {
+      continent: 'Avrupa', // Default fallback
+      country: 'Bilinmiyor',
+      place_name: trimmedText,
+      place_type: 'city',
+      description: null,
+    }
+  }
+}

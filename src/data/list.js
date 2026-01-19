@@ -26,6 +26,13 @@ export const listCategories = [
     description: 'Almak istediğim veya aldığım ürünler',
   },
   {
+    id: 'seyahat',
+    name: 'Seyahat',
+    emoji: '✈️',
+    icon: '🗺️',
+    description: 'Gezmek istediğim veya gezdiğim yerler',
+  },
+  {
     id: 'rusca',
     name: 'Rusça',
     emoji: '🇷🇺',
