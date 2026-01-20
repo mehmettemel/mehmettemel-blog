@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Container } from '@/components/Container'
+import RandomButton from '@/components/RandomButton'
 import {
   russianPhrases,
   russianCategories,
@@ -93,14 +94,7 @@ export default function RussianPage() {
 
         {/* Random Button */}
         <div className="mb-8 flex justify-center">
-          <button
-            onClick={getRandomPhrase}
-            className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary/80 px-8 py-4 text-lg font-semibold text-primary-foreground shadow-lg transition-all hover:scale-105 hover:shadow-xl active:scale-100"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              🎲 Rastgele {categoryInfo?.name?.slice(0, -3) || 'Öğe'}
-            </span>
-          </button>
+          <RandomButton onClick={getRandomPhrase} text="🎲" />
         </div>
 
         {/* Current Phrase Card */}
@@ -159,18 +153,11 @@ export default function RussianPage() {
         ) : (
           <div className="rounded-2xl border border-dashed border-border bg-secondary/20 p-12 text-center">
             <div className="mb-4 text-5xl">{categoryInfo?.emoji || '👆'}</div>
-            <p className="text-lg text-muted-foreground">
-              Butona tıklayarak rastgele bir{' '}
-              {categoryInfo?.name?.toLowerCase().slice(0, -3) || 'öğe'} öğren!
+            <p className="text-base text-muted-foreground">
+              🎲 Butona tıklayarak rastgele bir cümle öğren
             </p>
           </div>
         )}
-
-        {/* Hint */}
-        <p className="mt-6 text-center text-xs text-muted-foreground/60">
-          Tekrar tıklayarak yeni {categoryInfo?.name?.toLowerCase() || 'öğeler'}{' '}
-          keşfet
-        </p>
       </div>
     </Container>
   )

@@ -20,6 +20,7 @@ const kesiflerItems = [
   { href: '/kesifler/alintilar', label: 'Alıntılar', emoji: '💭' },
   { href: '/kesifler/videolar', label: 'Videolar', emoji: '🎬' },
   { href: '/kesifler/kitaplar', label: 'Kitaplar', emoji: '📖' },
+  { href: '/kesifler/rastgele', label: 'Rastgele', emoji: '🎲' },
 ]
 
 const listelerItems = [
