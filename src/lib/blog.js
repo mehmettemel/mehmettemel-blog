@@ -6,13 +6,13 @@ import html from 'remark-html'
 import remarkGfm from 'remark-gfm'
 import readingTime from 'reading-time'
 
-const postsDirectory = path.join(process.cwd(), 'content/researches')
+const postsDirectory = path.join(process.cwd(), 'content')
 
-// Valid categories
+// Valid categories (from frontmatter only)
 const CATEGORIES = ['gidalar', 'besinler', 'mekanizmalar']
 
 /**
- * Recursively get all post files from category folders
+ * Get all post files from content folder (flat structure)
  */
 function getAllPostFiles(dir) {
   const entries = []
@@ -28,23 +28,13 @@ function getAllPostFiles(dir) {
     const fullPath = path.join(dir, item)
     const stat = fs.statSync(fullPath)
 
-    if (stat.isDirectory() && CATEGORIES.includes(item)) {
-      // This is a category folder
-      const categoryFiles = fs.readdirSync(fullPath)
-      for (const file of categoryFiles) {
-        if (file.endsWith('.md') || file.endsWith('.mdx')) {
-          entries.push({
-            file,
-            category: item,
-            fullPath: path.join(fullPath, file),
-          })
-        }
-      }
-    } else if (item.endsWith('.md') || item.endsWith('.mdx')) {
-      // File in root (no category)
+    // Only process markdown files, ignore directories
+    if (
+      !stat.isDirectory() &&
+      (item.endsWith('.md') || item.endsWith('.mdx'))
+    ) {
       entries.push({
         file: item,
-        category: null,
         fullPath,
       })
     }
@@ -54,12 +44,12 @@ function getAllPostFiles(dir) {
 }
 
 /**
- * Get all posts with category information
+ * Get all posts with category information (from frontmatter)
  */
 export function getAllPosts() {
   const postFiles = getAllPostFiles(postsDirectory)
 
-  const allPostsData = postFiles.map(({ file, category, fullPath }) => {
+  const allPostsData = postFiles.map(({ file, fullPath }) => {
     const slug = file.replace(/\.mdx?$/, '')
     const fileContents = fs.readFileSync(fullPath, 'utf8')
     const { data, content } = matter(fileContents)
@@ -70,7 +60,7 @@ export function getAllPosts() {
       title: data.title || slug,
       date: data.date || new Date().toISOString(),
       description: data.description || '',
-      category: data.category || category || 'uncategorized',
+      category: data.category || 'uncategorized',
       tags: data.tags || [],
       author: data.author || 'Mehmet Temel',
       readingTime: readingStats.text,
@@ -100,27 +90,13 @@ export function getPostsByCategory(category) {
 }
 
 /**
- * Get a single post by slug (searches all categories)
+ * Get a single post by slug
  */
 export async function getPostBySlug(slug) {
-  // Try to find the post in category folders first
-  for (const category of CATEGORIES) {
-    const categoryPath = path.join(postsDirectory, category)
-    if (fs.existsSync(categoryPath)) {
-      for (const ext of ['.md', '.mdx']) {
-        const fullPath = path.join(categoryPath, `${slug}${ext}`)
-        if (fs.existsSync(fullPath)) {
-          return await readPost(fullPath, slug, category)
-        }
-      }
-    }
-  }
-
-  // Try root directory
   for (const ext of ['.md', '.mdx']) {
     const fullPath = path.join(postsDirectory, `${slug}${ext}`)
     if (fs.existsSync(fullPath)) {
-      return await readPost(fullPath, slug, null)
+      return await readPost(fullPath, slug)
     }
   }
 
@@ -130,25 +106,50 @@ export async function getPostBySlug(slug) {
 /**
  * Read and process a post file
  */
-async function readPost(fullPath, slug, category) {
+async function readPost(fullPath, slug) {
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
+
+  // Extract headings for TOC
+  const headingRegex = /^##\s+(.+)$/gm
+  const headings = []
+  let match
+  while ((match = headingRegex.exec(content)) !== null) {
+    const text = match[1].trim()
+    const id = text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+    headings.push({ text, id })
+  }
 
   const processedContent = await remark()
     .use(html, { sanitize: false })
     .use(remarkGfm)
     .process(content)
 
-  const contentHtml = processedContent.toString()
+  // Add IDs to h2 elements in HTML for anchor linking
+  let contentHtml = processedContent.toString()
+  headings.forEach(({ text, id }) => {
+    contentHtml = contentHtml.replace(
+      new RegExp(
+        `<h2>${text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h2>`,
+        'g',
+      ),
+      `<h2 id="${id}">${text}</h2>`,
+    )
+  })
+
   const readingStats = readingTime(content)
 
   return {
     slug,
     content: contentHtml,
+    headings,
     title: data.title || slug,
     date: data.date || new Date().toISOString(),
     description: data.description || '',
-    category: data.category || category || 'uncategorized',
+    category: data.category || 'uncategorized',
     tags: data.tags || [],
     author: data.author || 'Mehmet Temel',
     readingTime: readingStats.text,

@@ -142,6 +142,11 @@ export default function RussianPage() {
                 <p className="text-lg text-foreground">
                   {renderExample(currentPhrase.example)}
                 </p>
+                {currentPhrase.examplePronunciation && (
+                  <p className="mt-1 font-mono text-sm text-primary">
+                    [{currentPhrase.examplePronunciation}]
+                  </p>
+                )}
                 {currentPhrase.exampleTranslation && (
                   <p className="mt-1 text-sm text-muted-foreground">
                     → {currentPhrase.exampleTranslation}
