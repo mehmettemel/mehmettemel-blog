@@ -26,14 +26,16 @@ export function CategorySidebar({
             >
               <span className="text-sm">{category.icon}</span>
               <span>{category.name}</span>
-              <span
-                className={cn(
-                  'rounded-full px-1.5 py-0.5 text-xs',
-                  isActive ? 'bg-primary-foreground/20' : 'bg-muted/50',
-                )}
-              >
-                {category.count}
-              </span>
+              {category.count !== undefined && (
+                <span
+                  className={cn(
+                    'rounded-full px-1.5 py-0.5 text-xs',
+                    isActive ? 'bg-primary-foreground/20' : 'bg-muted/50',
+                  )}
+                >
+                  {category.count}
+                </span>
+              )}
             </button>
           )
         })}

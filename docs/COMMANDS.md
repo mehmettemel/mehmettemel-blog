@@ -59,20 +59,35 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 
 AI ile kategorize edilir ve `notes` tablosuna eklenir.
 
-### `/l [url]` - Link Ekle
+### 🍎 4 Yekpare Kategori Sistemi
 
-```bash
-/l https://waitbutwhy.com
-/l https://paulgraham.com/articles.html
-```
+Tüm keşifler (alıntı, kitap, video) aynı 4 kategoriyi kullanır:
 
-**AI bulur:** Başlık, açıklama, kategori (teknik/icerik/diger)
-
-**Gider:** `/kesifler`
+- 🍎 **Gıda** - Yemek, beslenme, tarif, mutfak
+- 🏥 **Sağlık** - Fitness, bağışıklık, wellness, mental sağlık
+- 💭 **Kişisel** - Motivasyon, üretkenlik, gelişim, alışkanlıklar
+- 📝 **Genel** - Diğer tüm konular
 
 ---
 
-### `/a [metin]` - Alıntı Ekle
+### 📝 Alıntı Komutları (Kategori ile)
+
+#### `/ag [metin]` - Alıntı (Gıda)
+```bash
+/ag Omega-3 beyin sağlığı için çok önemli
+```
+
+#### `/as [metin]` - Alıntı (Sağlık)
+```bash
+/as Günde 10.000 adım at
+```
+
+#### `/ak [metin]` - Alıntı (Kişisel)
+```bash
+/ak Tutarlılık başarının anahtarıdır
+```
+
+#### `/a [metin]` - Alıntı (Genel - Default)
 
 **Tek alıntı:**
 
@@ -101,13 +116,58 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 - Metin parçalanmaz, orijinal format korunur
 - "-" işaretinden sonraki metin yazar/kaynak olarak algılanır
 
-**AI bulur:** Kategori (kisisel/saglik/gida/seyahat/genel), yazar, kaynak
+**AI bulur:** Yazar, kaynak (kategori zaten belirtilmiş)
 
-**Gider:** `/kesifler`
+**Gider:** `/kesifler/alintilar`
 
 ---
 
-### `/v [metin]` - Video Notu
+### 📖 Kitap Notu Komutları (Kategori ile)
+
+#### `/kg [metin]` - Kitap Notu (Gıda)
+```bash
+/kg "Akdeniz diyeti en sağlıklısı" - Michael Pollan
+```
+
+#### `/ks [metin]` - Kitap Notu (Sağlık)
+```bash
+/ks "Uyku her şeydir" - Why We Sleep
+```
+
+#### `/kk [metin]` - Kitap Notu (Kişisel)
+```bash
+/kk "Small habits compound" - Atomic Habits James Clear
+```
+
+#### `/b [metin]` - Kitap Notu (Genel - Default)
+```bash
+/b Focus is the key - Atomic Habits James Clear
+```
+
+**AI bulur:** Yazar, kaynak (kategori zaten belirtilmiş)
+
+**Gider:** `/kesifler/kitaplar`
+
+---
+
+### 🎬 Video Notu Komutları (Kategori ile)
+
+#### `/vg [metin]` - Video Notu (Gıda)
+```bash
+/vg "Fermente gıdalar probiyotik zengini" - Nutrition Video
+```
+
+#### `/vs [metin]` - Video Notu (Sağlık)
+```bash
+/vs "Sabah güneşi bağışıklığı güçlendirir" - Huberman Lab
+```
+
+#### `/vk [metin]` - Video Notu (Kişisel)
+```bash
+/vk "Focus is the key to mastery" - Cal Newport Interview
+```
+
+#### `/v [metin]` - Video Notu (Genel - Default)
 
 **Tek not:**
 
@@ -131,41 +191,26 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 
 → `notes: ["AI is the future", "Scaling is key", "Data matters"], author: "Jensen Huang", source: "AI Interview"`
 
-**AI bulur:** Kategori (youtube/documentary/course/podcast), konuşmacı, kaynak
+**AI bulur:** Konuşmacı, kaynak (kategori zaten belirtilmiş)
 
-**Gider:** `/kesifler`
+**Gider:** `/kesifler/videolar`
 
 ---
 
-### `/b [metin]` - Kitap Notu
+### 🔗 Link Ekle (Kategori YOK)
 
-**Tek not:**
-
-```bash
-/b Focus is the key - Atomic Habits James Clear
-```
-
-→ `notes: ["Focus is the key"], source: "Atomic Habits", author: "James Clear"`
-
-**Tek not + kaynak (- ile):**
+#### `/l [url]` - Link Ekle
 
 ```bash
-/b "1% better every day" - Atomic Habits James Clear
+/l https://waitbutwhy.com
+/l https://paulgraham.com/articles.html
 ```
 
-→ `notes: ["1% better every day"], source: "Atomic Habits", author: "James Clear"`
+**Önemli:** Linkler artık kategorilenmez, hepsi bir arada gösterilir.
 
-**Çoklu not (tırnak içi, yan yana):**
+**AI bulur:** Başlık, açıklama
 
-```bash
-/b "Small habits compound" "Identity change is key" - Atomic Habits James Clear
-```
-
-→ `notes: ["Small habits compound", "Identity change is key"], source: "Atomic Habits", author: "James Clear"`
-
-**AI bulur:** Kategori (science/selfhelp/biography/fiction/health), yazar, kaynak
-
-**Gider:** `/kesifler`
+**Gider:** `/kesifler/linkler`
 
 ---
 
@@ -200,15 +245,20 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 
 ## 🎯 Komut Karşılaştırma
 
-| Komut | Tablo        | Sayfa             | AI Özelliği                    |
-| ----- | ------------ | ----------------- | ------------------------------ |
-| `/k`  | `list_items` | `/listeler/kitap` | Yazar + Description            |
-| `/f`  | `list_items` | `/listeler/film`  | Yönetmen + Description         |
-| `/u`  | `list_items` | `/listeler/urun`  | Marka + Description            |
-| `/l`  | `notes`      | `/kesifler`       | Kategori + Başlık              |
-| `/a`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Yazar     |
-| `/v`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Konuşmacı |
-| `/b`  | `notes`      | `/kesifler`       | Çoklu not + Kaynak + Yazar     |
+### Listeler
+| Komut | Tablo        | Sayfa             | AI Özelliği        |
+| ----- | ------------ | ----------------- | ------------------ |
+| `/k`  | `list_items` | `/listeler/kitap` | Yazar + Description|
+| `/f`  | `list_items` | `/listeler/film`  | Yönetmen + Desc    |
+| `/u`  | `list_items` | `/listeler/urun`  | Marka + Description|
+
+### Keşifler (Kategori ile)
+| Tip    | Gıda  | Sağlık | Kişisel | Genel | Tablo   | Sayfa              |
+| ------ | ----- | ------ | ------- | ----- | ------- | ------------------ |
+| Alıntı | `/ag` | `/as`  | `/ak`   | `/a`  | `notes` | `/kesifler/alintilar` |
+| Kitap  | `/kg` | `/ks`  | `/kk`   | `/b`  | `notes` | `/kesifler/kitaplar`  |
+| Video  | `/vg` | `/vs`  | `/vk`   | `/v`  | `notes` | `/kesifler/videolar`  |
+| Link   | -     | -      | -       | `/l`  | `notes` | `/kesifler/linkler`   |
 
 ---
 
@@ -217,14 +267,17 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 Eski komutlar hala çalışır (backward compatibility):
 
 ```bash
+# Listeler
 /cache-kitap → /k
 /cache-film → /f
 /cache-urun → /u
-/link → /l
-/quote → /a
-/alinti → /a
-/video → /v
-/kitap → /b
+
+# Keşifler (genel kategoriye gider)
+/link → /l (kategori yok)
+/quote → /a (genel)
+/alinti → /a (genel)
+/video → /v (genel)
+/book → /b (genel)
 ```
 
 ---
@@ -232,12 +285,14 @@ Eski komutlar hala çalışır (backward compatibility):
 ## 💡 İpuçları
 
 1. **Boşluk önemli** - `/k zero` ✅ `/kzero` ❌
-2. **Küçük harf OK** - Büyük/küçük harf önemli değil
-3. **URL otomatik** - Direkt URL gönder, otomatik `/l` olarak algılanır
-4. **"-" = Kaynak** - Alıntılarda tire işaretinden sonra gelen metin yazar/kaynak olarak algılanır
-5. **Alıntılar TEK not** - Tüm metin olduğu gibi tek alıntı olarak kaydedilir (parçalanmaz)
-6. **Video/Kitap çoklu** - `/v` ve `/b` komutlarında `"..."` tırnak içi metinler ayrı notlar olarak kaydedilir
-7. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
+2. **Kategori harfi ekle** - `/ag` (gıda), `/as` (sağlık), `/ak` (kişisel), `/a` (genel)
+3. **Komut sırası kritik** - `/kg` → kitap+gıda, `/k` → liste-kitap
+4. **URL otomatik** - Direkt URL gönder, otomatik `/l` olarak algılanır
+5. **"-" = Kaynak** - Alıntılarda tire işaretinden sonra gelen metin yazar/kaynak olarak algılanır
+6. **Alıntılar TEK not** - Tüm metin olduğu gibi tek alıntı olarak kaydedilir (parçalanmaz)
+7. **Video/Kitap çoklu** - `/v` ve `/b` komutlarında `"..."` tırnak içi metinler ayrı notlar olarak kaydedilir
+8. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
+9. **Linkler kategorisiz** - Artık teknik/içerik/diğer kategorileri yok, hepsi bir arada
 
 ---
 
@@ -289,5 +344,31 @@ vercel logs --follow
 
 ---
 
-**Versiyon:** v2.2.0
-**Son Güncelleme:** 17 Ocak 2026
+---
+
+## 🔄 Kategori Sistemi Değişikliği (v3.0.0)
+
+### 21 Ocak 2026 - Büyük Güncelleme
+
+**Eski Sistem (v2.x):**
+- Alıntılar: 5 kategori (kişisel, sağlık, gıda, seyahat, genel)
+- Kitaplar: 5 kategori (science, selfhelp, biography, fiction, health)
+- Videolar: 4 kategori (youtube, documentary, course, podcast)
+- Linkler: 3 kategori (teknik, içerik, diğer)
+
+**Yeni Sistem (v3.0.0):**
+- ✅ **4 Yekpare Kategori** - Gıda, Sağlık, Kişisel, Genel
+- ✅ **Tek Kategori Sistemi** - Alıntı, kitap, video hepsi aynı kategorileri kullanır
+- ✅ **Kategori Komutları** - `/ag`, `/as`, `/ak`, `/kg`, `/vg` gibi
+- ✅ **Linkler Kategorisiz** - Artık tüm linkler bir arada
+- ✅ **İçerik Bazlı** - Platform değil, içeriğe göre kategorileme
+
+**Migration:**
+- Mevcut veriler AI ile otomatik migrate edildi
+- Eski kategoriler `old_category` kolonunda saklandı
+- Rollback desteği mevcut
+
+---
+
+**Versiyon:** v3.0.0
+**Son Güncelleme:** 21 Ocak 2026

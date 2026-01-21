@@ -5,18 +5,33 @@ import { Container } from '@/components/Container'
 import RandomButton from '@/components/RandomButton'
 import Link from 'next/link'
 import { ExternalLink } from 'lucide-react'
+import { CategorySidebar } from '@/components/kesifler/CategorySidebar'
+
+// Unified categories for all discovery types
+const categories = [
+  { id: 'all', name: 'Tümü', icon: '📚' },
+  { id: 'gida', name: 'Gıda', icon: '🍎' },
+  { id: 'saglik', name: 'Sağlık', icon: '🏥' },
+  { id: 'kisisel', name: 'Kişisel', icon: '💭' },
+  { id: 'genel', name: 'Genel', icon: '📝' },
+]
 
 export default function RastgelePage() {
   const [note, setNote] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   const fetchRandomNote = async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const response = await fetch('/api/notes/random')
+      const url = selectedCategory === 'all'
+        ? '/api/notes/random'
+        : `/api/notes/random?category=${selectedCategory}`
+
+      const response = await fetch(url)
 
       if (!response.ok) {
         throw new Error('Not yüklenemedi')
@@ -30,6 +45,11 @@ export default function RastgelePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategory(categoryId)
+    setNote(null) // Clear current note when changing category
   }
 
   const getCategoryEmoji = (type) => {
@@ -76,8 +96,15 @@ export default function RastgelePage() {
             </div>
           </div>
 
+          {/* Category Filter */}
+          <CategorySidebar
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+
           {/* Random Button */}
-          <div className="flex flex-col items-center gap-3">
+          <div className="mt-6 flex flex-col items-center gap-3">
             <RandomButton
               onClick={fetchRandomNote}
               disabled={loading}
@@ -85,7 +112,10 @@ export default function RastgelePage() {
             />
             {!note && !error && (
               <p className="text-xs text-muted-foreground">
-                Rastgele bir not görmek için butona tıkla
+                {selectedCategory === 'all'
+                  ? 'Rastgele bir not görmek için butona tıkla'
+                  : `${categories.find(c => c.id === selectedCategory)?.name} kategorisinden rastgele not`
+                }
               </p>
             )}
           </div>
@@ -113,8 +143,9 @@ export default function RastgelePage() {
                 </Link>
 
                 {note.category && (
-                  <span className="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground">
-                    {note.category}
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+                    <span>{categories.find(c => c.id === note.category)?.icon || '📝'}</span>
+                    {categories.find(c => c.id === note.category)?.name || note.category}
                   </span>
                 )}
               </div>

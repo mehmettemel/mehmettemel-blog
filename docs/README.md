@@ -63,31 +63,86 @@ DATABASE_URL=...
 
 ---
 
+## 🆕 v3.0.0 - Büyük Güncelleme (21 Ocak 2026)
+
+### Yeni Kategori Sistemi
+
+**4 Yekpare Kategori** - Tüm keşifler artık aynı kategori sistemini kullanır:
+
+- 🍎 **Gıda** - Yemek, beslenme, tarif
+- 🏥 **Sağlık** - Fitness, wellness, mental sağlık
+- 💭 **Kişisel** - Motivasyon, üretkenlik, gelişim
+- 📝 **Genel** - Diğer tüm konular
+
+### Yeni Telegram Komutları
+
+**Kategori ile Not Ekleme:**
+
+```bash
+# Alıntılar
+/ag [metin]  # Gıda
+/as [metin]  # Sağlık
+/ak [metin]  # Kişisel
+/a [metin]   # Genel
+
+# Kitap Notları
+/kg [metin]  # Gıda
+/ks [metin]  # Sağlık
+/kk [metin]  # Kişisel
+/b [metin]   # Genel
+
+# Video Notları
+/vg [metin]  # Gıda
+/vs [metin]  # Sağlık
+/vk [metin]  # Kişisel
+/v [metin]   # Genel
+
+# Linkler (kategorisiz)
+/l [url]
+```
+
+### Değişiklikler
+
+- ✅ Alıntı, kitap, video → aynı 4 kategori
+- ✅ İçerik bazlı kategorileme (platform bazlı DEĞİL)
+- ✅ Linkler kategorisiz
+- ✅ AI ile otomatik migration
+- ✅ Rollback desteği
+
+**Detaylar:** [MIGRATION.md](./MIGRATION.md)
+
+---
+
 ## Dosya Yapısı
 
 ```
 docs/
 ├── README.md       # Bu dosya (giriş)
-├── COMMANDS.md     # Telegram komutları
-└── SYSTEM.md       # Teknik detaylar
+├── COMMANDS.md     # Telegram komutları (GÜNCELLENDİ v3.0.0)
+├── SYSTEM.md       # Teknik detaylar (GÜNCELLENDİ v3.0.0)
+├── MIGRATION.md    # v3.0.0 Migration rehberi (YENİ!)
+└── RUSSIAN.md      # Rusça döküm
 
 src/
 ├── app/
 │   ├── listeler/   # Listeler sayfaları
 │   ├── kesifler/   # Keşifler sayfası
 │   └── api/
-│       ├── telegram/webhook/    # Telegram webhook
+│       ├── telegram/webhook/    # Telegram webhook (GÜNCELLENDİ)
 │       └── listeler/[id]/toggle/  # Checkbox API
 ├── lib/
-│   ├── db.js       # Database fonksiyonları
-│   └── gemini.js   # AI kategorilendirme
-└── components/
-    └── cache/      # Liste UI bileşenleri
+│   ├── db.js       # Database fonksiyonları (GÜNCELLENDİ)
+│   └── gemini.js   # AI kategorilendirme (GÜNCELLENDİ)
+├── components/
+│   └── kesifler/   # Keşifler UI bileşenleri (GÜNCELLENDİ)
+└── data/
+    └── kesifler.js # Kategori tanımları (GÜNCELLENDİ)
 
 scripts/
+├── migrate-schema.sql      # v3.0.0 Schema migration (YENİ!)
+├── migrate-categories.js   # v3.0.0 Data migration (YENİ!)
 ├── create-cache-table.sql
-├── add-description-to-cache.sql
-└── add-author-to-cache.sql
+└── add-description-to-cache.sql
 ```
 
 ---
@@ -99,13 +154,18 @@ scripts/
 curl https://mehmettemel.com/api/telegram/webhook
 
 # Vercel logs
-vercel logs
+vercel logs --follow
 
-# Database migration
-node scripts/run-migration.js
+# Database schema migration
+psql $DATABASE_URL -f scripts/migrate-schema.sql
+
+# Data migration (v3.0.0)
+node scripts/migrate-categories.js --dry-run
+node scripts/migrate-categories.js --execute
+node scripts/migrate-categories.js --verify
 ```
 
 ---
 
-**Versiyon:** v2.2.0
-**Son Güncelleme:** 17 Ocak 2026
+**Versiyon:** v3.0.0
+**Son Güncelleme:** 21 Ocak 2026

@@ -8,12 +8,13 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
 
 1. [Sistem Mimarisi](#sistem-mimarisi)
 2. [Database Şemaları](#database-şemaları)
-3. [Listeler Sistemi](#listeler-sistemi)
-4. [Telegram Entegrasyonu](#telegram-entegrasyonu)
-5. [AI Kategorilendirme](#ai-kategorilendirme)
-6. [API Referansı](#api-referansı)
-7. [Deployment](#deployment)
-8. [Troubleshooting](#troubleshooting)
+3. [Kategori Sistemi (v3.0.0)](#kategori-sistemi-v300)
+4. [Listeler Sistemi](#listeler-sistemi)
+5. [Telegram Entegrasyonu](#telegram-entegrasyonu)
+6. [AI Kategorilendirme](#ai-kategorilendirme)
+7. [API Referansı](#api-referansı)
+8. [Deployment](#deployment)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -128,8 +129,8 @@ CREATE TABLE notes (
   note_type VARCHAR(20) NOT NULL
     CHECK (note_type IN ('link', 'quote', 'video', 'book')),
 
-  -- AI ile bulunan kategori
-  category VARCHAR(50) NOT NULL,
+  -- AI ile bulunan kategori (v3.0.0: NULL allowed for links)
+  category VARCHAR(50),  -- NOT NULL constraint kaldırıldı
 
   -- İçerik
   title VARCHAR(500),              -- Sadece link için
@@ -145,8 +146,9 @@ CREATE TABLE notes (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
 
-  -- Migration flag
-  is_migrated BOOLEAN DEFAULT FALSE
+  -- Migration tracking (v3.0.0)
+  is_migrated BOOLEAN DEFAULT FALSE,
+  old_category VARCHAR(50)         -- Backup for rollback
 );
 
 -- İndeksler
@@ -156,36 +158,102 @@ CREATE INDEX idx_notes_created_at ON notes(created_at DESC);
 CREATE INDEX idx_notes_type_category ON notes(note_type, category);
 ```
 
-**Kategoriler:**
+---
 
-**Link:**
+## Kategori Sistemi (v3.0.0)
 
-- `teknik` - Yazılım, programlama, developer tools
-- `icerik` - Blog, makale, tutorial
-- `diger` - Diğer
+### 🍎 4 Yekpare Kategori
 
-**Quote:**
+**v3.0.0 Güncellemesi (21 Ocak 2026):**
 
-- `kisisel` - Kişisel gelişim, motivasyon
-- `saglik` - Sağlık, fitness, mental sağlık
-- `gida` - Yemek, beslenme
-- `seyahat` - Gezi, tatil
-- `genel` - Diğer
+Tüm keşifler (alıntı, kitap, video) artık aynı 4 kategoriyi kullanır:
 
-**Video:**
+| Kategori | ID        | Icon | Açıklama                                        |
+| -------- | --------- | ---- | ----------------------------------------------- |
+| Gıda     | `gida`    | 🍎   | Yemek, beslenme, tarif, mutfak                  |
+| Sağlık   | `saglik`  | 🏥   | Fitness, bağışıklık, wellness, mental sağlık    |
+| Kişisel  | `kisisel` | 💭   | Motivasyon, üretkenlik, gelişim, alışkanlıklar  |
+| Genel    | `genel`   | 📝   | Diğer tüm konular                               |
 
-- `youtube` - YouTube videoları
-- `documentary` - Belgeseller
-- `course` - Kurslar, eğitimler
-- `podcast` - Podcast'ler
+**Linkler:** Kategorisiz (category = NULL)
 
-**Book:**
+### valid_categories Tablosu
 
-- `science` - Bilim, araştırma
-- `selfhelp` - Kişisel gelişim
-- `biography` - Biyografi
-- `fiction` - Kurgu
-- `health` - Sağlık, fitness
+```sql
+CREATE TABLE valid_categories (
+  note_type VARCHAR(20) NOT NULL,
+  category_id VARCHAR(50) NOT NULL,
+  category_name VARCHAR(100) NOT NULL,
+  icon VARCHAR(10),
+  PRIMARY KEY (note_type, category_id)
+);
+
+-- v3.0.0 kategoriler
+INSERT INTO valid_categories (note_type, category_id, category_name, icon) VALUES
+  ('quote', 'gida', 'Gıda', '🍎'),
+  ('quote', 'saglik', 'Sağlık', '🏥'),
+  ('quote', 'kisisel', 'Kişisel', '💭'),
+  ('quote', 'genel', 'Genel', '📝'),
+  ('book', 'gida', 'Gıda', '🍎'),
+  ('book', 'saglik', 'Sağlık', '🏥'),
+  ('book', 'kisisel', 'Kişisel', '💭'),
+  ('book', 'genel', 'Genel', '📝'),
+  ('video', 'gida', 'Gıda', '🍎'),
+  ('video', 'saglik', 'Sağlık', '🏥'),
+  ('video', 'kisisel', 'Kişisel', '💭'),
+  ('video', 'genel', 'Genel', '📝');
+```
+
+### Kategori Seçimi
+
+**İçerik Bazlı Kategorileme:**
+
+- ✅ Kitabın/videonun **konusuna** göre
+- ❌ Platform (youtube, podcast) bazlı DEĞİL
+- ❌ Tür (science, fiction) bazlı DEĞİL
+
+**Örnekler:**
+
+```
+"Omega-3 beyin sağlığı için önemli" → saglik
+"Akdeniz diyeti en sağlıklısı" → gida
+"1% better every day" - Atomic Habits → kisisel
+"Yapay zeka geleceği şekillendirecek" → genel
+```
+
+### Migration (v2.x → v3.0.0)
+
+**Eski Kategoriler:**
+
+- Quote: 5 kategori (kisisel, saglik, gida, **seyahat**, genel)
+- Book: 5 kategori (**science**, **selfhelp**, **biography**, **fiction**, **health**)
+- Video: 4 kategori (**youtube**, **documentary**, **course**, **podcast**)
+- Link: 3 kategori (**teknik**, **icerik**, **diger**)
+
+**Migration Mapping:**
+
+```javascript
+// Direkt mapping
+quote.gida → gida
+quote.saglik → saglik
+quote.kisisel → kisisel
+quote.genel → genel
+quote.seyahat → AI (kisisel veya genel)
+
+book.health → saglik
+book.selfhelp → kisisel
+book.science → AI (genel veya saglik)
+book.biography → AI (kisisel veya genel)
+book.fiction → AI (genel)
+
+video.* → AI (içeriğe göre)
+
+link.* → NULL
+```
+
+**Migration Script:** `scripts/migrate-categories.js`
+
+Detaylar için: [MIGRATION.md](./MIGRATION.md)
 
 ---
 

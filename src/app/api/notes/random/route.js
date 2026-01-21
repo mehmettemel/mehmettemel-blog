@@ -8,19 +8,37 @@ if (!process.env.DATABASE_URL) {
 const sql = neon(process.env.DATABASE_URL)
 
 /**
- * GET /api/notes/random
+ * GET /api/notes/random?category=gida
  * Get a random note from quote, video, or book types
+ * Optionally filter by category (gida, saglik, kisisel, genel)
+ * @param {string} category - Optional category filter
  * @returns {Promise<Object>} Random note
  */
-export async function GET() {
+export async function GET(request) {
   try {
-    // Get a random note from quote, video, or book types
-    const result = await sql`
-      SELECT * FROM notes
-      WHERE note_type IN ('quote', 'video', 'book')
-      ORDER BY RANDOM()
-      LIMIT 1
-    `
+    const { searchParams } = new URL(request.url)
+    const category = searchParams.get('category')
+
+    let result
+
+    if (category && category !== 'all') {
+      // Get random note filtered by category
+      result = await sql`
+        SELECT * FROM notes
+        WHERE note_type IN ('quote', 'video', 'book')
+        AND category = ${category}
+        ORDER BY RANDOM()
+        LIMIT 1
+      `
+    } else {
+      // Get random note from all categories
+      result = await sql`
+        SELECT * FROM notes
+        WHERE note_type IN ('quote', 'video', 'book')
+        ORDER BY RANDOM()
+        LIMIT 1
+      `
+    }
 
     if (result.length === 0) {
       return NextResponse.json(
