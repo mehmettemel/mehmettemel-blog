@@ -478,3 +478,162 @@ export async function getRecipeStats() {
   }
 }
 
+// ===================================
+// UPDATE AND DELETE FUNCTIONS
+// ===================================
+
+/**
+ * Update a note by ID
+ * @param {number} id - Note ID
+ * @param {Object} data - Fields to update
+ * @returns {Promise<Object>} Updated note
+ */
+export async function updateNote(id, data) {
+  try {
+    const result = await sql`
+      UPDATE notes
+      SET
+        title = COALESCE(${data.title !== undefined ? data.title : null}, title),
+        text = COALESCE(${data.text !== undefined ? data.text : null}, text),
+        author = COALESCE(${data.author !== undefined ? data.author : null}, author),
+        source = COALESCE(${data.source !== undefined ? data.source : null}, source),
+        url = COALESCE(${data.url !== undefined ? data.url : null}, url),
+        category = COALESCE(${data.category !== undefined ? data.category : null}, category),
+        tags = COALESCE(${data.tags !== undefined ? data.tags : null}, tags),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('Note not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in updateNote:', error)
+    throw new Error(`Failed to update note: ${error.message}`)
+  }
+}
+
+/**
+ * Delete a note by ID
+ * @param {number} id - Note ID
+ * @returns {Promise<Object>} Deleted note
+ */
+export async function deleteNote(id) {
+  try {
+    const result = await sql`
+      DELETE FROM notes
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('Note not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in deleteNote:', error)
+    throw new Error(`Failed to delete note: ${error.message}`)
+  }
+}
+
+/**
+ * Update a list item by ID
+ * @param {number} id - List item ID
+ * @param {Object} data - Fields to update
+ * @returns {Promise<Object>} Updated item
+ */
+export async function updateListItem(id, data) {
+  try {
+    const result = await sql`
+      UPDATE list_items
+      SET
+        name = COALESCE(${data.name !== undefined ? data.name : null}, name),
+        author = COALESCE(${data.author !== undefined ? data.author : null}, author),
+        description = COALESCE(${data.description !== undefined ? data.description : null}, description),
+        is_completed = COALESCE(${data.is_completed !== undefined ? data.is_completed : null}, is_completed),
+        is_liked = COALESCE(${data.is_liked !== undefined ? data.is_liked : null}, is_liked),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('List item not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in updateListItem:', error)
+    throw new Error(`Failed to update list item: ${error.message}`)
+  }
+}
+
+/**
+ * Delete a list item by ID
+ * @param {number} id - List item ID
+ * @returns {Promise<Object>} Deleted item
+ */
+export async function deleteListItem(id) {
+  try {
+    const result = await sql`
+      DELETE FROM list_items
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('List item not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in deleteListItem:', error)
+    throw new Error(`Failed to delete list item: ${error.message}`)
+  }
+}
+
+/**
+ * Update a recipe by ID
+ * @param {number} id - Recipe ID
+ * @param {Object} data - Fields to update
+ * @returns {Promise<Object>} Updated recipe
+ */
+export async function updateRecipe(id, data) {
+  try {
+    const result = await sql`
+      UPDATE recipes
+      SET
+        name = COALESCE(${data.name !== undefined ? data.name : null}, name),
+        ingredients = COALESCE(${data.ingredients !== undefined ? data.ingredients : null}, ingredients),
+        instructions = COALESCE(${data.instructions !== undefined ? data.instructions : null}, instructions),
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('Recipe not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in updateRecipe:', error)
+    throw new Error(`Failed to update recipe: ${error.message}`)
+  }
+}
+
+/**
+ * Delete a recipe by ID
+ * @param {number} id - Recipe ID
+ * @returns {Promise<Object>} Deleted recipe
+ */
+export async function deleteRecipe(id) {
+  try {
+    const result = await sql`
+      DELETE FROM recipes
+      WHERE id = ${id}
+      RETURNING *
+    `
+    if (result.length === 0) {
+      throw new Error('Recipe not found')
+    }
+    return result[0]
+  } catch (error) {
+    console.error('Database error in deleteRecipe:', error)
+    throw new Error(`Failed to delete recipe: ${error.message}`)
+  }
+}

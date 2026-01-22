@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { Container } from '@/components/Container'
 import { RussianCard } from '@/components/russian/RussianCard'
+import RandomButton from '@/components/RandomButton'
 import {
   russianCategories,
   getRussianByCategory,
@@ -73,12 +74,7 @@ export default function RussianPage() {
 
         {/* Random Button */}
         <div className="mb-8 flex justify-center">
-          <button
-            onClick={getRandomPhrase}
-            className="rounded-full bg-primary px-6 py-3 text-base font-medium text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-xl"
-          >
-            🎲 Rastgele
-          </button>
+          <RandomButton onClick={getRandomPhrase} />
         </div>
 
         {/* Single Card Display */}

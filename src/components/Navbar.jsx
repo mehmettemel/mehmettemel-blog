@@ -5,6 +5,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 import { AnimatedThemeToggle } from './ui/animated-theme-toggle'
+import { UserIcon } from './auth/UserIcon'
 import { Container } from './Container'
 import {
   NavigationMenu,
@@ -192,7 +193,13 @@ function MobileNav() {
           >
             İletişim
           </Link>
-          <div className="mt-6 border-t border-border pt-6">
+          <div className="mt-6 border-t border-border pt-6 space-y-4">
+            <div className="flex items-center justify-between px-3">
+              <span className="text-sm font-medium text-muted-foreground">
+                Admin
+              </span>
+              <UserIcon />
+            </div>
             <div className="flex items-center justify-between px-3">
               <span className="text-sm font-medium text-muted-foreground">
                 Tema
@@ -214,7 +221,8 @@ export function Navbar() {
           <div className="flex items-center">
             <NavLink href="/">Ana Sayfa</NavLink>
             <DesktopNav />
-            <div className="hidden md:block">
+            <div className="hidden md:flex md:items-center md:gap-2">
+              <UserIcon />
               <AnimatedThemeToggle />
             </div>
           </div>
