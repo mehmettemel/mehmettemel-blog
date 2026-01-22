@@ -456,22 +456,11 @@ AI tüm detayları analiz edip düzenler:
         const recipe = await createRecipe(recipeData)
         console.log('💾 [RECIPE] Saved successfully! ID:', recipe.id)
 
-        const prepCookTime = `⏱️ Hazırlık: ${recipe.prep_time}dk | Pişirme: ${recipe.cook_time}dk`
-        const servingsText = `👥 ${recipe.servings} kişilik`
-        const difficultyText = `📊 Zorluk: ${recipe.difficulty}`
-        const categoryText = recipe.category ? `🏷️ ${recipe.category}` : ''
-
         await sendTelegramMessage(
           chatId,
           `✅ 🍳 <b>Tarif eklendi!</b>
 
 📝 <b>${recipe.name}</b>
-${recipe.description}
-
-${categoryText}
-${prepCookTime}
-${servingsText}
-${difficultyText}
 
 ID: ${recipe.id}
 

@@ -147,7 +147,7 @@ Yapılışı:
 1. Tavukları doğrayın
 2. Soğanları kavurun
 
-AI parses everything: ingredients, instructions, timings, category, difficulty
+AI parses: name, ingredients, instructions
 ```
 
 #### Content Flow
@@ -198,7 +198,7 @@ npm start
 | `/listeler` | Lists dashboard - Overview of all tracked items |
 | `/listeler/kitap` | Books list - Reading list with completion tracking |
 | `/listeler/film` | Movies/Shows list - Watch list with completion tracking |
-| `/listeler/tarif` | Recipes list - Recipe collection with AI-parsed content |
+| `/listeler/tarif` | Recipes list - Simple recipe collection with full-screen modal view |
 | `/bu-hafta` | Weekly signals - Current week's curated content |
 | `/iletisim` | Contact page - Social links and email |
 | `/sitemap.xml` | Auto-generated sitemap |
@@ -221,7 +221,7 @@ npm start
 - Track items to read, watch, or cook
 - 3 categories: Books (Kitap), Movies/Shows (Film & Dizi), Recipes (Tarifler)
 - Checkbox tracking: Completed and Liked status (books/movies)
-- Recipe modal view: Full recipe with ingredients, instructions, timings
+- Recipe modal view: Full-screen display with ingredients and instructions
 - AI-powered parsing for recipes
 - Real-time updates with PATCH API
 - ISR with 60-second revalidation
@@ -408,7 +408,7 @@ Direct Telegram webhook integration for bot commands.
 - `/book [text]` or `/b [text]` - Add book notes
 - `/k [name]` - Add book to reading list (AI finds author & description)
 - `/f [name]` - Add movie/show to watch list (AI finds director & description)
-- `/tarif [recipe text]` - Add recipe (AI parses ingredients, instructions, timings, category)
+- `/tarif [recipe text]` - Add recipe (AI parses name, ingredients, instructions)
 - `/help` - Show help
 - `/stats` - Show statistics
 
@@ -478,10 +478,9 @@ Or manually execute the SQL in `scripts/init-db.sql`.
   - Types: kitap (books), film (movies/shows)
   - Constraint: is_liked requires is_completed to be true
 
-- **recipes** - Recipes table
-  - Fields: id, name, description, ingredients, instructions, category, prep_time, cook_time, servings, difficulty, tags, created_at, updated_at
-  - Categories: Ana yemek, Tatlı, Çorba, Salata, Aperatif, İçecek, Kahvaltı
-  - AI-parsed and formatted content
+- **recipes** - Recipes table (simplified)
+  - Fields: id, name, ingredients, instructions, created_at, updated_at
+  - AI-parsed and formatted content (name, ingredients, instructions only)
 
 - **valid_categories** - Category reference table
   - Pre-populated with valid categories for each note type

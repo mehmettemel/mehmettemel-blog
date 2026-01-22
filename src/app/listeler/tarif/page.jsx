@@ -49,7 +49,7 @@ export default async function TariflerPage() {
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             💡 Telegram botundan <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">/tarif</code> komutu ile yeni tarif ekleyebilirsiniz.
-            Gemini AI tüm detayları analiz edip düzenler.
+            Gemini AI malzemeleri ve yapılışı analiz edip düzenler.
           </p>
         </div>
 

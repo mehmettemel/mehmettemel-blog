@@ -65,15 +65,10 @@ Yapılışı:
 - Tarif adı
 - Malzemeler listesi (düzenli formatta)
 - Yapılış adımları (numaralandırılmış)
-- Hazırlık süresi, pişirme süresi
-- Porsiyon sayısı
-- Kategori (Ana yemek, Tatlı, Çorba, vs.)
-- Zorluk seviyesi (Kolay/Orta/Zor)
-- Etiketler
 
 **Gider:** `/listeler/tarif`
 
-**Not:** Gemini AI tüm tarif metnini analiz edip yapılandırılmış formata çevirir. Eksik bilgi bırakmaz!
+**Not:** Gemini AI tarif metnini analiz edip yapılandırılmış formata çevirir. Sadece isim, malzemeler ve yapılış kaydedilir.
 
 ---
 
@@ -274,7 +269,7 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 | -------- | ------------ | ----------------- | ------------------ |
 | `/k`     | `list_items` | `/listeler/kitap` | Yazar + Description|
 | `/f`     | `list_items` | `/listeler/film`  | Yönetmen + Desc    |
-| `/tarif` | `recipes`    | `/listeler/tarif` | Tam formatla + Parse|
+| `/tarif` | `recipes`    | `/listeler/tarif` | İsim + Malzemeler + Yapılış|
 
 ### Keşifler (Kategori ile)
 | Tip    | Gıda  | Sağlık | Kişisel | AI 🤖 | Tablo   | Sayfa              |
@@ -321,7 +316,7 @@ Eski komutlar hala çalışır (backward compatibility):
 7. **Video/Kitap çoklu** - `/v` ve `/b` komutlarında `"..."` tırnak içi metinler ayrı notlar olarak kaydedilir
 8. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
 9. **Linkler kategorisiz** - Artık teknik/içerik/diğer kategorileri yok, hepsi bir arada
-10. **Tarif formatı serbest** - `/tarif` ile tarif eklerken format serbest, Gemini AI tüm bilgileri otomatik çıkarır ve düzenler
+10. **Tarif formatı serbest** - `/tarif` ile tarif eklerken format serbest, Gemini AI malzemeleri ve yapılışı otomatik çıkarır ve düzenler
 
 ---
 

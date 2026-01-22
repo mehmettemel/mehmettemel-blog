@@ -203,25 +203,19 @@ Yapılışı:
 ```
 
 **Gemini AI Özellikleri:**
-- ✅ Tüm tarif metnini analiz eder
+- ✅ Tarif metnini analiz eder
 - ✅ Malzemeleri düzenli formata çevirir
 - ✅ Yapılış adımlarını numaralandırır
-- ✅ Süreleri, porsiyon sayısını çıkarır
-- ✅ Kategori belirler (Ana yemek, Tatlı, Çorba, vs.)
-- ✅ Zorluk seviyesi tahmin eder
-- ✅ Etiketler oluşturur
-- ✅ Eksik bilgi bırakmaz!
 
 **UI Özellikleri:**
-- Modal ile tam tarif görüntüleme
-- Kategori filtreleme
-- Süre, porsiyon, zorluk gösterimi
-- Mobil responsive tasarım
+- Full screen modal ile tarif görüntüleme
+- Basit ve temiz tasarım
+- Mobil responsive
 - Dark mode desteği
 
 **Database:**
 - Yeni `recipes` tablosu
-- Tam tarif bilgileri (ingredients, instructions, timings, category, difficulty, tags)
+- Basit yapı: name, ingredients, instructions
 
 **Sayfa:** `/listeler/tarif`
 

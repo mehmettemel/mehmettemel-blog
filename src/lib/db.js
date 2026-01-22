@@ -403,35 +403,18 @@ export async function getListStats() {
  * Create a new recipe
  * @param {Object} data - Recipe data
  * @param {string} data.name - Recipe name
- * @param {string} data.description - Recipe description
  * @param {string} data.ingredients - Ingredients list
  * @param {string} data.instructions - Cooking instructions
- * @param {string} [data.category] - Recipe category
- * @param {number} [data.prep_time] - Preparation time in minutes
- * @param {number} [data.cook_time] - Cooking time in minutes
- * @param {number} [data.servings] - Number of servings
- * @param {string} [data.difficulty] - Difficulty level
- * @param {string[]} [data.tags] - Tags array
  * @returns {Promise<Object>} Created recipe
  */
 export async function createRecipe(data) {
   try {
     const result = await sql`
-      INSERT INTO recipes (
-        name, description, ingredients, instructions,
-        category, prep_time, cook_time, servings, difficulty, tags
-      )
+      INSERT INTO recipes (name, ingredients, instructions)
       VALUES (
         ${data.name},
-        ${data.description || null},
         ${data.ingredients},
-        ${data.instructions},
-        ${data.category || null},
-        ${data.prep_time || null},
-        ${data.cook_time || null},
-        ${data.servings || null},
-        ${data.difficulty || null},
-        ${data.tags || []}
+        ${data.instructions}
       )
       RETURNING *
     `
@@ -443,43 +426,15 @@ export async function createRecipe(data) {
 }
 
 /**
- * Get all recipes with optional filtering
- * @param {Object} options - Query options
- * @param {string} [options.category] - Filter by category
- * @param {string} [options.difficulty] - Filter by difficulty
- * @param {number} [options.limit] - Limit results
+ * Get all recipes
  * @returns {Promise<Array>} Recipes array
  */
-export async function getRecipes({ category, difficulty, limit } = {}) {
+export async function getRecipes() {
   try {
-    let query = sql`SELECT * FROM recipes WHERE 1=1`
-
-    if (category) {
-      query = sql`SELECT * FROM recipes WHERE category = ${category}`
-    }
-
-    if (difficulty) {
-      query = sql`
-        SELECT * FROM recipes
-        WHERE ${category ? sql`category = ${category} AND` : sql`1=1 AND`}
-        difficulty = ${difficulty}
-      `
-    }
-
-    if (limit) {
-      query = sql`
-        ${query}
-        ORDER BY created_at DESC
-        LIMIT ${limit}
-      `
-    } else {
-      query = sql`
-        ${query}
-        ORDER BY created_at DESC
-      `
-    }
-
-    const recipes = await query
+    const recipes = await sql`
+      SELECT * FROM recipes
+      ORDER BY created_at DESC
+    `
     return recipes
   } catch (error) {
     console.error('Database error in getRecipes:', error)
@@ -514,18 +469,8 @@ export async function getRecipeStats() {
       SELECT COUNT(*) as count FROM recipes
     `
 
-    const categoryStats = await sql`
-      SELECT category, COUNT(*) as count
-      FROM recipes
-      GROUP BY category
-    `
-
     return {
       total: parseInt(totalResult[0].count),
-      byCategory: categoryStats.reduce((acc, row) => {
-        acc[row.category || 'Diğer'] = parseInt(row.count)
-        return acc
-      }, {}),
     }
   } catch (error) {
     console.error('Database error in getRecipeStats:', error)
