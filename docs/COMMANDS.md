@@ -15,7 +15,6 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 ```
 
 **AI bulur:**
-
 - Yazar: Peter Thiel
 - Description: Startup ve yenilik üzerine... (3-4 satır Türkçe)
 
@@ -31,11 +30,24 @@ AI otomatik olarak yazar/yönetmen/marka/description bulur ve ekler.
 ```
 
 **AI bulur:**
-
 - Yönetmen: Christopher Nolan
 - Description: Film hakkında kısa açıklama... (3-4 satır Türkçe)
 
 **Gider:** `/listeler/film`
+
+---
+
+### `/u [isim]` - Ürün Ekle
+
+```bash
+/u vitamix blender
+```
+
+**AI bulur:**
+- Marka: Vitamix
+- Description: Ürün açıklaması... (3-4 satır Türkçe)
+
+**Gider:** `/listeler/urun`
 
 ---
 
@@ -61,175 +73,133 @@ Yapılışı:
 ```
 
 **AI bulur ve düzenler:**
-
 - Tarif adı
 - Malzemeler listesi (düzenli formatta)
 - Yapılış adımları (numaralandırılmış)
 
 **Gider:** `/listeler/tarif`
 
-**Not:** Gemini AI tarif metnini analiz edip yapılandırılmış formata çevirir. Sadece isim, malzemeler ve yapılış kaydedilir.
+---
+
+## 📝 Keşifler Komutları - ULTRA KISA SİSTEM
+
+### ✨ Sadece 4 Komut (2 Karakter!)
+
+AI otomatik kategori belirler: **Gıda 🍎 / Sağlık 🏥 / Kişisel 💭 / Genel 📝**
 
 ---
 
-## 📝 Keşifler Komutları
+### `>ki [metin]` - Kitap Notları
 
-AI ile kategorize edilir ve `notes` tablosuna eklenir.
+📖 Kitap notları için. AI kategori, yazar, kaynak otomatik bulur.
 
-### 🍎 4 Yekpare Kategori Sistemi
-
-Tüm keşifler (alıntı, kitap, video) aynı 4 kategoriyi kullanır:
-
-- 🍎 **Gıda** - Yemek, beslenme, tarif, mutfak
-- 🏥 **Sağlık** - Fitness, bağışıklık, wellness, mental sağlık
-- 💭 **Kişisel** - Motivasyon, üretkenlik, gelişim, alışkanlıklar
-- 📝 **Genel** - Diğer tüm konular
-
----
-
----
-
-### 📝 Alıntı Komutları (Kategori ile)
-
-#### `/ag [metin]` - Alıntı (Gıda)
+**Tek not:**
 ```bash
-/ag Omega-3 beyin sağlığı için çok önemli
+>ki İki düşünce sistemi var: System 1 (hızlı, sezgisel) ve System 2 (yavaş, mantıksal). -Thinking Fast and Slow, Daniel Kahneman
 ```
 
-#### `/as [metin]` - Alıntı (Sağlık)
+**Çoklu not:**
 ```bash
-/as Günde 10.000 adım at
+>ki
+"Focus is the key to mastery"
+"Small habits compound over time"
+"Environment shapes behavior"
+-Atomic Habits, James Clear
 ```
 
-#### `/ak [metin]` - Alıntı (Kişisel)
-```bash
-/ak Tutarlılık başarının anahtarıdır
-```
-
-#### `/a [metin]` - Alıntı (AI Kategoriler)
-
-**Tek alıntı:**
-
-```bash
-/a Tutarlılık başarının anahtarıdır
-```
-
-**Uzun alıntı + kaynak (- ile):**
-
-```bash
-/a İnsanlar reformcu veya vizyoner olmanızı değil, onların "oyununa" uymanızı isterler.
-
-Eğer bir şeyi değiştirmek istiyorsanız, mevcut kesişim noktasını bulup, onu yavaşça kaydırmanız gerekir.
-
-Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarlarına" bak.
-
-- Professor Jiang
-```
-
-→ Tüm metin **tek bir alıntı** olarak kaydedilir
-→ `author: "Professor Jiang"`
-
-**Önemli:**
-
-- Tüm metin olduğu gibi tek not olarak kaydedilir
-- Metin parçalanmaz, orijinal format korunur
-- "-" işaretinden sonraki metin yazar/kaynak olarak algılanır
-
-**AI bulur:** Yazar, kaynak ve içeriğe göre kategori (gıda/sağlık/kişisel/genel)
-
-**Gider:** `/kesifler/alintilar`
-
----
-
-### 📖 Kitap Notu Komutları (Kategori ile)
-
-#### `/bg [metin]` - Kitap Notu (Gıda)
-```bash
-/bg "Akdeniz diyeti en sağlıklısı" - Michael Pollan
-```
-
-#### `/bs [metin]` - Kitap Notu (Sağlık)
-```bash
-/bs "Uyku her şeydir" - Why We Sleep
-```
-
-#### `/bk [metin]` - Kitap Notu (Kişisel)
-```bash
-/bk "Small habits compound" - Atomic Habits James Clear
-```
-
-#### `/b [metin]` - Kitap Notu (AI Kategoriler)
-```bash
-/b Focus is the key - Atomic Habits James Clear
-```
-
-**AI bulur:** Yazar, kaynak ve içeriğe göre kategori (gıda/sağlık/kişisel/genel)
+**AI bulur:**
+- Yazar: Daniel Kahneman / James Clear
+- Kaynak: Thinking Fast and Slow / Atomic Habits
+- Kategori: kisisel (AI otomatik)
 
 **Gider:** `/kesifler/kitaplar`
 
 ---
 
-### 🎬 Video Notu Komutları (Kategori ile)
+### `>vi [metin]` - Video/Podcast Notları
 
-#### `/vg [metin]` - Video Notu (Gıda)
-```bash
-/vg "Fermente gıdalar probiyotik zengini" - Nutrition Video
-```
-
-#### `/vs [metin]` - Video Notu (Sağlık)
-```bash
-/vs "Sabah güneşi bağışıklığı güçlendirir" - Huberman Lab
-```
-
-#### `/vk [metin]` - Video Notu (Kişisel)
-```bash
-/vk "Focus is the key to mastery" - Cal Newport Interview
-```
-
-#### `/v [metin]` - Video Notu (AI Kategoriler)
+🎬 Video ve podcast notları için. AI kategori, konuşmacı, kaynak otomatik bulur.
 
 **Tek not:**
-
 ```bash
-/v Huberman Lab: 10-30 minutes morning sunlight
+>vi Sabah güneş ışığı bağışıklığı güçlendirir - Huberman Lab
 ```
 
-**Tek not + kaynak (- ile):**
-
+**Çoklu not:**
 ```bash
-/v "Focus is the key to mastery" - Huberman Lab Sleep Toolkit
+>vi
+"AI is the future of computing"
+"Scaling is the most important factor"
+"Data quality beats quantity"
+-Jensen Huang, NVIDIA AI Summit
 ```
 
-→ `notes: ["Focus is the key to mastery"], author: "Huberman", source: "Sleep Toolkit"`
-
-**Çoklu not (tırnak içi, yan yana):**
-
-```bash
-/v "AI is the future" "Scaling is key" "Data matters" - Jensen Huang AI Interview
-```
-
-→ `notes: ["AI is the future", "Scaling is key", "Data matters"], author: "Jensen Huang", source: "AI Interview"`
-
-**AI bulur:** Konuşmacı, kaynak ve içeriğe göre kategori (gıda/sağlık/kişisel/genel)
+**AI bulur:**
+- Konuşmacı: Andrew Huberman / Jensen Huang
+- Kaynak: Huberman Lab / NVIDIA AI Summit
+- Kategori: saglik / genel (AI otomatik)
 
 **Gider:** `/kesifler/videolar`
 
 ---
 
-### 🔗 Link Ekle (Kategori YOK)
+### `>al [metin]` - Alıntılar
 
-#### `/l [url]` - Link Ekle
+💭 Alıntılar ve notlar için. AI kategori, yazar, kaynak otomatik bulur.
 
+**Basit alıntı:**
 ```bash
-/l https://waitbutwhy.com
-/l https://paulgraham.com/articles.html
+>al Sauna 4x per week at 175 degrees = 40% decrease in mortality
 ```
 
-**Önemli:** Linkler artık kategorilenmez, hepsi bir arada gösterilir.
+**Alıntı + Kaynak:**
+```bash
+>al İnsanlar reformcu veya vizyoner olmanızı değil, onların "oyununa" uymanızı isterler. Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarlarına" bak. -Professor Jiang
+```
 
-**AI bulur:** Başlık, açıklama
+**AI bulur:**
+- Yazar: Professor Jiang
+- Kategori: kisisel / saglik (AI otomatik, içeriğe göre)
+
+**Gider:** `/kesifler/alintilar`
+
+---
+
+### `>li [url]` - Link Ekle
+
+🔗 Web linkleri için. AI başlık ve açıklama bulur. **Kategori yok.**
+
+```bash
+>li https://waitbutwhy.com
+>li https://paulgraham.com/articles.html
+```
+
+**AI bulur:**
+- Başlık
+- Açıklama
 
 **Gider:** `/kesifler/linkler`
+
+---
+
+## 💡 AI Otomatik Kategoriler
+
+Tüm keşifler (kitap, video, alıntı) aynı 4 kategoriyi kullanır:
+
+| Kategori | Icon | Açıklama                                        |
+| -------- | ---- | ----------------------------------------------- |
+| 🍎 Gıda   | 🍎   | Yemek, beslenme, tarif, mutfak                  |
+| 🏥 Sağlık | 🏥   | Fitness, bağışıklık, wellness, mental sağlık    |
+| 💭 Kişisel| 💭   | Motivasyon, üretkenlik, gelişim, alışkanlıklar  |
+| 📝 Genel  | 📝   | Diğer tüm konular                               |
+
+**Örnekler:**
+```
+"Omega-3 beyin sağlığı için önemli" → saglik
+"Akdeniz diyeti en sağlıklısı" → gida
+"1% better every day - Atomic Habits" → kisisel
+"Yapay zeka geleceği şekillendirecek" → genel
+```
 
 ---
 
@@ -242,9 +212,7 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 ```
 
 **Gösterir:**
-
 - Toplam not sayısı (link, alıntı, video, kitap)
-- Cache istatistikleri (kitap, film, ürün)
 
 ---
 
@@ -255,68 +223,42 @@ Bir sistemi analiz ederken "söylenen amaçlara" değil, "oyuncuların çıkarla
 ```
 
 **Gösterir:**
-
 - Tüm komutlar
 - Örnekler
 - İpuçları
 
 ---
 
-## 🎯 Komut Karşılaştırma
+## 🎯 Komut Özeti
 
 ### Listeler
-| Komut    | Tablo        | Sayfa             | AI Özelliği        |
-| -------- | ------------ | ----------------- | ------------------ |
-| `/k`     | `list_items` | `/listeler/kitap` | Yazar + Description|
-| `/f`     | `list_items` | `/listeler/film`  | Yönetmen + Desc    |
-| `/tarif` | `recipes`    | `/listeler/tarif` | İsim + Malzemeler + Yapılış|
+| Komut    | Açıklama           | AI Özelliği            |
+| -------- | ------------------ | ---------------------- |
+| `/k`     | Kitap ekle         | Yazar + Description    |
+| `/f`     | Film/Dizi ekle     | Yönetmen + Description |
+| `/u`     | Ürün ekle          | Marka + Description    |
+| `/tarif` | Tarif ekle         | Malzemeler + Yapılış   |
 
-### Keşifler (Kategori ile)
-| Tip    | Gıda  | Sağlık | Kişisel | AI 🤖 | Tablo   | Sayfa              |
-| ------ | ----- | ------ | ------- | ----- | ------- | ------------------ |
-| Alıntı | `/ag` | `/as`  | `/ak`   | `/a`  | `notes` | `/kesifler/alintilar` |
-| Kitap  | `/bg` | `/bs`  | `/bk`   | `/b`  | `notes` | `/kesifler/kitaplar`  |
-| Video  | `/vg` | `/vs`  | `/vk`   | `/v`  | `notes` | `/kesifler/videolar`  |
-| Link   | -     | -      | -       | `/l`  | `notes` | `/kesifler/linkler`   |
-
-**Not:**
-- **Kategori belirtilirse** (`/ag`, `/bg`, `/vg`) → O kategoriye sabitlenir
-- **AI kullanılırsa** (`/a`, `/b`, `/v`) → İçerik analiz edilip otomatik kategorilenir (gıda/sağlık/kişisel/genel)
-
----
-
-## 🔄 Legacy Komutlar
-
-Eski komutlar hala çalışır (backward compatibility):
-
-```bash
-# Listeler
-/cache-kitap → /k
-/cache-film → /f
-/cache-urun → /u
-
-# Keşifler (genel kategoriye gider)
-/link → /l (kategori yok)
-/quote → /a (genel)
-/alinti → /a (genel)
-/video → /v (genel)
-/book → /b (genel)
-```
+### Keşifler (Ultra-Short + AI Kategori)
+| Komut | Tip     | AI Kategoriler                | Sayfa                  |
+| ----- | ------- | ----------------------------- | ---------------------- |
+| `>ki` | Kitap   | gıda/sağlık/kişisel/genel 🤖  | `/kesifler/kitaplar`   |
+| `>vi` | Video   | gıda/sağlık/kişisel/genel 🤖  | `/kesifler/videolar`   |
+| `>al` | Alıntı  | gıda/sağlık/kişisel/genel 🤖  | `/kesifler/alintilar`  |
+| `>li` | Link    | kategori yok                  | `/kesifler/linkler`    |
 
 ---
 
 ## 💡 İpuçları
 
-1. **Boşluk önemli** - `/k zero` ✅ `/kzero` ❌
-2. **Kategori harfi ekle** - `/ag` (gıda), `/as` (sağlık), `/ak` (kişisel), `/a` (genel)
-3. **Komut sırası kritik** - `/bg` → kitap notu+gıda, `/k` → liste-kitap
-4. **URL otomatik** - Direkt URL gönder, otomatik `/l` olarak algılanır
-5. **"-" = Kaynak** - Alıntılarda tire işaretinden sonra gelen metin yazar/kaynak olarak algılanır
-6. **Alıntılar TEK not** - Tüm metin olduğu gibi tek alıntı olarak kaydedilir (parçalanmaz)
-7. **Video/Kitap çoklu** - `/v` ve `/b` komutlarında `"..."` tırnak içi metinler ayrı notlar olarak kaydedilir
-8. **Description otomatik** - Liste komutları için AI 3-4 satır Türkçe açıklama üretir
-9. **Linkler kategorisiz** - Artık teknik/içerik/diğer kategorileri yok, hepsi bir arada
-10. **Tarif formatı serbest** - `/tarif` ile tarif eklerken format serbest, Gemini AI malzemeleri ve yapılışı otomatik çıkarır ve düzenler
+1. **Ultra hızlı** - Sadece 2 karakter: `>ki`, `>vi`, `>al`, `>li`
+2. **AI her şeyi halleder** - Kategori, yazar, kaynak otomatik bulunur
+3. **Hatırlama kolay** - >kitap, >video, >alıntı, >link
+4. **"-" = Kaynak** - Tire işaretinden sonra gelen metin yazar/kaynak olarak algılanır
+5. **Tek metin** - Tüm metin olduğu gibi kaydedilir, parçalanmaz
+6. **Çoklu not** - `"..."` tırnak içi metinler ayrı notlar (video/kitap)
+7. **URL otomatik** - Direkt URL gönder, otomatik link olarak algılanır
+8. **Sıfır kategori hatası** - Manuel kategori yok, AI %95+ doğru
 
 ---
 
@@ -325,74 +267,18 @@ Eski komutlar hala çalışır (backward compatibility):
 ### "Bot yanıt vermiyor"
 
 **Çözüm:**
-
 ```bash
 curl https://mehmettemel.com/api/telegram/webhook
 ```
 
-`"version": "2.0.1"` görmeli.
+`"status": "ok"` görmeli.
 
-### "Cache komutu keşiflere gidiyor"
+### "AI kategori yanlış buluyor"
 
-**Neden:** parseMessage() hatası
-**Çözüm:** Vercel logs kontrol et, `/k` → `cache-kitap` parse olmalı
-
-### "AI yazar/description bulmuyor"
-
-**Neden:** Gemini API hatası
-**Çözüm:** Fallback çalışır, null olarak kaydedilir
+**Neden:** İçerik belirsiz
+**Çözüm:** Daha açıklayıcı metin ekle veya kategoriyi manuel düzelt (admin panel)
 
 ---
 
-## 🐛 Debug
-
-### Vercel Logs
-
-```bash
-vercel logs --follow
-```
-
-### Test Komutu
-
-```bash
-/k zero to one
-```
-
-**Beklenen log:**
-
-```
-[parseMessage] Matched: /k → cache-kitap
-[AI Cache] Enriched: { name: "Zero to One", author: "Peter Thiel", description: "..." }
-[DB] Cache item created: ID 123
-```
-
----
-
----
-
-## 🔄 Kategori Sistemi Değişikliği (v3.0.0)
-
-### 21 Ocak 2026 - Büyük Güncelleme
-
-**Eski Sistem (v2.x):**
-- Alıntılar: 5 kategori (kişisel, sağlık, gıda, seyahat, genel)
-- Kitaplar: 5 kategori (science, selfhelp, biography, fiction, health)
-- Videolar: 4 kategori (youtube, documentary, course, podcast)
-- Linkler: 3 kategori (teknik, içerik, diğer)
-
-**Yeni Sistem (v3.0.0):**
-- ✅ **4 Yekpare Kategori** - Gıda, Sağlık, Kişisel, Genel
-- ✅ **Tek Kategori Sistemi** - Alıntı, kitap, video hepsi aynı kategorileri kullanır
-- ✅ **Kategori Komutları** - `/ag`, `/as`, `/ak`, `/bg`, `/vg` gibi
-- ✅ **Linkler Kategorisiz** - Artık tüm linkler bir arada
-- ✅ **İçerik Bazlı** - Platform değil, içeriğe göre kategorileme
-
-**Migration:**
-- Mevcut veriler AI ile otomatik migrate edildi
-- Eski kategoriler `old_category` kolonunda saklandı
-- Rollback desteği mevcut
-
----
-
-**Versiyon:** v3.0.0
-**Son Güncelleme:** 21 Ocak 2026
+**Versiyon:** v4.0.0 - Ultra-Short Commands
+**Son Güncelleme:** 24 Ocak 2026

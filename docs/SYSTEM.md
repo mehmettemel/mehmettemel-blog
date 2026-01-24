@@ -8,7 +8,7 @@ Teknik detaylar, mimari, database şemaları, ve API referansı.
 
 1. [Sistem Mimarisi](#sistem-mimarisi)
 2. [Database Şemaları](#database-şemaları)
-3. [Kategori Sistemi (v3.0.0)](#kategori-sistemi-v300)
+3. [Kategori Sistemi (v4.0.0)](#kategori-sistemi-v400)
 4. [Listeler Sistemi](#listeler-sistemi)
 5. [Telegram Entegrasyonu](#telegram-entegrasyonu)
 6. [AI Kategorilendirme](#ai-kategorilendirme)
@@ -61,11 +61,11 @@ Telegram → parseMessage() → handleCacheItemWithAI()
   → Telegram yanıt → Web görünür (ISR 60s)
 ```
 
-**Keşifler Ekleme (`/l`, `/a`, `/v`, `/b`):**
+**Keşifler Ekleme (`>li`, `>al`, `>vi`, `>ki`):**
 
 ```
 Telegram → parseMessage() → handleLink/Note/Video/Book()
-  → Gemini API (kategori, kaynak)
+  → Gemini API (AI otomatik kategori, kaynak)
   → createNote() → notes table
   → Telegram yanıt → /kesifler sayfası (ISR 60s)
 ```
@@ -160,13 +160,15 @@ CREATE INDEX idx_notes_type_category ON notes(note_type, category);
 
 ---
 
-## Kategori Sistemi (v3.0.0)
+## Kategori Sistemi (v4.0.0)
 
 ### 🍎 4 Yekpare Kategori
 
-**v3.0.0 Güncellemesi (21 Ocak 2026):**
+**v4.0.0 Güncellemesi (24 Ocak 2026):**
 
-Tüm keşifler (alıntı, kitap, video) artık aynı 4 kategoriyi kullanır:
+AI TAMAMEN otomatik kategori belirler. Manuel kategori seçimi YOK.
+
+Tüm keşifler (alıntı, kitap, video) aynı 4 kategoriyi kullanır:
 
 | Kategori | ID        | Icon | Açıklama                                        |
 | -------- | --------- | ---- | ----------------------------------------------- |
@@ -188,7 +190,7 @@ CREATE TABLE valid_categories (
   PRIMARY KEY (note_type, category_id)
 );
 
--- v3.0.0 kategoriler
+-- v4.0.0 kategoriler (AI otomatik belirler)
 INSERT INTO valid_categories (note_type, category_id, category_name, icon) VALUES
   ('quote', 'gida', 'Gıda', '🍎'),
   ('quote', 'saglik', 'Sağlık', '🏥'),
@@ -400,33 +402,47 @@ curl -X POST "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://mehmett
 curl "https://api.telegram.org/bot<TOKEN>/getWebhookInfo"
 ```
 
-### Komut Parse Mantığı
+### Komut Parse Mantığı (v4.0.0)
 
-**parseMessage(text)** → `{ type, content }`
+**parseMessage(text)** → `{ type, category: null, content }`
+
+**ULTRA-SHORT COMMANDS (2 karakter!):**
 
 ```javascript
-// Cache komutları (öncelik sırası önemli!)
-'/k '  → 'cache-kitap'
-'/f '  → 'cache-film'
-'/u '  → 'cache-urun'
+// Listeler komutları
+'/k '     → 'cache-kitap'
+'/f '     → 'cache-film'
+'/u '     → 'cache-urun'
+'/tarif ' → 'tarif'
 
-// Keşifler komutları
-'/l '  → 'link'
-'/a '  → 'quote'
-'/v '  → 'video'
-'/b '  → 'book'
+// Keşifler komutları (ULTRA-SHORT)
+'>ki '    → type='book',  category=null (AI belirler)
+'>vi '    → type='video', category=null (AI belirler)
+'>al '    → type='quote', category=null (AI belirler)
+'>li '    → type='link',  category=null (linkler kategorisiz)
 
-// Legacy komutlar (backward compatibility)
-'/cache-kitap ' → 'cache-kitap'
-'/link ' → 'link'
-'/quote ' → 'quote'
-'/alinti ' → 'quote'
+// Otomatik URL algılama (backward compatibility)
+isURL(text) → type='link', category=null
 
-// Otomatik URL algılama
-isURL(text) → 'link'
+// ÖNEMLİ: Manuel kategori override KALDIRILDI
+// Eski sistem: /ag /as /ak /bg /bs /bk /vg /vs /vk → SİLİNDİ
+// Yeni sistem: AI %100 kategori belirler
+```
 
-// Hiçbiri değilse
-null → default: 'quote'
+**Örnek Parse:**
+
+```javascript
+'>ki Atomic Habits notları...'
+→ { type: 'book', category: null, content: 'Atomic Habits notları...' }
+→ AI analiz eder → category: 'kisisel'
+
+'>al Sauna 4x per week...'
+→ { type: 'quote', category: null, content: 'Sauna 4x per week...' }
+→ AI analiz eder → category: 'saglik'
+
+'>li https://waitbutwhy.com'
+→ { type: 'link', category: null, content: 'https://waitbutwhy.com' }
+→ category=null (linkler kategorisiz)
 ```
 
 ### User Authentication
@@ -531,11 +547,11 @@ Health check ve version kontrolü.
 ```json
 {
   "status": "ok",
-  "version": "2.0.1",
+  "version": "4.0.0",
   "botConfigured": true,
   "userFilterEnabled": true,
   "allowedUsers": 1,
-  "commandsParsed": ["/k", "/f", "/u", "/l", "/a", "/v", "/b"]
+  "commandsParsed": ["/k", "/f", "/u", "/tarif", ">ki", ">vi", ">al", ">li"]
 }
 ```
 
@@ -760,6 +776,36 @@ fetch('/api/listeler/123/toggle', {
 
 ## Değişiklik Geçmişi
 
+### v4.0.0 (24 Ocak 2026) - ULTRA-SHORT SYSTEM
+
+**BÜYÜK DEĞİŞİKLİK:**
+
+- ✅ **Ultra-short commands:** >ki, >vi, >al, >li (sadece 2 karakter!)
+- ✅ **AI %100 kategori belirler** - Manuel kategori override tamamen kaldırıldı
+- ✅ **16 komut → 4 komut** - Sistem büyük oranda basitleştirildi
+- ✅ **SİLİNEN komutlar:** /ag, /as, /ak, /bg, /bs, /bk, /vg, /vs, /vk (9 komut)
+- ✅ **SİLİNEN komutlar:** /l, /a, /v, /b (4 komut - ultra-short ile değiştirildi)
+- ✅ **Parser simplification:** 150+ satır → 40 satır
+- ✅ **Webhook route:** Kategori override logic tamamen kaldırıldı
+
+**Komut Değişiklikleri:**
+
+```
+ESKİ (v3.0.0):
+/l, /a, /v, /b + 9 kategori override komutu = 13 komut
+
+YENİ (v4.0.0):
+>li, >al, >vi, >ki = 4 komut (AI kategori)
+```
+
+---
+
+### v3.0.0 (21 Ocak 2026)
+
+- ✅ 4 yekpare kategori sistemi (gıda, sağlık, kişisel, genel)
+- ✅ Kategori migration script
+- ✅ valid_categories tablosu
+
 ### v2.2.0 (17 Ocak 2026)
 
 - ✅ `/cache` route'u `/listeler` olarak yeniden adlandırıldı
@@ -793,5 +839,5 @@ fetch('/api/listeler/123/toggle', {
 
 ---
 
-**Versiyon:** v2.2.0
-**Son Güncelleme:** 17 Ocak 2026
+**Versiyon:** v4.0.0 - Ultra-Short System
+**Son Güncelleme:** 24 Ocak 2026

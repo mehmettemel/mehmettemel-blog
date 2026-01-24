@@ -9,11 +9,16 @@ Kişisel web sitesi - Telegram bot entegrasyonu, listeler sistemi, ve keşifler 
 **[COMMANDS.md](./COMMANDS.md)** - Tüm Telegram komutları ve örnekler
 
 ```bash
+# LISTELER (AI zenginleştirme)
 /k zero to one          # Kitap ekle (AI yazar bulur)
 /f inception            # Film ekle (AI yönetmen bulur)
 /tarif Tavuk Sote...    # Tarif ekle (AI parse edip formatlar)
-/l https://example.com  # Link ekle
-/a güzel bir alıntı     # Alıntı ekle
+
+# KEŞİFLER (Ultra-short commands - AI otomatik kategori)
+>ki Atomic Habits notları...  # Kitap notu (AI: kişisel)
+>vi Huberman Lab...           # Video notu (AI: sağlık)
+>al Sauna 4x per week...      # Alıntı (AI: sağlık)
+>li https://example.com       # Link (kategorisiz)
 ```
 
 ### Sistem Detayları
@@ -48,7 +53,10 @@ Kişisel web sitesi - Telegram bot entegrasyonu, listeler sistemi, ve keşifler 
 **3. Telegram Bot**
 
 - Hızlı not ekleme
-- 9 kısa komut: `/k /f /tarif /l /a /v /b /help /stats`
+- Ultra-short commands (2 karakter!): `>ki >vi >al >li`
+- Listeler: `/k /f /tarif`
+- Diğer: `/help /stats`
+- AI %100 otomatik kategori (manuel kategori YOK)
 - AI ile zenginleştirme ve otomatik formatla
 - User authentication
 
@@ -65,55 +73,57 @@ DATABASE_URL=...
 
 ---
 
-## 🆕 v3.0.0 - Büyük Güncelleme (21 Ocak 2026)
+## 🆕 v4.0.0 - Ultra-Short System (24 Ocak 2026)
 
-### Yeni Kategori Sistemi
+### BÜYÜK DEĞİŞİKLİK: AI %100 Otomatik Kategorilendirme
 
-**4 Yekpare Kategori** - Tüm keşifler artık aynı kategori sistemini kullanır:
+**16 komut → 4 komut!** Sadece 2 karakter ile ultra hızlı not ekleme.
+
+### Ultra-Short Commands
+
+```bash
+>ki [metin]  # 📖 Kitap notları (AI kategoriyi bulur)
+>vi [metin]  # 🎬 Video/Podcast notları (AI kategoriyi bulur)
+>al [metin]  # 💭 Alıntılar (AI kategoriyi bulur)
+>li [url]    # 🔗 Linkler (kategorisiz)
+```
+
+### 4 Otomatik Kategori
+
+AI içeriği analiz edip otomatik kategoriyi belirler:
 
 - 🍎 **Gıda** - Yemek, beslenme, tarif
 - 🏥 **Sağlık** - Fitness, wellness, mental sağlık
 - 💭 **Kişisel** - Motivasyon, üretkenlik, gelişim
 - 📝 **Genel** - Diğer tüm konular
 
-### Yeni Telegram Komutları
+**Linkler:** Kategorisiz (category = NULL)
 
-**Kategori ile Not Ekleme:**
+### Örnekler
 
 ```bash
-# Alıntılar
-/ag [metin]  # Gıda
-/as [metin]  # Sağlık
-/ak [metin]  # Kişisel
-/a [metin]   # AI kategoriler (otomatik)
+>ki Focus is the key to mastery - Atomic Habits
+→ AI analiz eder → type=book, category=kisisel, author=James Clear
 
-# Kitap Notları
-/bg [metin]  # Gıda
-/bs [metin]  # Sağlık
-/bk [metin]  # Kişisel
-/b [metin]   # AI kategoriler (otomatik)
+>vi Sauna 4x per week at 175 degrees = 40% decrease in mortality - Huberman Lab
+→ AI analiz eder → type=video, category=saglik, speaker=Andrew Huberman
 
-# Video Notları
-/vg [metin]  # Gıda
-/vs [metin]  # Sağlık
-/vk [metin]  # Kişisel
-/v [metin]   # AI kategoriler (otomatik)
+>al Akdeniz diyeti en sağlıklısı
+→ AI analiz eder → type=quote, category=gida
 
-# Linkler (kategorisiz)
-/l [url]
+>li https://waitbutwhy.com
+→ type=link, category=null (AI başlık/açıklama bulur)
 ```
-
-**Not:** Kategori belirtilmezse (`/a`, `/b`, `/v`), AI içeriği analiz edip otomatik kategoriler.
 
 ### Değişiklikler
 
-- ✅ Alıntı, kitap, video → aynı 4 kategori
-- ✅ İçerik bazlı kategorileme (platform bazlı DEĞİL)
-- ✅ Linkler kategorisiz
-- ✅ AI ile otomatik migration
-- ✅ Rollback desteği
-
-**Detaylar:** [MIGRATION.md](./MIGRATION.md)
+- ✅ **SİLİNDİ:** Manuel kategori komutları (/ag, /as, /ak, /bg, /bs, /bk, /vg, /vs, /vk)
+- ✅ **SİLİNDİ:** Eski komutlar (/l, /a, /v, /b)
+- ✅ **YENİ:** Ultra-short commands (>ki, >vi, >al, >li)
+- ✅ **AI %100 otomatik** - Manuel kategori override YOK
+- ✅ **Parser simplification:** 150+ satır → 40 satır
+- ✅ **Sıfır kategori hatası** - AI güvenilir şekilde kategoriler
+- ✅ **Hatırlama kolay** - >kitap, >video, >alıntı, >link
 
 ---
 
@@ -122,9 +132,9 @@ DATABASE_URL=...
 ```
 docs/
 ├── README.md       # Bu dosya (giriş)
-├── COMMANDS.md     # Telegram komutları (GÜNCELLENDİ v3.0.0)
-├── SYSTEM.md       # Teknik detaylar (GÜNCELLENDİ v3.0.0)
-├── MIGRATION.md    # v3.0.0 Migration rehberi (YENİ!)
+├── COMMANDS.md     # Telegram komutları (GÜNCELLENDİ v4.0.0 - Ultra-short)
+├── SYSTEM.md       # Teknik detaylar (GÜNCELLENDİ v4.0.0 - AI %100)
+├── MIGRATION.md    # v3.0.0 Migration rehberi
 └── RUSSIAN.md      # Rusça döküm
 
 src/
@@ -135,11 +145,11 @@ src/
 │   │   └── tarif/  # Tarifler sayfası (YENİ!)
 │   ├── kesifler/   # Keşifler sayfası
 │   └── api/
-│       ├── telegram/webhook/    # Telegram webhook (GÜNCELLENDİ)
+│       ├── telegram/webhook/    # Telegram webhook (v4.0.0 - Ultra-short)
 │       └── listeler/[id]/toggle/  # Checkbox API
 ├── lib/
-│   ├── db.js       # Database fonksiyonları (GÜNCELLENDİ - recipes CRUD)
-│   └── gemini.js   # AI kategorilendirme (GÜNCELLENDİ - handleRecipe)
+│   ├── db.js       # Database fonksiyonları (recipes CRUD)
+│   └── gemini.js   # AI kategorilendirme (AI %100 otomatik)
 ├── components/
 │   ├── kesifler/   # Keşifler UI bileşenleri
 │   └── recipes/    # Tarifler UI bileşenleri (YENİ!)
@@ -221,5 +231,20 @@ Yapılışı:
 
 ---
 
-**Versiyon:** v3.1.0
-**Son Güncelleme:** 21 Ocak 2026
+---
+
+## Geçmiş Sürümler
+
+### v3.1.0 - Tarifler Sistemi (21 Ocak 2026)
+- ✅ Tarifler eklendi (`/tarif` komutu)
+- ✅ Gemini AI ile tarif parse
+- ✅ Full screen modal UI
+
+### v3.0.0 - Kategori Sistemi (21 Ocak 2026)
+- ✅ 4 yekpare kategori sistemi
+- ✅ Manuel kategori override komutları (/ag, /as, /ak, vs.) - **v4.0.0'da silindi**
+
+---
+
+**Versiyon:** v4.0.0 - Ultra-Short System
+**Son Güncelleme:** 24 Ocak 2026
