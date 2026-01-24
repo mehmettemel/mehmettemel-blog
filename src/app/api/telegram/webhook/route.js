@@ -122,35 +122,35 @@ function parseMessage(text) {
   }
 
   // ========================================
-  // NEW SIMPLE KEŞİFLER COMMANDS
+  // ULTRA-SHORT KEŞİFLER COMMANDS
   // Type is manual, category is AI-determined
   // ========================================
 
   // BOOK NOTES (AI categorizes: gıda/sağlık/kişisel/genel)
-  if (text.startsWith('>kitap ') || text.startsWith('>kitap\n')) {
-    const content = text.replace(/^>kitap[\s\n]*/, '').trim()
-    console.log('[parseMessage] ✅ Matched: >kitap → book (AI will categorize)')
+  if (text.startsWith('>ki ') || text.startsWith('>ki\n')) {
+    const content = text.replace(/^>ki[\s\n]*/, '').trim()
+    console.log('[parseMessage] ✅ Matched: >ki → book (AI will categorize)')
     return { type: 'book', category: null, content }
   }
 
   // VIDEO NOTES (AI categorizes: gıda/sağlık/kişisel/genel)
-  if (text.startsWith('>video ') || text.startsWith('>video\n')) {
-    const content = text.replace(/^>video[\s\n]*/, '').trim()
-    console.log('[parseMessage] ✅ Matched: >video → video (AI will categorize)')
+  if (text.startsWith('>vi ') || text.startsWith('>vi\n')) {
+    const content = text.replace(/^>vi[\s\n]*/, '').trim()
+    console.log('[parseMessage] ✅ Matched: >vi → video (AI will categorize)')
     return { type: 'video', category: null, content }
   }
 
   // QUOTES (AI categorizes: gıda/sağlık/kişisel/genel)
-  if (text.startsWith('>alinti ') || text.startsWith('>alinti\n')) {
-    const content = text.replace(/^>alinti[\s\n]*/, '').trim()
-    console.log('[parseMessage] ✅ Matched: >alinti → quote (AI will categorize)')
+  if (text.startsWith('>al ') || text.startsWith('>al\n')) {
+    const content = text.replace(/^>al[\s\n]*/, '').trim()
+    console.log('[parseMessage] ✅ Matched: >al → quote (AI will categorize)')
     return { type: 'quote', category: null, content }
   }
 
   // LINKS (no categorization)
-  if (text.startsWith('>link ')) {
-    const content = text.replace(/^>link\s*/, '').trim()
-    console.log('[parseMessage] ✅ Matched: >link → link')
+  if (text.startsWith('>li ')) {
+    const content = text.replace(/^>li\s*/, '').trim()
+    console.log('[parseMessage] ✅ Matched: >li → link')
     return { type: 'link', category: null, content }
   }
 
@@ -204,53 +204,45 @@ export async function POST(request) {
     if (text === '/help') {
       await sendTelegramMessage(
         chatId,
-        `🤖 <b>Bot Komutları</b> - YENİ BASİT SİSTEM
+        `🤖 <b>Bot Komutları</b> - ULTRA KISA SİSTEM
 
-📚 <b>CACHE (Okuma/İzleme/Alışveriş Listesi)</b>
+📚 <b>CACHE (Okuma/İzleme/Alışveriş)</b>
 AI otomatik yazar/yönetmen/marka bulur:
-• /k [isim] - Kitap ekle
-• /f [isim] - Film/dizi ekle
-• /u [isim] - Ürün ekle
+• /k [isim] - Kitap
+• /f [isim] - Film/Dizi
+• /u [isim] - Ürün
 
 🍳 <b>TARİFLER</b>
-AI tüm detayları analiz edip düzenler:
-• /tarif [tarif metni] - Tarif ekle
-  AI otomatik malzemeleri, yapılışı, süreyi analiz eder
+• /tarif [tarif metni]
+  AI malzemeleri, yapılışı, süreyi analiz eder
 
-✨ <b>KEŞİFLER - YENİ SİSTEM (AI Otomatik Kategori)</b>
-Sadece içerik tipini belirtin, AI kategoriyi (Gıda/Sağlık/Kişisel/Genel) otomatik bulur:
+✨ <b>KEŞİFLER - ULTRA KISA (AI Otomatik Kategori)</b>
+Sadece 2 karakter! AI kategoriyi otomatik bulur:
 
-📖 <b>>kitap</b> [metin]
-  Kitap notları için
-  Örnek: >kitap İki düşünce sistemi var... -Daniel Kahneman
+📖 <b>>ki</b> [metin] - Kitap notları
+  Örnek: >ki İki düşünce sistemi var... -Daniel Kahneman
 
-🎬 <b>>video</b> [metin]
-  Video/podcast notları için
-  Örnek: >video Andrew Huberman sabah rutini...
+🎬 <b>>vi</b> [metin] - Video/Podcast
+  Örnek: >vi Huberman sabah rutini...
 
-💭 <b>>alinti</b> [metin]
-  Alıntılar için
-  Örnek: >alinti Sauna 4x per week = 40% decrease in mortality
+💭 <b>>al</b> [metin] - Alıntılar
+  Örnek: >al Sauna 40% mortality decrease
 
-🔗 <b>>link</b> [url]
-  Web linkleri için
-  Örnek: >link https://example.com
+🔗 <b>>li</b> [url] - Link
+  Örnek: >li https://example.com
 
 📊 <b>DİĞER</b>
 • /stats - İstatistikler
 • /help - Bu mesaj
 
-💡 <b>AI OTOM ATİK KATEGORİLER:</b>
-🍎 Gıda: Yemek, beslenme, tarif
-🏥 Sağlık: Fitness, bağışıklık, wellness, spor
-💭 Kişisel: Motivasyon, üretkenlik, gelişim
-📝 Genel: Diğer tüm konular
+💡 <b>AI KATEGORİLER:</b>
+🍎 Gıda 🏥 Sağlık 💭 Kişisel 📝 Genel
 
-✨ <b>AVANTAJLAR:</b>
-• Basit ve hızlı - sadece 4 komut!
-• AI her zaman doğru kategoriyi bulur
-• Kategori hatası riski YOK
-• Tek yapmam gereken: İçerik tipini belirtmek (kitap/video/alıntı/link)`,
+✨ <b>NEDEN >ki >vi >al >li?</b>
+• Ultra hızlı - 2 karakter!
+• Hatırlama kolay (>kitap, >video, >alıntı, >link)
+• AI doğru kategoriyi her zaman bulur
+• Sıfır kategori hatası`,
       )
       return NextResponse.json({ ok: true })
     }
