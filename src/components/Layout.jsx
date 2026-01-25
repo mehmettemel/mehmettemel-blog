@@ -1,7 +1,6 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Footer } from './Footer'
 import { Navbar } from './Navbar'
 
 export function Layout({ children }) {
@@ -15,7 +14,6 @@ export function Layout({ children }) {
           {children}
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

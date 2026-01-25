@@ -63,13 +63,6 @@ export function VideoPreview({ url, title }) {
 
   const videoInfo = getVideoInfo(url)
 
-  // Debug logging
-  if (typeof window !== 'undefined') {
-    console.log('VideoPreview - URL:', url)
-    console.log('VideoPreview - videoInfo:', videoInfo)
-    console.log('VideoPreview - imageError:', imageError)
-  }
-
   if (!videoInfo || !videoInfo.thumbnail || imageError) {
     return null
   }
@@ -80,8 +73,7 @@ export function VideoPreview({ url, title }) {
         src={videoInfo.thumbnail}
         alt={title || 'Video thumbnail'}
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        onError={(e) => {
-          console.error('Video thumbnail failed to load:', videoInfo.thumbnail)
+        onError={() => {
           setImageError(true)
         }}
       />

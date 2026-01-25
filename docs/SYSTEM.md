@@ -253,10 +253,6 @@ video.* → AI (içeriğe göre)
 link.* → NULL
 ```
 
-**Migration Script:** `scripts/migrate-categories.js`
-
-Detaylar için: [MIGRATION.md](./MIGRATION.md)
-
 ---
 
 ## Listeler Sistemi

@@ -132,10 +132,9 @@ AI içeriği analiz edip otomatik kategoriyi belirler:
 ```
 docs/
 ├── README.md       # Bu dosya (giriş)
-├── COMMANDS.md     # Telegram komutları (GÜNCELLENDİ v4.0.0 - Ultra-short)
-├── SYSTEM.md       # Teknik detaylar (GÜNCELLENDİ v4.0.0 - AI %100)
-├── MIGRATION.md    # v3.0.0 Migration rehberi
-└── RUSSIAN.md      # Rusça döküm
+├── COMMANDS.md     # Telegram komutları (v4.0.0 - Ultra-short)
+├── SYSTEM.md       # Teknik detaylar (v4.0.0 - AI %100)
+└── RUSSIAN.md      # Rusça dil öğrenme sistemi
 
 src/
 ├── app/
@@ -161,11 +160,10 @@ src/
     └── list.js     # Liste kategorileri (GÜNCELLENDİ - tarif eklendi)
 
 scripts/
-├── migrate-schema.sql      # v3.0.0 Schema migration
-├── migrate-categories.js   # v3.0.0 Data migration
-├── create-cache-table.sql
-├── add-description-to-cache.sql
-└── create-recipes-table.sql # Tarifler tablosu (YENİ!)
+├── init-db.sql                  # Initial database schema
+├── create-recipes-table.sql     # Recipes table
+├── simplify-recipes-table.sql   # Recipes table simplification
+└── telegram-bot-updated.gs      # Google Apps Script (reference)
 ```
 
 ---

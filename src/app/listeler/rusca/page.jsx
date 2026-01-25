@@ -4,10 +4,7 @@ import { useState, useMemo } from 'react'
 import { Container } from '@/components/Container'
 import { RussianCard } from '@/components/russian/RussianCard'
 import { RandomCircleButton } from '@/components/ui/random-circle-button'
-import {
-  russianCategories,
-  getRussianByCategory,
-} from '@/data/russian'
+import { russianCategories, getRussianByCategory } from '@/data/russian'
 
 export default function RussianPage() {
   const [selectedCategory, setSelectedCategory] = useState('cumle')
@@ -46,9 +43,6 @@ export default function RussianPage() {
           </div>
           <p className="text-base text-muted-foreground">
             Günlük hayatta kullanılabilecek Rusça kelime ve cümleler
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            💡 Kartın sağ üstündeki ℹ️ ikonuna hover et
           </p>
         </div>
 
