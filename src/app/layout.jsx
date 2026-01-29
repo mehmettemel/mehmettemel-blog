@@ -15,6 +15,13 @@ export const metadata = {
   authors: [{ name: siteConfig.author.name }],
   creator: siteConfig.author.name,
   publisher: siteConfig.author.name,
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    minimumScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -98,6 +105,12 @@ export default function RootLayout({ children }) {
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#1A1C1A" media="(prefers-color-scheme: dark)" />
+
+        {/* PWA Support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Mehmet Temel" />
+        <meta name="mobile-web-app-capable" content="yes" />
 
         {/* Google Analytics */}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
